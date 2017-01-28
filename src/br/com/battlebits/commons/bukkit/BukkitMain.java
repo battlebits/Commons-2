@@ -78,8 +78,8 @@ public class BukkitMain extends JavaPlugin {
 		// BattlebitsAPI.getBungeeChannel(), new MessageListener());
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
 		try {
-			new CommandLoader(new BukkitCommandFramework(plugin))
-					.loadCommandsFromPackage("br.com.battlebits.commons.bukkit.command.register");
+			new CommandLoader(new BukkitCommandFramework(plugin)).loadCommandsFromPackage(getClass(),
+					"br.com.battlebits.commons.bukkit.command.register");
 		} catch (Exception e) {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();
@@ -92,7 +92,7 @@ public class BukkitMain extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChatListener(), this);
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
-		
+
 		// APIs
 		getServer().getPluginManager().registerEvents(new MenuListener(), this);
 	}

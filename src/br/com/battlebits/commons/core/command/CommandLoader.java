@@ -10,7 +10,7 @@ public class CommandLoader {
 		this.framework = framework;
 	}
 
-	public int loadCommandsFromPackage(String packageName) {
+	public int loadCommandsFromPackage(Class<?> pluginClass, String packageName) {
 		int i = 0;
 		for (Class<?> commandClass : ClassGetter.getClassesForPackage(BattlebitsAPI.class, packageName)) {
 			if (CommandClass.class.isAssignableFrom(commandClass)) {
