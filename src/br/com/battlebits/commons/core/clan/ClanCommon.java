@@ -35,15 +35,8 @@ public class ClanCommon {
 			BattlebitsAPI.getLogger().log(Level.SEVERE, "NAO FOI POSSIVEL ENCONTRAR CLAN " + uniqueId.toString());
 	}
 
-	public void saveClana(Clan clan) {
-		// TODO Save Clan
-	}
-
 	public Clan getClan(UUID uniqueId) {
-		Clan clan = clans.get(uniqueId);
-		if (clan != null)
-			clan.updateCache();
-		return clan;
+		return clans.get(uniqueId);
 	}
 
 	public Clan getClan(String clanName) {

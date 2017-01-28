@@ -8,6 +8,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
 import br.com.battlebits.commons.bukkit.listener.AntiAFK;
 import br.com.battlebits.commons.bukkit.listener.ChatListener;
@@ -39,11 +40,12 @@ public class BukkitMain extends JavaPlugin {
 	private boolean oldTag = false;
 	@Setter
 	private boolean tagControl = false;
-	
+
 	@Override
 	public void onLoad() {
 		plugin = this;
 		procotolManager = ProtocolLibrary.getProtocolManager();
+		new TranslationInjector().inject(this);
 	}
 
 	@Override

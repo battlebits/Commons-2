@@ -10,12 +10,14 @@ import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.bungee.manager.BanManager;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
+import br.com.battlebits.commons.core.data.DataClan;
 import br.com.battlebits.commons.core.data.DataPlayer;
 import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.util.GeoIpUtils;
 import br.com.battlebits.commons.util.GeoIpUtils.IpCityResponse;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -62,14 +64,27 @@ public class AccountListener implements Listener {
 					BattlebitsAPI.getAccountCommon().loadBattlePlayer(uuid, player);
 					if (player.getClanUniqueId() != null) {
 						try {
-							Clan clan = BungeeMain.getPlugin().getClanManager().loadClan(player.getClanUniqueId());
+							Clan clan = BattlebitsAPI.getClanCommon().getClan(player.getClanUniqueId());
 							if (clan == null) {
-								clan = player.getClan();
+								clan = DataClan.getRedisClan(player.getClanUniqueId());
+								if (clan == null) {
+									clan = DataClan.getMongoClan(player.getClanUniqueId());
+									if (clan != null) {
+										DataClan.saveRedisClan(clan);
+									}
+								} else {
+									DataClan.checkCache(player.getClanUniqueId());
+								}
+								if (clan != null) {
+									BattlebitsAPI.getClanCommon().loadClan(clan);
+								}
 							}
-							if (!clan.isParticipant(player))
-								player.setClanUniqueId(null);
 							if (clan != null) {
-								clan.updatePlayer(player);
+								if (!clan.isParticipant(player))
+									player.setClanUniqueId(null);
+								if (clan != null) {
+									clan.updatePlayer(player);
+								}
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -118,6 +133,23 @@ public class AccountListener implements Listener {
 	public void onQuit(PlayerDisconnectEvent event) {
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId());
 		player.setLeaveData();
+		if (player.getClan() != null) {
+			Clan clan = player.getClan();
+			boolean removeClan = true;
+			for (UUID uuid : clan.getParticipants().keySet()) {
+				if (uuid == player.getUniqueId())
+					continue;
+				ProxiedPlayer p = BungeeMain.getPlugin().getProxy().getPlayer(uuid);
+				if (p != null) {
+					removeClan = false;
+					break;
+				}
+			}
+			if (removeClan) {
+				DataClan.cacheRedisClan(clan.getUniqueId(), clan.getName());
+				BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
+			}
+		}
 		DataPlayer.cacheRedisPlayer(player.getUniqueId());
 		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(player.getUniqueId());
 		player = null;
