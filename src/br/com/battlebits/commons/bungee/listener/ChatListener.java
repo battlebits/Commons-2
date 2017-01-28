@@ -32,7 +32,7 @@ public class ChatListener implements Listener {
 		} else if (player.getConfiguration().isClanChatEnabled() && player.getClan() != null) {
 			sendClanMessage(player, event.getMessage());
 			event.setCancelled(true);
-		}
+		}		
 	}
 
 	public static void sendStaffMessage(BattlePlayer bP, String message) {
