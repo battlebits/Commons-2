@@ -1,6 +1,7 @@
 package br.com.battlebits.commons.bukkit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -16,11 +17,13 @@ import br.com.battlebits.commons.bukkit.permission.PermissionManager;
 import br.com.battlebits.commons.bukkit.redis.BukkitPubSubHandler;
 import br.com.battlebits.commons.bukkit.scheduler.UpdateScheduler;
 import br.com.battlebits.commons.bukkit.scoreboard.tagmanager.TagManager;
+import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
+import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
 import lombok.Getter;
 import lombok.Setter;
@@ -77,6 +80,32 @@ public class BukkitMain extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChatListener(), this);
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
+	}
+	
+	public static void broadcastMessage(String id, String[]... replace) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId());
+			if (bp != null) {
+				Language lang = bp.getLanguage();
+				player.sendMessage(T.t(lang, id, replace));
+			}			
+		}
+	}
+	
+	public static void broadcastMessage(String id, String[] target, String[] replace) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId());
+			if (bp != null) {
+				Language lang = bp.getLanguage();
+				player.sendMessage(T.t(lang, id, target, replace));
+			}			
+		}
+	}
+	
+	public static void broadcastMessage(String message) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			player.sendMessage(message);
+		}
 	}
 
 	private void registerCommonManagement() {
