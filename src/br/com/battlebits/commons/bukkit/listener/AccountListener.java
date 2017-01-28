@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
+import br.com.battlebits.commons.bukkit.event.account.PlayerChangeGroupEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdateFieldEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdatedFieldEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
@@ -145,6 +146,8 @@ public class AccountListener implements Listener {
 		case "ranks":
 			player.loadTags();
 			player.setTag(player.getDefaultTag());
+			Bukkit.getPluginManager()
+					.callEvent(new PlayerChangeGroupEvent(event.getPlayer(), player, player.getServerGroup()));
 			break;
 		default:
 			break;

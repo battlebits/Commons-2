@@ -121,8 +121,8 @@ public class BukkitCommandFramework implements CommandFramework {
 		for (Method m : commandClass.getClass().getMethods()) {
 			if (m.getAnnotation(Command.class) != null) {
 				Command command = m.getAnnotation(Command.class);
-				System.out.println(command.name());
-				if (m.getParameterTypes().length > 1 || !m.getParameterTypes()[0].isAssignableFrom(CommandArgs.class)) {
+				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length <= 0
+						|| !CommandArgs.class.isAssignableFrom(m.getParameterTypes()[0])) {
 					System.out.println("Unable to register command " + m.getName() + ". Unexpected method arguments");
 					continue;
 				}

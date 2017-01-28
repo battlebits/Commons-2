@@ -8,6 +8,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
 import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
 import br.com.battlebits.commons.bukkit.listener.AntiAFK;
@@ -22,6 +23,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
+import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
@@ -39,7 +41,7 @@ public class BukkitMain extends JavaPlugin {
 	private PubSubListener pubSubListener;
 	private boolean oldTag = false;
 	@Setter
-	private boolean tagControl = false;
+	private boolean tagControl = true;
 
 	@Override
 	public void onLoad() {
@@ -74,6 +76,13 @@ public class BukkitMain extends JavaPlugin {
 		// this.getServer().getMessenger().registerIncomingPluginChannel(this,
 		// BattlebitsAPI.getBungeeChannel(), new MessageListener());
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
+		try {
+			new CommandLoader(new BukkitCommandFramework(plugin))
+					.loadCommandsFromPackage("br.com.battlebits.commons.bukkit.command.register");
+		} catch (Exception e) {
+			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
+			e.printStackTrace();
+		}
 	}
 
 	private void registerListeners() {
@@ -83,27 +92,27 @@ public class BukkitMain extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
 	}
-	
+
 	public static void broadcastMessage(String id, String[]... replace) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player);
 			if (bp != null) {
 				Language lang = bp.getLanguage();
 				player.sendMessage(T.t(lang, id, replace));
-			}			
+			}
 		}
 	}
-	
+
 	public static void broadcastMessage(String id, String[] target, String[] replace) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player);
 			if (bp != null) {
 				Language lang = bp.getLanguage();
 				player.sendMessage(T.t(lang, id, target, replace));
-			}			
+			}
 		}
 	}
-	
+
 	public static void broadcastMessage(String message) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.sendMessage(message);

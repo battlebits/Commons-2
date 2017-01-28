@@ -18,6 +18,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.event.account.PlayerChangeGroupEvent;
 import br.com.battlebits.commons.bukkit.permission.PermissionManager;
 import br.com.battlebits.commons.core.permission.Group;
 
@@ -55,6 +56,11 @@ public class PermissionListener implements Listener {
 		if (event.getResult() != Result.ALLOWED) {
 			removeAttachment(event.getPlayer());
 		}
+	}
+
+	@EventHandler
+	public void onChangeGroupEvent(PlayerChangeGroupEvent event) {
+		updateAttachment(event.getPlayer(), event.getGroup());
 	}
 
 	protected void updateAttachment(Player player, Group group) {

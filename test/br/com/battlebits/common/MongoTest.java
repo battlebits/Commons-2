@@ -1,20 +1,15 @@
 package br.com.battlebits.common;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bson.Document;
 
-import com.avaje.ebean.Filter;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 
 import br.com.battlebits.commons.BattlebitsAPI;
-import br.com.battlebits.commons.core.account.BattlePlayer;
-import br.com.battlebits.commons.core.account.Tag;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
@@ -26,8 +21,9 @@ public class MongoTest {
 		MongoBackend backend = new MongoBackend();
 		backend.startConnection();
 		MongoClient client = backend.getClient();
-		MongoDatabase db = client.getDatabase("commons");
-		MongoCollection<Document> col = db.getCollection("account");
+		MongoDatabase db = client.getDatabase("skywars");
+		MongoCollection<Document> col = db.getCollection("data");
+		
 		FindIterable<Document> docs = col.find().sort(new Document("xp", -1)).limit(100);
 		for(Document doc : docs) {
 			System.out.println(doc.getString("name"));
@@ -78,6 +74,9 @@ public class MongoTest {
 
 		// DataServer.addTranslationTag(Language.PORTUGUESE, "admin");
 		System.out.println(Translate.getyCommonMapTranslation(Language.PORTUGUESE));
+	}
+	
+	public static class PlayerData {
 	}
 
 }

@@ -263,7 +263,7 @@ public class ScoreboardAPI {
 
 	public static void unregisterTeamIfEmpty(Team team) {
 		if (team != null) {
-			if (team.getSize() == 0) {
+			if (team.getEntries().size() == 0) {
 				unregisterTeam(team);
 			}
 			team = null;

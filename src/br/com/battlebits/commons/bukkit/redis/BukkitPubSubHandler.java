@@ -32,7 +32,6 @@ public class BukkitPubSubHandler extends JedisPubSub {
 		if (p == null)
 			return;
 		String field = obj.getAsJsonPrimitive("field").getAsString();
-		BattlebitsAPI.getLogger().info("Recebeu informação para field: " + field);
 		BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(uuid);
 		try {
 			Field f = Reflection.getField(BattlePlayer.class, field);

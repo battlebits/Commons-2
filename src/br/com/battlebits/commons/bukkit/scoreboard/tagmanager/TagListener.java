@@ -42,6 +42,8 @@ public class TagListener implements Listener {
 				.getBattlePlayer(e.getPlayer().getUniqueId());
 		if (player == null)
 			return;
+		if (!manager.getPlugin().isTagControl())
+			return;
 		player.setTag(player.getTag());
 		for (Player o : Bukkit.getOnlinePlayers()) {
 			if (o.getUniqueId() != p.getUniqueId()) {
@@ -71,14 +73,17 @@ public class TagListener implements Listener {
 	@EventHandler
 	public void onPlayerChangeTagListener(PlayerChangeTagEvent e) {
 		Player p = e.getPlayer();
+		if (!manager.getPlugin().isTagControl())
+			return;
 		if (p == null) {
-			System.out.println("NULL TagListener.java linha 68");
+			System.out.println("NULL TagListener.java linha 75");
 			return;
 		}
 		BukkitPlayer player = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 		if (player == null)
 			return;
 		String id = getTeamName(e.getNewTag(), player.getLeague());
+		String oldId = getTeamName(e.getOldTag(), player.getLeague());
 		if (manager.getPlugin().isOldTag()) {
 			id = chars[e.getNewTag().ordinal()] + "";
 		}
@@ -93,6 +98,8 @@ public class TagListener implements Listener {
 					tag = tag.substring(tag.length() - 2, tag.length());
 					league = "";
 				}
+				ScoreboardAPI.leaveTeamToPlayer(o, oldId, p);
+				ScoreboardAPI.unregisterTeamIfEmptyToPlayer(o, oldId);
 				ScoreboardAPI.joinTeam(ScoreboardAPI.createTeamIfNotExistsToPlayer(o, id,
 						tag + (ChatColor.stripColor(tag).trim().length() > 0 ? " " : ""), league), p);
 				bp = null;

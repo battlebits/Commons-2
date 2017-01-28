@@ -34,6 +34,7 @@ public class TrasnlationLoad {
 				while (result.next()) {
 					Language lang = Language.valueOf(result.getString("language"));
 					String json = result.getString("json");
+					@SuppressWarnings("unchecked")
 					Map<String, String> map = BattlebitsAPI.getGson().fromJson(json, Map.class);
 					MongoCollection<Document> col = mongo.getClient().getDatabase("commons")
 							.getCollection("translation");

@@ -19,24 +19,24 @@ public class BattleBoard {
 
 	@Getter
 	private Scoreboard scoreboard;
-	
+
 	@Getter
 	private Objective objective;
-	
+
 	public BattleBoard(Player player) {
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		objective = scoreboard.registerNewObjective("sidebar", "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		player.setScoreboard(scoreboard);
 	}
-	
+
 	public void setDisplayName(String displayName) {
 		objective.setDisplayName(displayName);
 	}
-	
+
 	public void setText(Row row, String text) {
 		if (!text.isEmpty()) {
-			
+
 			Team team = scoreboard.getTeam(row.getTeam());
 			if (team == null) {
 				objective.getScore(row.getScore()).setScore(row.getId());
@@ -44,8 +44,8 @@ public class BattleBoard {
 				if (!team.hasEntry(row.getScore()))
 					team.addEntry(row.getScore());
 			}
-			
-			Iterator<String> iterator = Splitter.fixedLength(32).split(text).iterator();
+
+			Iterator<String> iterator = Splitter.fixedLength(16).split(text).iterator();
 			String prefix = iterator.next();
 			if (prefix.endsWith("§")) {
 				prefix = prefix.substring(0, prefix.length() - 1);
@@ -82,7 +82,7 @@ public class BattleBoard {
 			}
 		}
 	}
-	
+
 	public void setRows(Map<Integer, String> rows) {
 		for (Row row : Row.values()) {
 			if (rows.containsKey(row.getId())) {
@@ -92,46 +92,34 @@ public class BattleBoard {
 			}
 		}
 	}
-	
+
 	public void unregister(Row row) {
 		scoreboard.resetScores(row.getScore());
 		Team team = scoreboard.getTeam(row.getTeam());
-		if (team != null) team.unregister();
+		if (team != null)
+			team.unregister();
 	}
 
 	public void unregisterAll() {
 		objective.unregister();
 	}
-	
+
 	public enum Row {
-		
-		ROW_01(1),
-		ROW_02(2),
-		ROW_03(3),
-		ROW_04(4),
-		ROW_05(5),
-		ROW_06(6),
-		ROW_07(7),
-		ROW_08(8),
-		ROW_09(9),
-		ROW_10(10),
-		ROW_11(11),
-		ROW_12(12),
-		ROW_13(13),
-		ROW_14(14),
-		ROW_15(15);
-		
+
+		ROW_01(1), ROW_02(2), ROW_03(3), ROW_04(4), ROW_05(5), ROW_06(6), ROW_07(7), ROW_08(8), ROW_09(9), ROW_10(
+				10), ROW_11(11), ROW_12(12), ROW_13(13), ROW_14(14), ROW_15(15);
+
 		@Getter
-		private int id;	
-		
+		private int id;
+
 		Row(int id) {
 			this.id = id;
 		}
-		
+
 		public String getTeam() {
 			return name().toLowerCase();
 		}
-		
+
 		public String getScore() {
 			ChatColor color = ChatColor.values()[ordinal()];
 			return color.toString() + ChatColor.RESET;

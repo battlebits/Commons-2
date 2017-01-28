@@ -15,7 +15,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.common.base.Splitter;
 
@@ -48,10 +47,9 @@ public class TranslationInjector implements Injector {
 						Language lang = BattlePlayer.getLanguage(event.getPlayer().getUniqueId());
 						PacketContainer packet = event.getPacket();
 						if (event.getPacketType() == PacketType.Play.Server.CHAT) {
-							StructureModifier<WrappedChatComponent> chatComponents = packet.getChatComponents();
-							for (WrappedChatComponent component : chatComponents.getValues()) {
-								component.setJson(translate(component.getJson(), lang));
-							}
+							WrappedChatComponent chatComponents = packet.getChatComponents().read(0);
+							packet.getChatComponents().write(0,
+									WrappedChatComponent.fromJson(translate(chatComponents.getJson(), lang)));
 						} else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
 							// List<ItemStack> items = new ArrayList<>();
 							for (ItemStack item : packet.getItemArrayModifier().read(0)) {
@@ -76,9 +74,17 @@ public class TranslationInjector implements Injector {
 							packet.getStrings().write(0, translate(message, lang));
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_TEAM) {
 							String text = translate(packet.getStrings().read(2) + packet.getStrings().read(3), lang);
+							Matcher matcher = finder.matcher(text);
+							boolean matched = false;
+							while (matcher.find()) {
+								text = text.replace(matcher.group(), T.t(lang, matcher.group(2)));
+								matched = true;
+							}
+							if (!matched)
+								return;
 							String prefix = "";
 							String suffix = "";
-							Iterator<String> iterator = Splitter.fixedLength(32).split(text).iterator();
+							Iterator<String> iterator = Splitter.fixedLength(16).split(text).iterator();
 							String str = iterator.next();
 							if (str.endsWith("§")) {
 								str = str.substring(0, str.length() - 1);
@@ -156,11 +162,6 @@ public class TranslationInjector implements Injector {
 			message = message.replace(matcher.group(), T.t(lang, matcher.group(2)));
 		}
 		return message;
-	}
-
-	public static void main(String[] args) {
-		WrappedChatComponent component = WrappedChatComponent.fromText("Olá eu sou um texto");
-		System.out.println(component.getJson());
 	}
 
 }
