@@ -1,5 +1,5 @@
-name: yCommon
-authors: [GustavoInacio, vitorrdgs]
+name: Commons
+authors: [GustavoInacio, vitorrdgs, LuanPereira]
 main: br.com.battlebits.commons.bukkit.BukkitMain
 version: ${project.version}
 depend: [ProtocolLib]

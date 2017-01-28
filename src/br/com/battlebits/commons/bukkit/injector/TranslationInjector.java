@@ -128,6 +128,8 @@ public class TranslationInjector implements Injector {
 	}
 
 	private ItemStack translateItemStack(ItemStack iS, Language lang) {
+		if(iS == null)
+			return iS;
 		ItemMeta meta = iS.getItemMeta();
 		if (meta != null) {
 			if (meta.hasDisplayName()) {
