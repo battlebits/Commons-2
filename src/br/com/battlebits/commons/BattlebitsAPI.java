@@ -37,7 +37,7 @@ public class BattlebitsAPI {
 	@Getter
 	private static ClanCommon clanCommon = new ClanCommon();
 	@Getter
-	public static AccountCommon accountCommon = new AccountCommon();
+	private static AccountCommon accountCommon = new AccountCommon();
 	@Getter
 	private static AccountVersion defaultAccountVersion = AccountVersion.SEASON_3_BUG_2;
 	@Getter
