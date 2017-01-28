@@ -23,6 +23,7 @@ import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.Translate;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class BukkitMain extends JavaPlugin {
@@ -33,7 +34,9 @@ public class BukkitMain extends JavaPlugin {
 	private static BukkitMain plugin;
 	private PubSubListener pubSubListener;
 	private boolean oldTag = false;
-
+	@Setter
+	private boolean tagControl = false;
+	
 	@Override
 	public void onLoad() {
 		plugin = this;
