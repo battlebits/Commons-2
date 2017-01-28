@@ -21,7 +21,7 @@ public class BukkitPlayer extends BattlePlayer {
 	private UUID lastTellUUID;
 	private ArrayList<Tag> tags;
 	@Getter@Setter
-	private boolean cacheOnQuit;
+	protected transient boolean cacheOnQuit;
 	public BukkitPlayer(String name, UUID uniqueId, String hostName, String countryCode, String timeZone) {
 		super(name, uniqueId, hostName, countryCode, timeZone);
 	}

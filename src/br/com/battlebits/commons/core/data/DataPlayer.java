@@ -1,6 +1,5 @@
 package br.com.battlebits.commons.core.data;
 
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,8 +7,6 @@ import java.util.UUID;
 
 import org.bson.Document;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -23,10 +20,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
-public class DataPlayer {
-
-	private static final Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.STATIC, Modifier.PROTECTED)
-			.create();
+public class DataPlayer extends Data {
 
 	public static BattlePlayer getPlayer(UUID uuid) {
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
@@ -178,14 +172,14 @@ public class DataPlayer {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			jedis.hset("account:" + player.getUniqueId().toString(), fieldName, value);
-			
+
 			JsonObject json = new JsonObject();
 			json.add("uniqueId", new JsonPrimitive(player.getUniqueId().toString()));
 			json.add("source", new JsonPrimitive(BattlebitsAPI.getServerId()));
 			json.add("field", new JsonPrimitive(fieldName));
 			json.add("value", element);
 			pipe.publish("account-field", json.toString());
-			
+
 			pipe.sync();
 		}
 	}

@@ -10,7 +10,6 @@ import br.com.battlebits.commons.bungee.listener.ChatListener;
 import br.com.battlebits.commons.bungee.listener.ScreenshareListener;
 import br.com.battlebits.commons.bungee.listener.ServerListener;
 import br.com.battlebits.commons.bungee.manager.BanManager;
-import br.com.battlebits.commons.bungee.manager.ClanManager;
 import br.com.battlebits.commons.bungee.manager.ServerManager;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
@@ -31,7 +30,6 @@ public class BungeeMain extends Plugin {
 	private static BungeeMain plugin;
 	private ServerManager serverManager = new ServerManager();
 	private BanManager banManager = new BanManager();
-	private ClanManager clanManager = new ClanManager();
 
 	// CONNECTIONS
 	private MySQLBackend mysqlBackend;

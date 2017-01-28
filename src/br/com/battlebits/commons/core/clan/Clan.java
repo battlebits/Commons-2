@@ -11,6 +11,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.data.DataClan;
 import br.com.battlebits.commons.core.permission.Group;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class Clan {
@@ -24,10 +25,10 @@ public class Clan {
 	private HashMap<UUID, String> participants;
 	private Set<UUID> invites;
 	private Set<UUID> vips;
-	private transient long cacheExpire;
 	private transient long confirmDisband = Long.MAX_VALUE;
+	@Setter
+	protected transient boolean cacheOnQuit = false;
 
-	
 	public Clan(String name, String abbreviation, BattlePlayer owner) {
 		this.uniqueId = DataClan.getNewUniqueId();
 		this.owner = owner.getUniqueId();
@@ -40,15 +41,6 @@ public class Clan {
 		vips = new HashSet<>();
 		participants.put(owner.getUniqueId(), owner.getName());
 		administrators.add(owner.getUniqueId());
-		owner.setClanUniqueId(uniqueId);
-	}
-	
-	public boolean isCacheExpired() {
-		return System.currentTimeMillis() > cacheExpire;
-	}
-
-	public void updateCache() {
-		this.cacheExpire = System.currentTimeMillis() + (60 * 5 * 1000);
 	}
 
 	public String getPlayerName(UUID uuid) {
@@ -59,12 +51,12 @@ public class Clan {
 		if (xp < 0)
 			xp = 0;
 		this.xp += xp;
-		updateStatus();
+		DataClan.saveClanField(this, "xp");
 	}
 
 	public void changeAbbreviation(String str) {
 		abbreviation = str;
-		updateStatus();
+		DataClan.saveClanField(this, "abbreviation");
 	}
 
 	public boolean isOwner(BattlePlayer player) {
@@ -112,7 +104,7 @@ public class Clan {
 		if (administrators.contains(uuid))
 			return false;
 		administrators.add(uuid);
-		updateStatus();
+		DataClan.saveClanField(this, "administrators");
 		return true;
 	}
 
@@ -122,19 +114,22 @@ public class Clan {
 		if (!administrators.contains(uuid))
 			return false;
 		administrators.remove(uuid);
-		updateStatus();
+		DataClan.saveClanField(this, "administrators");
 		return true;
 	}
 
 	public boolean updatePlayer(BattlePlayer player) {
-		participants.put(player.getUniqueId(), player.getName());
 		if (player.hasGroupPermission(Group.LIGHT)) {
-			if (!vips.contains(player.getUniqueId()))
+			if (!vips.contains(player.getUniqueId())) {
 				vips.add(player.getUniqueId());
+				DataClan.saveClanField(this, "vips");
+			}
 			return false;
 		} else {
-			if (vips.contains(player.getUniqueId()))
+			if (vips.contains(player.getUniqueId())) {
 				vips.remove(player.getUniqueId());
+				DataClan.saveClanField(this, "vips");
+			}
 		}
 		if (getSlots() >= getParticipants().size())
 			return false;
@@ -156,18 +151,20 @@ public class Clan {
 				demote(uuid);
 		}
 		removeParticipant(player.getUniqueId());
-		updateStatus();
 		return true;
 	}
 
 	public void addParticipant(BattlePlayer player) {
 		invites.remove(player.getUniqueId());
 		participants.put(player.getUniqueId(), player.getName());
+		DataClan.saveClanField(this, "invites");
+		DataClan.saveClanField(this, "participants");
 		player.setClanUniqueId(uniqueId);
-		updateStatus();
 		if (player.hasGroupPermission(Group.LIGHT)) {
-			if (!vips.contains(player.getUniqueId()))
+			if (!vips.contains(player.getUniqueId())) {
 				vips.add(player.getUniqueId());
+				DataClan.saveClanField(this, "vips");
+			}
 		}
 	}
 
@@ -178,7 +175,8 @@ public class Clan {
 			return false;
 		participants.remove(uuid);
 		vips.remove(uuid);
-		updateStatus();
+		DataClan.saveClanField(this, "participants");
+		DataClan.saveClanField(this, "vips");
 		return true;
 	}
 
@@ -186,20 +184,18 @@ public class Clan {
 		if (invites.contains(player.getUniqueId()))
 			return;
 		invites.add(player.getUniqueId());
+		DataClan.saveClanField(this, "invites");
 	}
 
 	public void removeInvite(UUID uuid) {
 		if (!invites.contains(uuid))
 			return;
 		invites.remove(uuid);
+		DataClan.saveClanField(this, "invites");
 	}
 
 	public int getSlots() {
 		return 5 + (2 * rank.ordinal()) + vips.size();
-	}
-
-	public void updateStatus() {
-		// TODO Update Clan
 	}
 
 }

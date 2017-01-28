@@ -195,8 +195,7 @@ public class BattlePlayer {
 	public Clan getClan() {
 		if (clanUniqueId == null)
 			return null;
-		Clan clan = BattlebitsAPI.getClanCommon().getClan(clanUniqueId);
-		return clan;
+		return BattlebitsAPI.getClanCommon().getClan(clanUniqueId);
 	}
 
 	public boolean isScreensharing() {
