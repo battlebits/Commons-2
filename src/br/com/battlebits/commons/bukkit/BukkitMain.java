@@ -8,6 +8,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.api.menu.MenuListener;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
 import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
@@ -91,6 +92,9 @@ public class BukkitMain extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChatListener(), this);
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 		getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
+		
+		// APIs
+		getServer().getPluginManager().registerEvents(new MenuListener(), this);
 	}
 
 	public static void broadcastMessage(String id, String[]... replace) {
