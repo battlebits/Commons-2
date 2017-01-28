@@ -1,0 +1,229 @@
+package br.com.battlebits.commons.core.data;
+
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.bson.Document;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+
+import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
+import br.com.battlebits.commons.core.account.BattlePlayer;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
+
+public class DataPlayer {
+
+	private static final Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.STATIC, Modifier.PROTECTED)
+			.create();
+
+	public static BattlePlayer getPlayer(UUID uuid) {
+		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
+		if (player == null) {
+			player = getRedisPlayer(uuid);
+			if (player == null)
+				player = getMongoPlayer(uuid);
+		}
+		return player;
+	}
+
+	public static BattlePlayer getMongoPlayer(UUID uuid) {
+		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoCollection<Document> collection = database.getCollection("account");
+
+		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
+		if (found == null) {
+			return null;
+		}
+		return BattlebitsAPI.getGson().fromJson(BattlebitsAPI.getGson().toJson(found), BattlePlayer.class);
+	}
+
+	public static BattlePlayer createIfNotExistMongo(UUID uuid, String name, String address, String countryCode,
+			String timeZone) {
+		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoCollection<Document> collection = database.getCollection("account");
+
+		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
+		BattlePlayer player = null;
+		if (found == null) {
+			player = new BattlePlayer(name, uuid, address, countryCode, timeZone);
+			found = Document.parse(BattlebitsAPI.getGson().toJson(player));
+			collection.insertOne(found);
+			BattlebitsAPI.debug("MONGO > INSERTED");
+		} else {
+			player = BattlebitsAPI.getGson().fromJson(BattlebitsAPI.getGson().toJson(found), BattlePlayer.class);
+			BattlebitsAPI.debug("MONGO > LOADED");
+		}
+		return player;
+	}
+
+	public static BattlePlayer getRedisPlayer(UUID uuid) {
+		BattlePlayer player = null;
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			Map<String, String> fields = jedis.hgetAll("account:" + uuid.toString());
+			if (fields == null || fields.isEmpty())
+				return null;
+			JsonObject obj = new JsonObject();
+			for (Entry<String, String> entry : fields.entrySet()) {
+				obj.add(entry.getKey(), BattlebitsAPI.getParser().parse(entry.getValue()));
+			}
+			player = BattlebitsAPI.getGson().fromJson(obj.toString(), BattlePlayer.class);
+		}
+		return player;
+	}
+
+	public static BukkitPlayer getMongoBukkitPlayer(UUID uuid) {
+		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoCollection<Document> collection = database.getCollection("account");
+
+		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
+		if (found == null) {
+			return null;
+		}
+		return BattlebitsAPI.getGson().fromJson(BattlebitsAPI.getGson().toJson(found), BukkitPlayer.class);
+	}
+
+	public static void cacheRedisPlayer(UUID uuid) {
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			BattlebitsAPI.debug("REDIS > EXPIRE 300");
+			jedis.expire("account:" + uuid.toString(), 300);
+		}
+	}
+
+	public static boolean checkCache(UUID uuid) {
+		boolean bol = false;
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			String key = "account:" + uuid.toString();
+			bol = jedis.persist(key) == 1;
+		}
+		if (bol)
+			BattlebitsAPI.debug("REDIS > SHOULD REMOVE");
+		else
+			BattlebitsAPI.debug("REDIS > SUB-SERVER");
+		return bol;
+	}
+
+	public static BukkitPlayer createIfNotExistMongoBukkit(UUID uuid, String name, String address, String countryCode,
+			String timeZone) {
+		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoCollection<Document> collection = database.getCollection("account");
+
+		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
+		BukkitPlayer player = null;
+		if (found == null) {
+			player = new BukkitPlayer(name, uuid, address, countryCode, timeZone);
+			found = Document.parse(BattlebitsAPI.getGson().toJson(player));
+			collection.insertOne(found);
+			BattlebitsAPI.debug("MONGO > INSERTED");
+		} else {
+			player = BattlebitsAPI.getGson().fromJson(BattlebitsAPI.getGson().toJson(found), BukkitPlayer.class);
+			BattlebitsAPI.debug("MONGO > LOADED");
+		}
+		return player;
+	}
+
+	public static BukkitPlayer getRedisBukkitPlayer(UUID uuid) {
+		BukkitPlayer player = null;
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			Map<String, String> fields = jedis.hgetAll("account:" + uuid.toString());
+			if (fields == null || fields.isEmpty())
+				return null;
+			JsonObject obj = new JsonObject();
+			for (Entry<String, String> entry : fields.entrySet()) {
+				obj.add(entry.getKey(), BattlebitsAPI.getParser().parse(entry.getValue()));
+			}
+			player = BattlebitsAPI.getGson().fromJson(obj.toString(), BukkitPlayer.class);
+		}
+		return player;
+	}
+
+	public static void saveRedisPlayer(BattlePlayer player) {
+		JsonObject jsonObject = BattlebitsAPI.getParser().parse(gson.toJson(player)).getAsJsonObject();
+		Map<String, String> playerElements = new HashMap<>();
+		for (Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue().isJsonObject() ? entry.getValue().toString()
+					: entry.getValue().getAsString();
+			playerElements.put(key, value);
+		}
+
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			jedis.hmset("account:" + player.getUniqueId().toString(), playerElements);
+		}
+		BattlebitsAPI.debug("REDIS > SAVE SUCCESS");
+	}
+
+	public static void saveBattlePlayer(BattlePlayer player, String fieldName) {
+		saveBattleFieldRedis(player, fieldName);
+		saveBattleFieldMongo(player, fieldName);
+	}
+
+	private static void saveBattleFieldRedis(BattlePlayer player, String fieldName) {
+		JsonObject jsonObject = BattlebitsAPI.getParser().parse(gson.toJson(player)).getAsJsonObject();
+		if (!jsonObject.has(fieldName))
+			return;
+		JsonElement element = jsonObject.get(fieldName);
+		String value = element.isJsonObject() ? element.toString() : element.getAsString();
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			Pipeline pipe = jedis.pipelined();
+			jedis.hset("account:" + player.getUniqueId().toString(), fieldName, value);
+			
+			JsonObject json = new JsonObject();
+			json.add("uniqueId", new JsonPrimitive(player.getUniqueId().toString()));
+			json.add("source", new JsonPrimitive(BattlebitsAPI.getServerId()));
+			json.add("field", new JsonPrimitive(fieldName));
+			json.add("value", element);
+			pipe.publish("account-field", json.toString());
+			
+			pipe.sync();
+		}
+	}
+
+	private static void saveBattleFieldMongo(BattlePlayer player, String fieldName) {
+		JsonObject jsonObject = BattlebitsAPI.getParser().parse(BattlebitsAPI.getGson().toJson(player))
+				.getAsJsonObject();
+		if (!jsonObject.has(fieldName))
+			return;
+		JsonElement element = jsonObject.get(fieldName);
+
+		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoCollection<Document> collection = database.getCollection("account");
+		collection.updateOne(Filters.eq("uniqueId", player.getUniqueId().toString()),
+				new Document("$set", new Document(fieldName, (element.isJsonObject()
+						? Document.parse(element.getAsJsonObject().toString()) : element.getAsString()))));
+	}
+
+	public static void saveConfigField(BattlePlayer player, String fieldName) {
+		saveBattleFieldRedis(player, "configuration");
+		saveConfigFieldMongo(player, fieldName);
+	}
+
+	private static void saveConfigFieldMongo(BattlePlayer player, String fieldName) {
+		JsonObject jsonObject = BattlebitsAPI.getParser().parse(BattlebitsAPI.getGson().toJson(player))
+				.getAsJsonObject();
+		if (!jsonObject.has("configuration"))
+			return;
+		JsonObject configuration = jsonObject.getAsJsonObject("configuration");
+		if (!configuration.has(fieldName))
+			return;
+		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoCollection<Document> collection = database.getCollection("account");
+		collection.updateOne(Filters.eq("uniqueId", player.getUniqueId().toString()),
+				new Document("$set", new Document("configuration." + fieldName, configuration.getAsString())));
+	}
+
+	public static void saveCompleteBattlePlayer(BattlePlayer player) {
+		// TODO
+	}
+}

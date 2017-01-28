@@ -1,0 +1,4 @@
+name: yCommon
+author: GustavoInacio and vitorrdgs
+main: br.com.battlebits.commons.bungee.BungeeMain
+version: ${project.version}
