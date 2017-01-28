@@ -46,7 +46,7 @@ public class ClanManager {
 		MongoCollection<Document> collection = database.getCollection("clan");
 		Document found = collection.find(Filters.eq("uniqueId", clan.getUniqueId())).first();
 		if (found != null) {
-			collection.updateOne(Filters.eq("clanName", clan.getClanName()),
+			collection.updateOne(Filters.eq("clanName", clan.getName()),
 					Document.parse(BattlebitsAPI.getGson().toJson(clan)));
 		} else {
 			collection.insertOne(Document.parse(BattlebitsAPI.getGson().toJson(clan)));
