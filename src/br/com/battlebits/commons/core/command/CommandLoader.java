@@ -12,7 +12,7 @@ public class CommandLoader {
 
 	public int loadCommandsFromPackage(Class<?> pluginClass, String packageName) {
 		int i = 0;
-		for (Class<?> commandClass : ClassGetter.getClassesForPackage(pluginClass, packageName)) {
+		for (Class<?> commandClass : ClassGetter.getClassesForPackage(framework.getClass(), packageName)) {
 			if (CommandClass.class.isAssignableFrom(commandClass)) {
 				try {
 					CommandClass commands = (CommandClass) commandClass.newInstance();

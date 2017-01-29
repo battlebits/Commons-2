@@ -47,9 +47,10 @@ public class TranslationInjector implements Injector {
 						Language lang = BattlePlayer.getLanguage(event.getPlayer().getUniqueId());
 						PacketContainer packet = event.getPacket();
 						if (event.getPacketType() == PacketType.Play.Server.CHAT) {
-							WrappedChatComponent chatComponents = packet.getChatComponents().read(0);
-							packet.getChatComponents().write(0,
-									WrappedChatComponent.fromJson(translate(chatComponents.getJson(), lang)));
+							for (WrappedChatComponent chatComponent : packet.getChatComponents().getValues()) {
+								if (chatComponent != null)
+									chatComponent.setJson(translate(chatComponent.getJson(), lang));
+							}
 						} else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
 							// List<ItemStack> items = new ArrayList<>();
 							for (ItemStack item : packet.getItemArrayModifier().read(0)) {
@@ -128,7 +129,7 @@ public class TranslationInjector implements Injector {
 	}
 
 	private ItemStack translateItemStack(ItemStack iS, Language lang) {
-		if(iS == null)
+		if (iS == null)
 			return iS;
 		ItemMeta meta = iS.getItemMeta();
 		if (meta != null) {

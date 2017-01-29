@@ -24,11 +24,13 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
+import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.util.ClassGetter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -131,6 +133,24 @@ public class BukkitMain extends JavaPlugin {
 	private void enableCommonManagement() {
 		permissionManager.onEnable();
 		tagManager.onEnable();
+	}
+
+	public static void main(String[] args) {
+		try {
+			for (Class<?> commandClass : ClassGetter.getClassesForPackage(BukkitCommandFramework.class,
+					"br.com.battlebits.commons.bukkit.command.register")) {
+				if (CommandClass.class.isAssignableFrom(commandClass)) {
+					try {
+						CommandClass commands = (CommandClass) commandClass.newInstance();
+						System.out.println(commands.getClass().getSimpleName());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
