@@ -25,7 +25,7 @@ import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.util.string.StringLoreUtils;
 
 public class TranslationInjector implements Injector {
-	private Pattern finder = Pattern.compile("§%(([^)]+)%§)");
+	private Pattern finder = Pattern.compile("§%(([\\S^)]+)%§)");
 
 	@Override
 	public void inject(BukkitMain plugin) {
@@ -48,9 +48,12 @@ public class TranslationInjector implements Injector {
 						Language lang = BattlePlayer.getLanguage(event.getPlayer().getUniqueId());
 						PacketContainer packet = event.getPacket();
 						if (event.getPacketType() == PacketType.Play.Server.CHAT) {
-							for (WrappedChatComponent chatComponent : packet.getChatComponents().getValues()) {
-								if (chatComponent != null)
-									chatComponent.setJson(translate(chatComponent.getJson(), lang));
+							for (int i = 0; i < packet.getChatComponents().size(); i++) {
+								WrappedChatComponent chatComponent = packet.getChatComponents().read(i);
+								if (chatComponent != null) {
+									packet.getChatComponents().write(i,
+											WrappedChatComponent.fromJson(translate(chatComponent.getJson(), lang)));
+								}
 							}
 						} else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
 							// List<ItemStack> items = new ArrayList<>();

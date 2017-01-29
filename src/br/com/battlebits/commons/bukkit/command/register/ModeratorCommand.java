@@ -27,7 +27,7 @@ public class ModeratorCommand implements CommandClass {
 
 	@SuppressWarnings("deprecation")
 	@Command(name = "gamemode", aliases = {
-			"gm" }, groupToUse = Group.MANAGER, noPermMessageId = "command-gamemode-no-access", runAsync = true)
+			"gm" }, groupToUse = Group.MANAGER, noPermMessageId = "command-gamemode-no-access")
 	public void gamemode(BukkitCommandArgs cmdArgs) {
 		if (cmdArgs.isPlayer()) {
 			Player p = cmdArgs.getPlayer();

@@ -40,7 +40,7 @@ public class AdminMode {
 		Map<String, String> map = new HashMap<>();
 		map.put("%invisible%", group.toString());
 		p.sendMessage("§%command-admin-prefix%§ §%command-admin-enabled%§");
-		p.sendMessage("§%command-admin-prefix%§ " + T.t(BattlePlayer.getLanguage(p.getUniqueId()),
+		p.sendMessage("§%command-vanish-prefix%§ " + T.t(BattlePlayer.getLanguage(p.getUniqueId()),
 				"command-vanish-invisible", new String[] { "%invisible%", group.toString() }));
 	}
 
