@@ -72,7 +72,7 @@ public class TranslationInjector implements Injector {
 							packet.getStrings().write(0, translate(message, lang));
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_OBJECTIVE) {
 							String message = event.getPacket().getStrings().read(1);
-							packet.getStrings().write(0, translate(message, lang));
+							packet.getStrings().write(1, translate(message, lang));
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_TEAM) {
 							String text = translate(packet.getStrings().read(2) + packet.getStrings().read(3), lang);
 							Matcher matcher = finder.matcher(text);
