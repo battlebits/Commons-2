@@ -202,6 +202,13 @@ public class BattlePlayer {
 		return screensharing;
 	}
 
+	public void setFakeName(String fakeName) {
+		if (!fakeName.equals(this.fakeName)) {
+			this.fakeName = fakeName;
+			DataPlayer.saveBattlePlayer(this, "fakeName");
+		}
+	}
+
 	public void setScreensharing(boolean screensharing) {
 		if (screensharing) {
 			lastServer = getServerConnected();
@@ -369,10 +376,10 @@ public class BattlePlayer {
 	}
 
 	public boolean setTag(Tag tag) {
-		this.tag = tag;
-		if (hasGroupPermission(Group.YOUTUBER)) {
+		if (hasGroupPermission(Group.YOUTUBER) && this.tag != tag) {
 			DataPlayer.saveBattlePlayer(this, "tag");
 		}
+		this.tag = tag;
 		return true;
 	}
 

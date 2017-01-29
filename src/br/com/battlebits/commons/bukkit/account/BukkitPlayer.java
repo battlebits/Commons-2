@@ -41,8 +41,7 @@ public class BukkitPlayer extends BattlePlayer {
 		BukkitMain.getPlugin().getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			if (!forcetag)
-				if (tag != getTag())
-					super.setTag(tag);
+				super.setTag(tag);
 		}
 		return !event.isCancelled();
 	}

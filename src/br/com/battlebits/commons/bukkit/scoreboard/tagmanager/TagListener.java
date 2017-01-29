@@ -99,7 +99,6 @@ public class TagListener implements Listener {
 					league = "";
 				}
 				ScoreboardAPI.leaveTeamToPlayer(o, oldId, p);
-				ScoreboardAPI.unregisterTeamIfEmptyToPlayer(o, oldId);
 				ScoreboardAPI.joinTeam(ScoreboardAPI.createTeamIfNotExistsToPlayer(o, id,
 						tag + (ChatColor.stripColor(tag).trim().length() > 0 ? " " : ""), league), p);
 				bp = null;
