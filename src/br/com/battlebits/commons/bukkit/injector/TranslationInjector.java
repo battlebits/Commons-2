@@ -37,7 +37,8 @@ public class TranslationInjector implements Injector {
 						PacketType.Play.Server.OPEN_WINDOW, //
 						PacketType.Play.Server.SCOREBOARD_OBJECTIVE, //
 						PacketType.Play.Server.SCOREBOARD_TEAM, //
-						PacketType.Play.Server.SCOREBOARD_SCORE) {
+						PacketType.Play.Server.SCOREBOARD_SCORE, //
+						PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER) {
 					@Override
 					public void onPacketSending(PacketEvent event) {
 						if (event.getPlayer() == null)
@@ -122,6 +123,15 @@ public class TranslationInjector implements Injector {
 							}
 							packet.getStrings().write(2, prefix);
 							packet.getStrings().write(3, suffix);
+						} else if (event.getPacketType() == PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER) {
+							WrappedChatComponent header = packet.getChatComponents().read(0);
+							WrappedChatComponent footer = packet.getChatComponents().read(1);
+							if (header != null)
+								packet.getChatComponents().write(0,
+										WrappedChatComponent.fromJson(translate(header.getJson(), lang)));
+							if (footer != null)
+								packet.getChatComponents().write(1,
+										WrappedChatComponent.fromJson(translate(footer.getJson(), lang)));
 						}
 					}
 
