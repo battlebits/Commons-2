@@ -61,8 +61,8 @@ public class BungeeMain extends Plugin {
 		getProxy().registerChannel(BattlebitsAPI.getBungeeChannel());
 		loadListeners();
 		try {
-			new CommandLoader(new BungeeCommandFramework(plugin)).loadCommandsFromPackage(getClass(),
-					"br.com.battlebits.commons.bungee.command.register");
+			new CommandLoader(new BungeeCommandFramework(plugin))
+					.loadCommandsFromPackage("br.com.battlebits.commons.bungee.command.register");
 		} catch (Exception e) {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();

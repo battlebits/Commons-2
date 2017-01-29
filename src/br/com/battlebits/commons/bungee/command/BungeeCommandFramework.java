@@ -188,4 +188,9 @@ public class BungeeCommandFramework implements CommandFramework {
 			}
 		}
 	}
+
+	@Override
+	public Class<?> getJarClass() {
+		return plugin.getClass();
+	}
 }
