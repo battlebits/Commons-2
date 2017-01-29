@@ -21,8 +21,9 @@ public class Translate {
 	}
 
 	public static String getTranslation(Language language, String messageId, String[]... replacement) {
-		String[] target = new String[replacement.length / 2];
-		String[] replace = new String[replacement.length / 2];
+		String[] target = new String[replacement.length];
+		String[] replace = new String[replacement.length];
+		
 		for (int i = 0; i < replacement.length; i++) {
 			String[] s = replacement[i];
 			if (s.length >= 2) {
@@ -30,6 +31,7 @@ public class Translate {
 				replace[i] = s[1];
 			}
 		}
+		
 		return getTranslation(language, messageId, target, replace);
 	}
 
