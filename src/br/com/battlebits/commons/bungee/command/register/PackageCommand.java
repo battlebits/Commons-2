@@ -174,7 +174,7 @@ public class PackageCommand implements CommandClass {
 	}
 
 	@Command(name = "doublexpadd", groupToUse = Group.DONO, noPermMessageId = "command-doublexpadd-no-access", runAsync = true)
-	public void torneioadd(BungeeCommandArgs cmdArgs) {
+	public void doublexpadd(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = cmdArgs.getSender();
 		final String[] args = cmdArgs.getArgs();
 		Language lang = BattlebitsAPI.getDefaultLanguage();
@@ -221,6 +221,110 @@ public class PackageCommand implements CommandClass {
 		}
 		player.addDoubleXpMultiplier(d);
 		String message = groupSetPrefix + Translate.getTranslation(language, "command-doublexpadd-add-success");
+		message = message.replace("%player%",
+				player.getName() + "(" + player.getUniqueId().toString().replace("-", "") + ")");
+		sender.sendMessage(TextComponent.fromLegacyText(message));
+	}
+
+	@Command(name = "torneioadd", aliases = {
+			"tadd" }, groupToUse = Group.DONO, noPermMessageId = "command-torneio-no-access", runAsync = true)
+	public void torneioadd(BungeeCommandArgs cmdArgs) {
+		final CommandSender sender = cmdArgs.getSender();
+		final String[] args = cmdArgs.getArgs();
+		Language lang = BattlebitsAPI.getDefaultLanguage();
+		if (cmdArgs.isPlayer()) {
+			lang = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getLanguage();
+		}
+		final Language language = lang;
+		final String groupSetPrefix = Translate.getTranslation(lang, "command-torneio-prefix") + " ";
+		if (args.length != 1) {
+			sender.sendMessage(TextComponent.fromLegacyText(groupSetPrefix + Translate
+					.getTranslation(lang, "command-torneio-usage").replace("%command%", cmdArgs.getLabel())));
+			return;
+		}
+		UUID uuid = BattlebitsAPI.getUUIDOf(args[0]);
+		if (uuid == null) {
+			sender.sendMessage(TextComponent
+					.fromLegacyText(groupSetPrefix + Translate.getTranslation(language, "player-not-exist")));
+			return;
+		}
+		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
+		if (player == null) {
+			try {
+				player = DataPlayer.getPlayer(uuid);
+			} catch (Exception e) {
+				e.printStackTrace();
+				sender.sendMessage(TextComponent
+						.fromLegacyText(groupSetPrefix + Translate.getTranslation(language, "cant-request-offline")));
+				return;
+			}
+			if (player == null) {
+				sender.sendMessage(TextComponent
+						.fromLegacyText(groupSetPrefix + Translate.getTranslation(language, "player-never-joined")));
+				return;
+			}
+		}
+		player.setTournament(BattlebitsAPI.getTournament());
+		ProxiedPlayer pPlayer = BungeeMain.getPlugin().getProxy().getPlayer(player.getUniqueId());
+		if (pPlayer != null) {
+			ByteArrayDataOutput out = ByteStreams.newDataOutput();
+			out.writeUTF("TorneioAdd");
+			if (pPlayer.getServer() != null)
+				pPlayer.getServer().sendData(BattlebitsAPI.getBungeeChannel(), out.toByteArray());
+		}
+		String message = groupSetPrefix + Translate.getTranslation(language, "command-torneio-add-success");
+		message = message.replace("%player%",
+				player.getName() + "(" + player.getUniqueId().toString().replace("-", "") + ")");
+		sender.sendMessage(TextComponent.fromLegacyText(message));
+	}
+
+	@Command(name = "torneioremove", aliases = {
+			"tremove" }, groupToUse = Group.DONO, noPermMessageId = "command-torneio-no-access", runAsync = true)
+	public void torneioremove(BungeeCommandArgs cmdArgs) {
+		final CommandSender sender = cmdArgs.getSender();
+		final String[] args = cmdArgs.getArgs();
+		Language lang = BattlebitsAPI.getDefaultLanguage();
+		if (cmdArgs.isPlayer()) {
+			lang = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getLanguage();
+		}
+		final Language language = lang;
+		final String groupSetPrefix = Translate.getTranslation(lang, "command-torneio-prefix") + " ";
+		if (args.length != 1) {
+			sender.sendMessage(TextComponent.fromLegacyText(groupSetPrefix + Translate
+					.getTranslation(lang, "command-torneio-usage").replace("%command%", cmdArgs.getLabel())));
+			return;
+		}
+		UUID uuid = BattlebitsAPI.getUUIDOf(args[0]);
+		if (uuid == null) {
+			sender.sendMessage(TextComponent
+					.fromLegacyText(groupSetPrefix + Translate.getTranslation(language, "player-not-exist")));
+			return;
+		}
+		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
+		if (player == null) {
+			try {
+				player = DataPlayer.getPlayer(uuid);
+			} catch (Exception e) {
+				e.printStackTrace();
+				sender.sendMessage(TextComponent
+						.fromLegacyText(groupSetPrefix + Translate.getTranslation(language, "cant-request-offline")));
+				return;
+			}
+			if (player == null) {
+				sender.sendMessage(TextComponent
+						.fromLegacyText(groupSetPrefix + Translate.getTranslation(language, "player-never-joined")));
+				return;
+			}
+		}
+		player.setTournament(null);
+		ProxiedPlayer pPlayer = BungeeMain.getPlugin().getProxy().getPlayer(player.getUniqueId());
+		if (pPlayer != null) {
+			ByteArrayDataOutput out = ByteStreams.newDataOutput();
+			out.writeUTF("TorneioRemove");
+			if (pPlayer.getServer() != null)
+				pPlayer.getServer().sendData(BattlebitsAPI.getBungeeChannel(), out.toByteArray());
+		}
+		String message = groupSetPrefix + Translate.getTranslation(language, "command-torneio-remove-success");
 		message = message.replace("%player%",
 				player.getName() + "(" + player.getUniqueId().toString().replace("-", "") + ")");
 		sender.sendMessage(TextComponent.fromLegacyText(message));

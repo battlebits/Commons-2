@@ -20,8 +20,10 @@ import lombok.Setter;
 public class BukkitPlayer extends BattlePlayer {
 	private UUID lastTellUUID;
 	private ArrayList<Tag> tags;
-	@Getter@Setter
+	@Getter
+	@Setter
 	protected transient boolean cacheOnQuit;
+
 	public BukkitPlayer(String name, UUID uniqueId, String hostName, String countryCode, String timeZone) {
 		super(name, uniqueId, hostName, countryCode, timeZone);
 	}
@@ -77,7 +79,7 @@ public class BukkitPlayer extends BattlePlayer {
 		for (Tag t : Tag.values()) {
 			if (t == Tag.TORNEIO)
 				if (getTournament() != null && getTournament() == BattlebitsAPI.getTournament()) {
-					tags.add(t);
+					tags.add(0, t);
 					continue;
 				}
 			if ((t.isExclusive()
@@ -87,7 +89,7 @@ public class BukkitPlayer extends BattlePlayer {
 			}
 		}
 	}
-	
+
 	@Override
 	public void setJoinData(String userName, String ipAdrress, String countryCode, String timeZoneCode) {
 		super.setJoinData(userName, ipAdrress, countryCode, timeZoneCode);
