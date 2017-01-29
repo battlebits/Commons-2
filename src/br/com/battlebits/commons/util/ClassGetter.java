@@ -1,13 +1,10 @@
 package br.com.battlebits.commons.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -39,6 +36,7 @@ public class ClassGetter {
 		String resPath = resource.getPath().replace("%20", " ");
 		String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
 		JarFile jarFile;
+		System.out.println(jarPath);
 		try {
 			jarFile = new JarFile(jarPath);
 		} catch (IOException e) {
@@ -49,7 +47,8 @@ public class ClassGetter {
 			JarEntry entry = entries.nextElement();
 			String entryName = entry.getName();
 			String className = null;
-			if (entryName.endsWith(".class") && entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length())) {
+			if (entryName.endsWith(".class") && entryName.startsWith(relPath)
+					&& entryName.length() > (relPath.length() + "/".length())) {
 				className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
 			}
 			if (className != null) {
@@ -64,21 +63,5 @@ public class ClassGetter {
 			e.printStackTrace();
 		}
 	}
-	
-	public static Set<Class<?>> getClasses(File jarFile, String packageName) {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        try {
-            JarFile file = new JarFile(jarFile); 
-            for (Enumeration<JarEntry> entry = file.entries(); entry.hasMoreElements();) { 
-               JarEntry jarEntry = entry.nextElement();
-               String name = jarEntry.getName().replace("/", ".");
-               if(name.startsWith(packageName) && name.endsWith(".class"))
-               classes.add(Class.forName(name.substring(0, name.length() - 6)));
-            }
-            file.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return classes;
-    }
+
 }

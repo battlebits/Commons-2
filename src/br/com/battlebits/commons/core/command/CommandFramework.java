@@ -9,6 +9,8 @@ import br.com.battlebits.commons.core.permission.Group;
 
 public interface CommandFramework {
 
+	public Class<?> getJarClass();
+	
 	public void registerCommands(CommandClass commandClass);
 
 	@Target(ElementType.METHOD)
