@@ -20,6 +20,8 @@ public interface CommandFramework {
 		public String name();
 
 		public Group groupToUse() default Group.NORMAL;
+		
+		public String permission() default "";
 
 		public String noPermMessageId() default "command-no-access";
 

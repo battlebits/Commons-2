@@ -157,7 +157,7 @@ public class ServerCommand implements CommandClass {
 		}
 	}
 
-	@Command(name = "address", usage = "/<command>", aliases = { "ip" })
+	@Command(name = "address", usage = "/<command>", aliases = { "ip" }, permission = "bungeecord.command.ip")
 	public void address(BungeeCommandArgs cmdArgs) {
 		if (cmdArgs.isPlayer()) {
 			ProxiedPlayer p = cmdArgs.getPlayer();

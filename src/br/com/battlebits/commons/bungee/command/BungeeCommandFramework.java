@@ -127,7 +127,12 @@ public class BungeeCommandFramework implements CommandFramework {
 		Entry<Method, Object> entry = new AbstractMap.SimpleEntry<Method, Object>(m, obj);
 		commandMap.put(label.toLowerCase(), entry);
 		String cmdLabel = label.replace(".", ",").split(",")[0].toLowerCase();
-		net.md_5.bungee.api.plugin.Command cmd = new BungeeCommand(cmdLabel);
+
+		net.md_5.bungee.api.plugin.Command cmd;
+		if (command.permission().isEmpty())
+			cmd = new BungeeCommand(cmdLabel);
+		else
+			cmd = new BungeeCommand(cmdLabel, command.permission());
 		plugin.getProxy().getPluginManager().registerCommand(plugin, cmd);
 	}
 
@@ -143,6 +148,10 @@ public class BungeeCommandFramework implements CommandFramework {
 
 		protected BungeeCommand(String label) {
 			super(label);
+		}
+
+		protected BungeeCommand(String label, String permission) {
+			super(label, permission);
 		}
 
 		@Override
