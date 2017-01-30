@@ -67,6 +67,6 @@ public class ActionItemStack {
 
 	public static interface InteractHandler {
 
-		public void onInteract(Player player, ItemStack item, Action action);
+		public boolean onInteract(Player player, ItemStack item, Action action);
 	}
 }

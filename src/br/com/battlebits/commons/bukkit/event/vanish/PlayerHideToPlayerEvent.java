@@ -6,11 +6,11 @@ import br.com.battlebits.commons.bukkit.event.PlayerCancellableEvent;
 import lombok.Getter;
 
 @Getter
-public class PlayerInvisibleToPlayerEvent extends PlayerCancellableEvent {
+public class PlayerHideToPlayerEvent extends PlayerCancellableEvent {
 
 	private Player toPlayer;
 
-	public PlayerInvisibleToPlayerEvent(Player player, Player toPlayer) {
+	public PlayerHideToPlayerEvent(Player player, Player toPlayer) {
 		super(player);
 		this.toPlayer = toPlayer;
 	}

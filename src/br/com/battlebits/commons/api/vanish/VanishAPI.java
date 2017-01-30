@@ -7,8 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import br.com.battlebits.commons.BattlebitsAPI;
-import br.com.battlebits.commons.bukkit.event.vanish.PlayerInvisibleToPlayerEvent;
-import br.com.battlebits.commons.bukkit.event.vanish.PlayerVisibleToPlayerEvent;
+import br.com.battlebits.commons.bukkit.event.vanish.PlayerHideToPlayerEvent;
+import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.permission.Group;
 
@@ -37,26 +37,26 @@ public class VanishAPI {
 			BattlePlayer onlineP = BattlebitsAPI.getAccountCommon().getBattlePlayer(online.getUniqueId());
 			if (onlineP.getServerGroup().ordinal() < group.ordinal()) {
 				if (!online.canSee(player)) {
-					PlayerVisibleToPlayerEvent event = new PlayerVisibleToPlayerEvent(player, online);
+					PlayerShowToPlayerEvent event = new PlayerShowToPlayerEvent(player, online);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled())
 						online.showPlayer(player);
 					continue;
 				}
-				PlayerInvisibleToPlayerEvent event = new PlayerInvisibleToPlayerEvent(player, online);
+				PlayerHideToPlayerEvent event = new PlayerHideToPlayerEvent(player, online);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled())
 					online.hidePlayer(player);
 				continue;
 			}
 			if (online.canSee(player)) {
-				PlayerInvisibleToPlayerEvent event = new PlayerInvisibleToPlayerEvent(player, online);
+				PlayerHideToPlayerEvent event = new PlayerHideToPlayerEvent(player, online);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled())
 					online.hidePlayer(player);
 				continue;
 			}
-			PlayerVisibleToPlayerEvent event = new PlayerVisibleToPlayerEvent(player, online);
+			PlayerShowToPlayerEvent event = new PlayerShowToPlayerEvent(player, online);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled())
 				online.showPlayer(player);
@@ -73,7 +73,7 @@ public class VanishAPI {
 				if (bP.getServerGroup().ordinal() < group.ordinal()) {
 					if (!player.canSee(online))
 						continue;
-					PlayerInvisibleToPlayerEvent event = new PlayerInvisibleToPlayerEvent(online, player);
+					PlayerHideToPlayerEvent event = new PlayerHideToPlayerEvent(online, player);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled())
 						player.hidePlayer(online);
@@ -82,7 +82,7 @@ public class VanishAPI {
 			}
 			if (player.canSee(online))
 				continue;
-			PlayerVisibleToPlayerEvent event = new PlayerVisibleToPlayerEvent(online, player);
+			PlayerShowToPlayerEvent event = new PlayerShowToPlayerEvent(online, player);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled())
 				player.showPlayer(online);

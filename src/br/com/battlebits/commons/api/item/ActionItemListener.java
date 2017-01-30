@@ -45,7 +45,7 @@ public class ActionItemListener implements Listener {
 			}
 			Player player = event.getPlayer();
 			Action action = event.getAction();
-			handler.onInteract(player, item, action);
+			event.setCancelled(!handler.onInteract(player, item, action));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
