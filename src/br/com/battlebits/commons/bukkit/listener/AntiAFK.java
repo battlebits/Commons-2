@@ -55,6 +55,8 @@ public class AntiAFK implements Listener {
 				resetTimer(p);
 			}
 			BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
+			if (player == null)
+				return;
 			if (!player.hasGroupPermission(Group.LIGHT)) {
 				if (getTime(p) == 240) {
 					p.sendMessage("§%antiafk-timer%§");
