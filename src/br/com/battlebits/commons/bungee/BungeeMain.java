@@ -7,6 +7,7 @@ import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bungee.command.BungeeCommandFramework;
 import br.com.battlebits.commons.bungee.listener.AccountListener;
 import br.com.battlebits.commons.bungee.listener.ChatListener;
+import br.com.battlebits.commons.bungee.listener.MessageListener;
 import br.com.battlebits.commons.bungee.listener.ScreenshareListener;
 import br.com.battlebits.commons.bungee.listener.ServerListener;
 import br.com.battlebits.commons.bungee.manager.BanManager;
@@ -74,6 +75,7 @@ public class BungeeMain extends Plugin {
 		getProxy().getPluginManager().registerListener(this, new ChatListener());
 		// getProxy().getPluginManager().registerListener(this, new
 		// LoadBalancerListener(serverManager));
+		getProxy().getPluginManager().registerListener(this, new MessageListener(serverManager));
 		getProxy().getPluginManager().registerListener(this, new ScreenshareListener());
 		getProxy().getPluginManager().registerListener(this, new ServerListener());
 	}

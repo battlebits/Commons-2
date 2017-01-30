@@ -14,9 +14,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-public class MessageListener {
+public class MessageListener implements Listener{
 	private ServerManager manager;
 
 	public MessageListener(ServerManager manager) {
