@@ -8,8 +8,10 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.api.item.ActionItemListener;
 import br.com.battlebits.commons.api.menu.MenuListener;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
+import br.com.battlebits.commons.bukkit.injector.ActionItemInjector;
 import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
 import br.com.battlebits.commons.bukkit.listener.AntiAFK;
@@ -24,13 +26,11 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
-import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
-import br.com.battlebits.commons.util.ClassGetter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,6 +51,7 @@ public class BukkitMain extends JavaPlugin {
 		plugin = this;
 		procotolManager = ProtocolLibrary.getProtocolManager();
 		new TranslationInjector().inject(this);
+		new ActionItemInjector().inject(this);
 	}
 
 	@Override
@@ -96,6 +97,7 @@ public class BukkitMain extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
 
 		// APIs
+		getServer().getPluginManager().registerEvents(new ActionItemListener(), this);
 		getServer().getPluginManager().registerEvents(new MenuListener(), this);
 	}
 
@@ -133,24 +135,6 @@ public class BukkitMain extends JavaPlugin {
 	private void enableCommonManagement() {
 		permissionManager.onEnable();
 		tagManager.onEnable();
-	}
-
-	public static void main(String[] args) {
-		try {
-			for (Class<?> commandClass : ClassGetter.getClassesForPackage(BukkitCommandFramework.class,
-					"br.com.battlebits.commons.bukkit.command.register")) {
-				if (CommandClass.class.isAssignableFrom(commandClass)) {
-					try {
-						CommandClass commands = (CommandClass) commandClass.newInstance();
-						System.out.println(commands.getClass().getSimpleName());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 }
