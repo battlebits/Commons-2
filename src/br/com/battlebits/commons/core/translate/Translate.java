@@ -15,15 +15,15 @@ public class Translate {
 	}
 
 	public static String getTranslation(Language language, String messageId, HashMap<String, String> replacement) {
-		String[] target = (String[]) replacement.keySet().toArray();
-		String[] replace = (String[]) replacement.values().toArray();
+		String[] target = replacement.keySet().toArray(new String[replacement.size()]);
+		String[] replace = replacement.values().toArray(new String[replacement.size()]);
 		return getTranslation(language, messageId, target, replace);
 	}
 
 	public static String getTranslation(Language language, String messageId, String[]... replacement) {
 		String[] target = new String[replacement.length];
 		String[] replace = new String[replacement.length];
-		
+
 		for (int i = 0; i < replacement.length; i++) {
 			String[] s = replacement[i];
 			if (s.length >= 2) {
@@ -31,7 +31,7 @@ public class Translate {
 				replace[i] = s[1];
 			}
 		}
-		
+
 		return getTranslation(language, messageId, target, replace);
 	}
 
