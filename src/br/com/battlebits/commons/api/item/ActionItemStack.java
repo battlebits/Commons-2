@@ -26,20 +26,9 @@ public class ActionItemStack {
 	private ItemStack itemStack;
 
 	public ActionItemStack(ItemStack stack, InteractHandler handler) {
-		try {
-			if (stack == null || stack.getType() == Material.AIR)
-				throw new Exception();
-			Constructor<?> caller = MinecraftReflection.getCraftItemStackClass()
-					.getDeclaredConstructor(ItemStack.class);
-			caller.setAccessible(true);
-			ItemStack item = (ItemStack) caller.newInstance(stack);
-			NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(item);
-			compound.put("interactHandler", register(handler));
-			itemStack = item;
-		} catch (Exception e) {
-			e.printStackTrace();
-			this.itemStack = stack;
-		}
+		itemStack = setTag(stack, register(handler));
+		if (itemStack == null)
+			itemStack = stack;
 		interactHandler = handler;
 	}
 
@@ -57,6 +46,23 @@ public class ActionItemStack {
 
 	public static InteractHandler getHandler(Integer id) {
 		return handlers.get(id);
+	}
+
+	public static ItemStack setTag(ItemStack stack, int id) {
+		try {
+			if (stack == null || stack.getType() == Material.AIR)
+				throw new Exception();
+			Constructor<?> caller = MinecraftReflection.getCraftItemStackClass()
+					.getDeclaredConstructor(ItemStack.class);
+			caller.setAccessible(true);
+			ItemStack item = (ItemStack) caller.newInstance(stack);
+			NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(item);
+			compound.put("interactHandler", id);
+			return item;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static interface InteractHandler {
