@@ -69,10 +69,6 @@ public class StaffCommand implements CommandClass {
 				}
 			} else
 				group = VanishAPI.getInstance().hidePlayer(p);
-			if (group.ordinal() < Group.DEV.ordinal()) {
-				p.sendMessage("§%command-vanish-prefix%§ §%command-vanish-rank-lowest-allowed%§");
-				return;
-			}
 			VanishAPI.getInstance().setPlayerVanishToGroup(p, group);
 			p.sendMessage("§%command-vanish-prefix%§ " + T.t(bP.getLanguage(), "command-vanish-invisible",
 					new String[] { "%invisible%", group.toString() }));

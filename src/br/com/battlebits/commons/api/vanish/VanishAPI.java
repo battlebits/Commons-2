@@ -22,43 +22,30 @@ public class VanishAPI {
 	}
 
 	public void setPlayerVanishToGroup(Player player, Group group) {
-		switch (group) {
-		case NORMAL:
-			if (vanishedToGroup.containsKey(player.getUniqueId()))
-				vanishedToGroup.remove(player.getUniqueId());
-			break;
-		default:
+		if (group == null)
+			vanishedToGroup.remove(player.getUniqueId());
+		else
 			vanishedToGroup.put(player.getUniqueId(), group);
-			break;
-		}
 		for (Player online : Bukkit.getOnlinePlayers()) {
 			if (online.getUniqueId().equals(player.getUniqueId()))
 				continue;
 			BattlePlayer onlineP = BattlebitsAPI.getAccountCommon().getBattlePlayer(online.getUniqueId());
-			if (onlineP.getServerGroup().ordinal() < group.ordinal()) {
-				if (!online.canSee(player)) {
-					PlayerShowToPlayerEvent event = new PlayerShowToPlayerEvent(player, online);
-					Bukkit.getPluginManager().callEvent(event);
-					if (!event.isCancelled())
+			if (group != null && onlineP.getServerGroup().ordinal() <= group.ordinal()) {
+				PlayerHideToPlayerEvent event = new PlayerHideToPlayerEvent(player, online);
+				Bukkit.getPluginManager().callEvent(event);
+				if (event.isCancelled()) {
+					if (!online.canSee(player))
 						online.showPlayer(player);
-					continue;
-				}
-				PlayerHideToPlayerEvent event = new PlayerHideToPlayerEvent(player, online);
-				Bukkit.getPluginManager().callEvent(event);
-				if (!event.isCancelled())
-					online.hidePlayer(player);
-				continue;
-			}
-			if (online.canSee(player)) {
-				PlayerHideToPlayerEvent event = new PlayerHideToPlayerEvent(player, online);
-				Bukkit.getPluginManager().callEvent(event);
-				if (!event.isCancelled())
+				} else if (online.canSee(player))
 					online.hidePlayer(player);
 				continue;
 			}
 			PlayerShowToPlayerEvent event = new PlayerShowToPlayerEvent(player, online);
 			Bukkit.getPluginManager().callEvent(event);
-			if (!event.isCancelled())
+			if (event.isCancelled()) {
+				if (online.canSee(player))
+					online.hidePlayer(player);
+			} else if (!online.canSee(player))
 				online.showPlayer(player);
 		}
 	}
@@ -70,21 +57,23 @@ public class VanishAPI {
 				continue;
 			Group group = vanishedToGroup.get(online.getUniqueId());
 			if (group != null) {
-				if (bP.getServerGroup().ordinal() < group.ordinal()) {
-					if (!player.canSee(online))
-						continue;
+				if (bP.getServerGroup().ordinal() <= group.ordinal()) {
 					PlayerHideToPlayerEvent event = new PlayerHideToPlayerEvent(online, player);
 					Bukkit.getPluginManager().callEvent(event);
-					if (!event.isCancelled())
+					if (event.isCancelled()) {
+						if (!player.canSee(online))
+							player.showPlayer(online);
+					} else if (player.canSee(online))
 						player.hidePlayer(online);
 					continue;
 				}
 			}
-			if (player.canSee(online))
-				continue;
 			PlayerShowToPlayerEvent event = new PlayerShowToPlayerEvent(online, player);
 			Bukkit.getPluginManager().callEvent(event);
-			if (!event.isCancelled())
+			if (event.isCancelled()) {
+				if (player.canSee(online))
+					player.hidePlayer(online);
+			} else if (!player.canSee(online))
 				player.showPlayer(online);
 		}
 	}
@@ -97,7 +86,7 @@ public class VanishAPI {
 	}
 
 	public void showPlayer(Player player) {
-		setPlayerVanishToGroup(player, Group.NORMAL);
+		setPlayerVanishToGroup(player, null);
 	}
 
 	public void removeVanish(Player p) {

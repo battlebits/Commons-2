@@ -14,6 +14,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeGroupEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdateFieldEvent;
@@ -146,6 +147,7 @@ public class AccountListener implements Listener {
 		case "ranks":
 			player.loadTags();
 			player.setTag(player.getDefaultTag());
+			VanishAPI.getInstance().updateVanishToPlayer(event.getPlayer());
 			Bukkit.getPluginManager()
 					.callEvent(new PlayerChangeGroupEvent(event.getPlayer(), player, player.getServerGroup()));
 			break;

@@ -2,7 +2,9 @@ package br.com.battlebits.commons.bukkit.listener;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,6 +20,7 @@ import br.com.battlebits.commons.api.admin.AdminMode;
 import br.com.battlebits.commons.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeLeagueEvent;
+import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.translate.T;
 
@@ -46,7 +49,20 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onJoin(PlayerJoinEvent event) {
-		VanishAPI.getInstance().updateVanishToPlayer(event.getPlayer());
+		Player player = event.getPlayer();
+		VanishAPI.getInstance().updateVanishToPlayer(player);
+		for (Player online : Bukkit.getOnlinePlayers()) {
+			if (online.getUniqueId().equals(player.getUniqueId()))
+				continue;
+			PlayerShowToPlayerEvent eventCall = new PlayerShowToPlayerEvent(player, online);
+			Bukkit.getPluginManager().callEvent(eventCall);
+			if (eventCall.isCancelled()) {
+				if (online.canSee(player))
+					online.hidePlayer(player);
+			} else if (!online.canSee(player))
+				online.showPlayer(player);
+		}
+
 		if (BattlebitsAPI.isChristmas())
 			new BukkitRunnable() {
 				@Override
