@@ -82,7 +82,7 @@ public class ItemBuilder {
 		if (!this.useMeta) {
 			this.useMeta = true;
 		}
-		this.lore = new ArrayList<>(StringLoreUtils.getLore(25, text));
+		this.lore = new ArrayList<>(StringLoreUtils.getLore(30, text));
 		return this;
 	}
 
