@@ -1,5 +1,7 @@
 package br.com.battlebits.commons.api.item;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 
@@ -102,12 +105,13 @@ public class ItemBuilder {
 	}
 
 	public ItemStack build() {
+
 		ItemStack stack = new ItemStack(material);
 		stack.setAmount(amount);
 		stack.setDurability(durability);
 		if (enchantments != null && !enchantments.isEmpty()) {
 			for (Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-				stack.addEnchantment(entry.getKey(), entry.getValue());
+				stack.addUnsafeEnchantment(entry.getKey(), entry.getValue());
 			}
 		}
 		if (useMeta) {
@@ -121,8 +125,18 @@ public class ItemBuilder {
 			stack.setItemMeta(meta);
 		}
 		if (glow && (enchantments == null || enchantments.isEmpty())) {
-			NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(stack);
-			compound.put(NbtFactory.ofList("ench"));
+			try {
+				Constructor<?> caller = MinecraftReflection.getCraftItemStackClass()
+						.getDeclaredConstructor(ItemStack.class);
+				caller.setAccessible(true);
+				ItemStack item = (ItemStack) caller.newInstance(stack);
+				NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(item);
+				compound.put(NbtFactory.ofList("ench"));
+				return item;
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
 		}
 		material = Material.STONE;
 		amount = 1;
@@ -143,6 +157,22 @@ public class ItemBuilder {
 		if (lore != null) {
 			lore.clear();
 			lore = null;
+		}
+		return stack;
+	}
+
+	public static ItemStack glow(ItemStack stack) {
+		try {
+			Constructor<?> caller = MinecraftReflection.getCraftItemStackClass()
+					.getDeclaredConstructor(ItemStack.class);
+			caller.setAccessible(true);
+			ItemStack item = (ItemStack) caller.newInstance(stack);
+			NbtCompound compound = (NbtCompound) NbtFactory.fromItemTag(item);
+			compound.put(NbtFactory.ofList("ench"));
+			return item;
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
 		}
 		return stack;
 	}
