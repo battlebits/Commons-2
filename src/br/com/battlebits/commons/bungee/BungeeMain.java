@@ -4,15 +4,16 @@ import java.net.InetSocketAddress;
 import java.util.logging.Level;
 
 import br.com.battlebits.commons.BattlebitsAPI;
-import br.com.battlebits.commons.bukkit.redis.BukkitPubSubHandler;
 import br.com.battlebits.commons.bungee.command.BungeeCommandFramework;
 import br.com.battlebits.commons.bungee.listener.AccountListener;
 import br.com.battlebits.commons.bungee.listener.ChatListener;
+import br.com.battlebits.commons.bungee.listener.LoadBalancerListener;
 import br.com.battlebits.commons.bungee.listener.MessageListener;
 import br.com.battlebits.commons.bungee.listener.ScreenshareListener;
 import br.com.battlebits.commons.bungee.listener.ServerListener;
 import br.com.battlebits.commons.bungee.manager.BanManager;
 import br.com.battlebits.commons.bungee.manager.ServerManager;
+import br.com.battlebits.commons.bungee.redis.BungeePubSubHandler;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
@@ -73,7 +74,7 @@ public class BungeeMain extends Plugin {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();
 		}
-		getProxy().getScheduler().runAsync(this, new PubSubListener(new BukkitPubSubHandler()));
+		getProxy().getScheduler().runAsync(this, new PubSubListener(new BungeePubSubHandler()));
 	}
 
 	@Override
@@ -86,8 +87,7 @@ public class BungeeMain extends Plugin {
 	private void loadListeners() {
 		getProxy().getPluginManager().registerListener(this, new AccountListener());
 		getProxy().getPluginManager().registerListener(this, new ChatListener());
-		// getProxy().getPluginManager().registerListener(this, new
-		// LoadBalancerListener(serverManager));
+		getProxy().getPluginManager().registerListener(this, new LoadBalancerListener(serverManager));
 		getProxy().getPluginManager().registerListener(this, new MessageListener(serverManager));
 		getProxy().getPluginManager().registerListener(this, new ScreenshareListener());
 		getProxy().getPluginManager().registerListener(this, new ServerListener());
