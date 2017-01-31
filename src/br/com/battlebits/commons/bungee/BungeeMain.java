@@ -39,6 +39,8 @@ public class BungeeMain extends Plugin {
 	// CONNECTIONS
 	private MySQLBackend mysqlBackend;
 
+	private PubSubListener pubSubListener;
+
 	@Override
 	public void onLoad() {
 		plugin = this;
@@ -74,7 +76,9 @@ public class BungeeMain extends Plugin {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();
 		}
-		getProxy().getScheduler().runAsync(this, new PubSubListener(new BungeePubSubHandler()));
+		getProxy().getScheduler().runAsync(this, pubSubListener = new PubSubListener(new BungeePubSubHandler(),
+				"account-field", "clan-field", "server-info"));
+		// TODO Get Servers Online on Redis and add them
 	}
 
 	@Override

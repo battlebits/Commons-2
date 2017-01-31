@@ -4,10 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.Bukkit;
 
 /**
  * An utility class that simplifies reflection in Bukkit plugins.
@@ -82,12 +78,8 @@ public final class Reflection {
 	}
 
 	// Deduce the net.minecraft.server.v* package
-	private static String OBC_PREFIX = Bukkit.getServer().getClass().getPackage().getName();
-	private static String NMS_PREFIX = OBC_PREFIX.replace("org.bukkit.craftbukkit", "net.minecraft.server");
-	private static String VERSION = OBC_PREFIX.replace("org.bukkit.craftbukkit", "").replace(".", "");
 
 	// Variable replacement
-	private static Pattern MATCH_VARIABLE = Pattern.compile("\\{([^\\}]+)\\}");
 
 	private Reflection() {
 		// Seal class
@@ -119,10 +111,6 @@ public final class Reflection {
 	 *            - a compatible field type.
 	 * @return The field accessor.
 	 */
-	public static <T> FieldAccessor<T> getField(String className, String name, Class<T> fieldType) {
-		return getField(getClass(className), name, fieldType, 0);
-	}
-
 	/**
 	 * Retrieve a field accessor for a specific field type and name.
 	 * 
@@ -149,9 +137,6 @@ public final class Reflection {
 	 *            - the number of compatible fields to skip.
 	 * @return The field accessor.
 	 */
-	public static <T> FieldAccessor<T> getField(String className, Class<T> fieldType, int index) {
-		return getField(getClass(className), fieldType, index);
-	}
 
 	// Common method
 	private static <T> FieldAccessor<T> getField(Class<?> target, String name, Class<T> fieldType, int index) {
@@ -212,9 +197,6 @@ public final class Reflection {
 	 * @throws IllegalStateException
 	 *             If we cannot find this method.
 	 */
-	public static MethodInvoker getMethod(String className, String methodName, Class<?>... params) {
-		return getTypedMethod(getClass(className), methodName, null, params);
-	}
 
 	/**
 	 * Search for the first publically and privately defined method of the given
@@ -292,9 +274,6 @@ public final class Reflection {
 	 * @throws IllegalStateException
 	 *             If we cannot find this method.
 	 */
-	public static ConstructorInvoker getConstructor(String className, Class<?>... params) {
-		return getConstructor(getClass(className), params);
-	}
 
 	/**
 	 * Search for the first publically and privately defined constructor of the
@@ -344,11 +323,6 @@ public final class Reflection {
 	 *            - the class name with variables.
 	 * @return The class.
 	 */
-	public static Class<Object> getUntypedClass(String lookupName) {
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		Class<Object> clazz = (Class) getClass(lookupName);
-		return clazz;
-	}
 
 	/**
 	 * Retrieve a class from its full name.
@@ -381,10 +355,6 @@ public final class Reflection {
 	 * @throws IllegalArgumentException
 	 *             If a variable or class could not be found.
 	 */
-	public static Class<?> getClass(String lookupName) {
-		return getCanonicalClass(expandVariables(lookupName));
-	}
-
 	/**
 	 * Retrieve a class in the net.minecraft.server.VERSION.* package.
 	 * 
@@ -393,9 +363,6 @@ public final class Reflection {
 	 * @throws IllegalArgumentException
 	 *             If the class doesn't exist.
 	 */
-	public static Class<?> getMinecraftClass(String name) {
-		return getCanonicalClass(NMS_PREFIX + "." + name);
-	}
 
 	/**
 	 * Retrieve a class in the org.bukkit.craftbukkit.VERSION.* package.
@@ -405,9 +372,6 @@ public final class Reflection {
 	 * @throws IllegalArgumentException
 	 *             If the class doesn't exist.
 	 */
-	public static Class<?> getCraftBukkitClass(String name) {
-		return getCanonicalClass(OBC_PREFIX + "." + name);
-	}
 
 	/**
 	 * Retrieve a class by its canonical name.
@@ -416,13 +380,6 @@ public final class Reflection {
 	 *            - the canonical name.
 	 * @return The class.
 	 */
-	private static Class<?> getCanonicalClass(String canonicalName) {
-		try {
-			return Class.forName(canonicalName);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("Cannot find " + canonicalName, e);
-		}
-	}
 
 	/**
 	 * Expand variables such as "{nms}" and "{obc}" to their corresponding
@@ -432,67 +389,6 @@ public final class Reflection {
 	 *            - the full name of the class.
 	 * @return The expanded string.
 	 */
-	private static String expandVariables(String name) {
-		StringBuffer output = new StringBuffer();
-		Matcher matcher = MATCH_VARIABLE.matcher(name);
-
-		while (matcher.find()) {
-			String variable = matcher.group(1);
-			String replacement = "";
-
-			// Expand all detected variables
-			if ("nms".equalsIgnoreCase(variable))
-				replacement = NMS_PREFIX;
-			else if ("obc".equalsIgnoreCase(variable))
-				replacement = OBC_PREFIX;
-			else if ("version".equalsIgnoreCase(variable))
-				replacement = VERSION;
-			else
-				throw new IllegalArgumentException("Unknown variable: " + variable);
-
-			// Assume the expanded variables are all packages, and append a dot
-			if (replacement.length() > 0 && matcher.end() < name.length() && name.charAt(matcher.end()) != '.')
-				replacement += ".";
-			matcher.appendReplacement(output, Matcher.quoteReplacement(replacement));
-		}
-
-		matcher.appendTail(output);
-		return output.toString();
-	}
-
-	public static String getVersion() {
-		String name = Bukkit.getServer().getClass().getPackage().getName();
-		String version = name.substring(name.lastIndexOf('.') + 1) + ".";
-		return version;
-	}
-
-	public static Class<?> getNMSClass(String className) {
-		String fullName = "net.minecraft.server." + getVersion() + className;
-		Class<?> clazz = null;
-		try {
-			clazz = Class.forName(fullName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return clazz;
-	}
-
-	public static Class<?> getNMSClassWithException(String className) throws Exception {
-		String fullName = "net.minecraft.server." + getVersion() + className;
-		Class<?> clazz = Class.forName(fullName);
-		return clazz;
-	}
-
-	public static Class<?> getOBCClass(String className) {
-		String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
-		Class<?> clazz = null;
-		try {
-			clazz = Class.forName(fullName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return clazz;
-	}
 
 	public static Object getHandle(Object obj) {
 		try {

@@ -376,10 +376,10 @@ public class BattlePlayer {
 	}
 
 	public boolean setTag(Tag tag) {
-		if (hasGroupPermission(Group.YOUTUBER) && this.tag != tag) {
+		this.tag = tag;
+		if (hasGroupPermission(Group.YOUTUBER)) {
 			DataPlayer.saveBattlePlayer(this, "tag");
 		}
-		this.tag = tag;
 		return true;
 	}
 
