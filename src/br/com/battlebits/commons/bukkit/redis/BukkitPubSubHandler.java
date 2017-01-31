@@ -13,6 +13,7 @@ import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdateFieldEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdatedFieldEvent;
+import br.com.battlebits.commons.bukkit.event.redis.RedisPubSubMessageEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.util.reflection.Reflection;
@@ -22,6 +23,7 @@ public class BukkitPubSubHandler extends JedisPubSub {
 
 	@Override
 	public void onMessage(String channel, String message) {
+		Bukkit.getPluginManager().callEvent(new RedisPubSubMessageEvent(channel, message));
 		if (channel.equals("account-field")) {
 			JsonObject obj = (JsonObject) BattlebitsAPI.getParser().parse(message);
 			if (obj.getAsJsonPrimitive("source").getAsString().equalsIgnoreCase(BattlebitsAPI.getServerId())) {
