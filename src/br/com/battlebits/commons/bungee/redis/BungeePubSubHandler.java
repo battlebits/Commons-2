@@ -11,6 +11,7 @@ import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.bungee.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.bungee.loadbalancer.server.MinigameServer;
 import br.com.battlebits.commons.core.account.BattlePlayer;
+import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.Action;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.JoinEnablePayload;
@@ -42,6 +43,23 @@ public class BungeePubSubHandler extends JedisPubSub {
 				f.setAccessible(true);
 				Object object = BattlebitsAPI.getGson().fromJson(obj.get("value"), f.getGenericType());
 				f.set(player, object);
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		} else if (channel.equals("clan-field")) {
+			JsonObject jsonObject = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
+			String source = jsonObject.get("source").getAsString();
+			if (source.equals(BattlebitsAPI.getServerId()))
+				return;
+			UUID uuid = UUID.fromString(jsonObject.get("uniqueId").getAsString());
+			Clan clan = BattlebitsAPI.getClanCommon().getClan(uuid);
+			if (clan == null)
+				return;
+			try {
+				Field f = Reflection.getField(Clan.class, jsonObject.get("field").getAsString());
+				f.setAccessible(true);
+				Object object = BattlebitsAPI.getGson().fromJson(jsonObject.get("value"), f.getGenericType());
+				f.set(clan, object);
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
