@@ -17,6 +17,7 @@ import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.backend.sql.MySQLBackend;
 import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
+import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.Translate;
 import lombok.Getter;
@@ -55,7 +56,9 @@ public class BungeeMain extends Plugin {
 		BattlebitsAPI.setLogger(getLogger());
 		@SuppressWarnings("deprecation")
 		ListenerInfo info = getProxy().getConfig().getListeners().iterator().next();
-		BattlebitsAPI.setServerId(info.getHost().getHostName() + ":" + info.getHost().getPort());
+		BattlebitsAPI
+				.setServerId(DataServer.getServerId(info.getHost().getHostName() + ":" + info.getHost().getPort()));
+		DataServer.newServer(ServerType.NETWORK, BattlebitsAPI.getServerId());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
 		}
@@ -68,6 +71,13 @@ public class BungeeMain extends Plugin {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onDisable() {
+		DataServer.stopServer(ServerType.NETWORK, BattlebitsAPI.getServerId());
+		BattlebitsAPI.getMongo().closeConnection();
+		BattlebitsAPI.getRedis().closeConnection();
 	}
 
 	private void loadListeners() {

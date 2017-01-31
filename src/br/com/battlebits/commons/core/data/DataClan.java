@@ -194,7 +194,7 @@ public class DataClan extends Data {
 			jedis.expire("clan:uniqueId:" + clanName, 300);
 		}
 	}
-	
+
 	public static boolean checkCache(UUID uuid) {
 		boolean bol = false;
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {

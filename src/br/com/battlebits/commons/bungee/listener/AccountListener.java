@@ -12,6 +12,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataClan;
 import br.com.battlebits.commons.core.data.DataPlayer;
+import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.util.GeoIpUtils;
@@ -123,6 +124,7 @@ public class AccountListener implements Listener {
 				BattlebitsAPI.debug("BANNING > FINISHED");
 				player.checkForMultipliers();
 				event.completeIntent(BungeeMain.getPlugin());
+				DataServer.joinPlayer(BattlebitsAPI.getServerId(), uuid);
 				player = null;
 				ban = null;
 			}
@@ -151,6 +153,7 @@ public class AccountListener implements Listener {
 			}
 		}
 		DataPlayer.cacheRedisPlayer(player.getUniqueId());
+		DataServer.leavePlayer(BattlebitsAPI.getServerId(), player.getUniqueId());
 		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(player.getUniqueId());
 		player = null;
 	}

@@ -11,10 +11,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.api.vanish.VanishAPI;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeGroupEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdateFieldEvent;
@@ -23,6 +26,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataClan;
 import br.com.battlebits.commons.core.data.DataPlayer;
+import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
 import br.com.battlebits.commons.util.GeoIpUtils;
@@ -115,6 +119,17 @@ public class AccountListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
+	public void onLogin(PlayerLoginEvent event) {
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				DataServer.joinPlayer(BattlebitsAPI.getServerId(), event.getPlayer().getUniqueId());
+			}
+		}.runTaskAsynchronously(BukkitMain.getPlugin());
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onLeave(PlayerQuitEvent event) {
 		BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
 		if (player.getClan() != null) {
@@ -136,6 +151,7 @@ public class AccountListener implements Listener {
 		}
 		if (player.isCacheOnQuit())
 			DataPlayer.cacheRedisPlayer(event.getPlayer().getUniqueId());
+		DataServer.leavePlayer(BattlebitsAPI.getServerId(), player.getUniqueId());
 		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(event.getPlayer().getUniqueId());
 	}
 

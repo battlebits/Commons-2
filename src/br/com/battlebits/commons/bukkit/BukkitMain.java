@@ -28,6 +28,7 @@ import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
+import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
@@ -66,8 +67,9 @@ public class BukkitMain extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		BattlebitsAPI.setServerId(Bukkit.getIp() + ":" + Bukkit.getPort());
 		BattlebitsAPI.setLogger(getLogger());
+		BattlebitsAPI.setServerId(DataServer.getServerId(Bukkit.getIp() + ":" + Bukkit.getPort()));
+		DataServer.newServer(ServerType.getServerType(BattlebitsAPI.getServerId()), BattlebitsAPI.getServerId());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
@@ -87,6 +89,13 @@ public class BukkitMain extends JavaPlugin {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onDisable() {
+		DataServer.stopServer(ServerType.getServerType(BattlebitsAPI.getServerId()), BattlebitsAPI.getServerId());
+		BattlebitsAPI.getMongo().closeConnection();
+		BattlebitsAPI.getRedis().closeConnection();
 	}
 
 	private void registerListeners() {
