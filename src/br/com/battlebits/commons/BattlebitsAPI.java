@@ -63,6 +63,9 @@ public class BattlebitsAPI {
 	@Getter
 	@Setter
 	private static String serverId;
+	@Getter
+	@Setter
+	private static String serverAddress;
 
 	private static boolean debugMode = true;
 	private static final Calendar CALENDAR = Calendar.getInstance();

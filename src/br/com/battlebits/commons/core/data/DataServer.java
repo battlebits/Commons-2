@@ -85,7 +85,7 @@ public class DataServer extends Data {
 			BattleServer server = new BattleServer(serverId, 0, maxPlayers, true);
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<StartPayload>(BattlebitsAPI.getServerId(),
-							Action.START, new StartPayload(server))));
+							Action.START, new StartPayload(BattlebitsAPI.getServerAddress(), server))));
 			pipe.sync();
 		}
 	}
@@ -169,49 +169,50 @@ public class DataServer extends Data {
 
 	@Getter
 	@RequiredArgsConstructor
-	static class DataServerMessage<T> {
+	public static class DataServerMessage<T> {
 		private final String source;
 		private final Action action;
 		private final T payload;
 
-		enum Action {
+		public static enum Action {
 			START, STOP, UPDATE, JOIN_ENABLE, JOIN, LEAVE,
 		}
 
 		@Getter
 		@RequiredArgsConstructor
-		static class StartPayload {
+		public static class StartPayload {
+			private final String serverAddress;
 			private final BattleServer server;
 		}
 
 		@Getter
 		@RequiredArgsConstructor
-		static class StopPayload {
+		public static class StopPayload {
 			private final String serverId;
 		}
 
 		@Getter
 		@RequiredArgsConstructor
-		static class UpdatePayload {
+		public static class UpdatePayload {
 			private final int time;
 			private final MinigameState state;
 		}
 
 		@Getter
 		@RequiredArgsConstructor
-		static class JoinEnablePayload {
+		public static class JoinEnablePayload {
 			private final boolean enable;
 		}
 
 		@Getter
 		@RequiredArgsConstructor
-		static class JoinPayload {
+		public static class JoinPayload {
 			private final UUID uniqueId;
 		}
 
 		@Getter
 		@RequiredArgsConstructor
-		static class LeavePayload {
+		public static class LeavePayload {
 			private final UUID uniqueId;
 		}
 	}

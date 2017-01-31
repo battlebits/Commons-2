@@ -49,12 +49,6 @@ public class BukkitPubSubHandler extends JedisPubSub {
 		}
 	}
 
-	public static void main(String[] args) {
-		Field f = getField(BukkitPlayer.class, "groups");
-		System.out.println(f.getAnnotatedType());
-
-	}
-
 	public static Field getField(Class<?> clazz, String name) {
 		try {
 			Field field = clazz.getDeclaredField(name);

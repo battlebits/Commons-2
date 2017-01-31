@@ -42,7 +42,6 @@ public class BukkitMain extends JavaPlugin {
 	private TagManager tagManager;
 	@Getter
 	private static BukkitMain plugin;
-	private PubSubListener pubSubListener;
 	private boolean oldTag = false;
 	@Setter
 	private boolean tagControl = true;
@@ -68,7 +67,8 @@ public class BukkitMain extends JavaPlugin {
 			e.printStackTrace();
 		}
 		BattlebitsAPI.setLogger(getLogger());
-		BattlebitsAPI.setServerId(DataServer.getServerId(Bukkit.getIp() + ":" + Bukkit.getPort()));
+		BattlebitsAPI.setServerAddress(Bukkit.getIp() + ":" + Bukkit.getPort());
+		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));
 		DataServer.newServer(ServerType.getServerType(BattlebitsAPI.getServerId()), BattlebitsAPI.getServerId(),
 				Bukkit.getMaxPlayers());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
@@ -78,8 +78,7 @@ public class BukkitMain extends JavaPlugin {
 		registerListeners();
 		registerCommonManagement();
 		enableCommonManagement();
-		pubSubListener = new PubSubListener(new BukkitPubSubHandler());
-		getServer().getScheduler().runTaskAsynchronously(this, pubSubListener);
+		getServer().getScheduler().runTaskAsynchronously(this, new PubSubListener(new BukkitPubSubHandler()));
 		// this.getServer().getMessenger().registerIncomingPluginChannel(this,
 		// BattlebitsAPI.getBungeeChannel(), new MessageListener());
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
