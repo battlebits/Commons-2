@@ -1,8 +1,8 @@
-package br.com.battlebits.commons.bungee.loadbalancer.server;
+package br.com.battlebits.commons.core.loadbalancer.server;
 
 import br.com.battlebits.commons.bungee.BungeeMain;
-import br.com.battlebits.commons.bungee.loadbalancer.element.LoadBalancerObject;
-import br.com.battlebits.commons.bungee.loadbalancer.element.NumberConnection;
+import br.com.battlebits.commons.core.loadbalancer.element.LoadBalancerObject;
+import br.com.battlebits.commons.core.loadbalancer.element.NumberConnection;
 import br.com.battlebits.commons.core.server.ServerType;
 import net.md_5.bungee.api.config.ServerInfo;
 

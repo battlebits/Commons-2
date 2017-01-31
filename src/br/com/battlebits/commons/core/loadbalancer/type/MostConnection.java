@@ -1,8 +1,8 @@
-package br.com.battlebits.commons.bungee.loadbalancer.type;
+package br.com.battlebits.commons.core.loadbalancer.type;
 
-import br.com.battlebits.commons.bungee.loadbalancer.BaseBalancer;
-import br.com.battlebits.commons.bungee.loadbalancer.element.LoadBalancerObject;
-import br.com.battlebits.commons.bungee.loadbalancer.element.NumberConnection;
+import br.com.battlebits.commons.core.loadbalancer.BaseBalancer;
+import br.com.battlebits.commons.core.loadbalancer.element.LoadBalancerObject;
+import br.com.battlebits.commons.core.loadbalancer.element.NumberConnection;
 
 public class MostConnection<T extends LoadBalancerObject & NumberConnection> extends BaseBalancer<T> {
 

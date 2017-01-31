@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.bungee.loadbalancer.server;
+package br.com.battlebits.commons.core.loadbalancer.server;
 
 import lombok.Getter;
 import lombok.Setter;

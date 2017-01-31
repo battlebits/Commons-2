@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.bungee.loadbalancer.element;
+package br.com.battlebits.commons.core.loadbalancer.element;
 
 public interface LoadBalancerObject {
 

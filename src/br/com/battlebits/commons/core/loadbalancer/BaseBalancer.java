@@ -1,11 +1,11 @@
-package br.com.battlebits.commons.bungee.loadbalancer;
+package br.com.battlebits.commons.core.loadbalancer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.battlebits.commons.bungee.loadbalancer.element.LoadBalancerObject;
+import br.com.battlebits.commons.core.loadbalancer.element.LoadBalancerObject;
 
 public abstract class BaseBalancer<T extends LoadBalancerObject> implements LoadBalancer<T> {
 

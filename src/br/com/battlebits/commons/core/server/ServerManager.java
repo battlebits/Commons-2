@@ -1,21 +1,15 @@
-package br.com.battlebits.commons.bungee.manager;
+package br.com.battlebits.commons.core.server;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-
-import br.com.battlebits.commons.bungee.BungeeMain;
-import br.com.battlebits.commons.bungee.loadbalancer.BaseBalancer;
-import br.com.battlebits.commons.bungee.loadbalancer.server.BattleServer;
-import br.com.battlebits.commons.bungee.loadbalancer.server.HungerGamesServer;
-import br.com.battlebits.commons.bungee.loadbalancer.server.MinigameServer;
-import br.com.battlebits.commons.bungee.loadbalancer.server.MinigameState;
-import br.com.battlebits.commons.bungee.loadbalancer.type.LeastConnection;
-import br.com.battlebits.commons.bungee.loadbalancer.type.MostConnection;
-import br.com.battlebits.commons.core.server.ServerType;
-import net.md_5.bungee.api.config.ServerInfo;
+import br.com.battlebits.commons.core.loadbalancer.BaseBalancer;
+import br.com.battlebits.commons.core.loadbalancer.server.BattleServer;
+import br.com.battlebits.commons.core.loadbalancer.server.HungerGamesServer;
+import br.com.battlebits.commons.core.loadbalancer.server.MinigameServer;
+import br.com.battlebits.commons.core.loadbalancer.server.MinigameState;
+import br.com.battlebits.commons.core.loadbalancer.type.LeastConnection;
+import br.com.battlebits.commons.core.loadbalancer.type.MostConnection;
 
 public class ServerManager {
 
@@ -42,17 +36,7 @@ public class ServerManager {
 	}
 
 	public void addActiveServer(String serverAddress, String serverIp, int maxPlayers) {
-		BungeeMain.getPlugin().addBungee(serverIp, serverAddress.split(":")[0],
-				Integer.valueOf(serverAddress.split(":")[1]));
 		updateActiveServer(serverIp, 0, maxPlayers, true);
-	}
-
-	public void sendDataToServer(ServerInfo info, String... data) {
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		for (String str : data) {
-			out.writeUTF(str);
-		}
-		info.sendData("BungeeCord", out.toByteArray());
 	}
 
 	public void updateActiveServer(String serverId, int onlinePlayers, int maxPlayers, boolean canJoin) {

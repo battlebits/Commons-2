@@ -4,10 +4,10 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 import br.com.battlebits.commons.BattlebitsAPI;
-import br.com.battlebits.commons.bungee.loadbalancer.server.BattleServer;
-import br.com.battlebits.commons.bungee.manager.ServerManager;
 import br.com.battlebits.commons.core.account.BattlePlayer;
+import br.com.battlebits.commons.core.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.core.permission.Group;
+import br.com.battlebits.commons.core.server.ServerManager;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Translate;
 import net.md_5.bungee.api.chat.TextComponent;

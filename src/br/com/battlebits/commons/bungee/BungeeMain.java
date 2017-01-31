@@ -14,7 +14,7 @@ import br.com.battlebits.commons.bungee.listener.MessageListener;
 import br.com.battlebits.commons.bungee.listener.ScreenshareListener;
 import br.com.battlebits.commons.bungee.listener.ServerListener;
 import br.com.battlebits.commons.bungee.manager.BanManager;
-import br.com.battlebits.commons.bungee.manager.ServerManager;
+import br.com.battlebits.commons.bungee.manager.BungeeServerManager;
 import br.com.battlebits.commons.bungee.redis.BungeePubSubHandler;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
@@ -22,6 +22,7 @@ import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.backend.sql.MySQLBackend;
 import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
+import br.com.battlebits.commons.core.server.ServerManager;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.Translate;
@@ -35,7 +36,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class BungeeMain extends Plugin {
 	@Getter
 	private static BungeeMain plugin;
-	private ServerManager serverManager = new ServerManager();
+	private ServerManager serverManager = new BungeeServerManager();
 	private BanManager banManager = new BanManager();
 
 	// CONNECTIONS
