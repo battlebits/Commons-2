@@ -1,7 +1,6 @@
 package br.com.battlebits.commons.core.server;
 
 public enum ServerType {
-	NETWORK("bbits.com.br", ServerStaff.NETWORK), //
 	DOUBLEKITHG("doublekit.battle-hg.com", ServerStaff.HUNGERGAMES), //
 	FAIRPLAY("fp.battle-hg.com", ServerStaff.HUNGERGAMES), //
 	CUSTOMHG("custom.battle-hg.com", ServerStaff.HUNGERGAMES), //
@@ -13,6 +12,7 @@ public enum ServerType {
 	RAID("raid.battlebits.com.br", ServerStaff.RAID), //
 	GARTICCRAFT("gc.battlebits.com.br", ServerStaff.GARTICCRAFT), //
 	TESTSERVER("teste.battlebits.com.br", ServerStaff.TESTSERVER), //
+	NETWORK("battlebits.com.br", ServerStaff.NETWORK), //
 	NONE("none", ServerStaff.NONE);
 
 	private String suffix;

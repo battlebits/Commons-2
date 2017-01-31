@@ -124,7 +124,7 @@ public class AccountListener implements Listener {
 
 			@Override
 			public void run() {
-				DataServer.joinPlayer(BattlebitsAPI.getServerId(), event.getPlayer().getUniqueId());
+				DataServer.joinPlayer(event.getPlayer().getUniqueId());
 			}
 		}.runTaskAsynchronously(BukkitMain.getPlugin());
 	}
@@ -151,7 +151,7 @@ public class AccountListener implements Listener {
 		}
 		if (player.isCacheOnQuit())
 			DataPlayer.cacheRedisPlayer(event.getPlayer().getUniqueId());
-		DataServer.leavePlayer(BattlebitsAPI.getServerId(), player.getUniqueId());
+		DataServer.leavePlayer(player.getUniqueId());
 		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(event.getPlayer().getUniqueId());
 	}
 

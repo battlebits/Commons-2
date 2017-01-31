@@ -19,7 +19,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 public class ServerManager {
 
-	private Map<String, String> battlebitsServers;
 	private Map<String, BattleServer> activeServers;
 
 	private HashMap<ServerType, BaseBalancer<BattleServer>> balancers;
@@ -35,40 +34,17 @@ public class ServerManager {
 		balancers.put(ServerType.DOUBLEKITHG, new MostConnection<>());
 		balancers.put(ServerType.HUNGERGAMES, new MostConnection<>());
 
-		battlebitsServers = new HashMap<>();
 		activeServers = new HashMap<>();
-	}
-
-	public void loadServersa() {
-		battlebitsServers.clear();
-		// TODO Remake Connection
 	}
 
 	public BaseBalancer<BattleServer> getBalancer(ServerType type) {
 		return balancers.get(type);
 	}
 
-	public String getServerId(String serverAddress) {
-		return battlebitsServers.containsKey(serverAddress.toLowerCase())
-				? battlebitsServers.get(serverAddress.toLowerCase()) : serverAddress.toLowerCase();
-	}
-
 	public void addActiveServer(String serverAddress, String serverIp, int maxPlayers) {
 		BungeeMain.getPlugin().addBungee(serverIp, serverAddress.split(":")[0],
 				Integer.valueOf(serverAddress.split(":")[1]));
 		updateActiveServer(serverIp, 0, maxPlayers, true);
-	}
-
-	public void sendAddToLobbies(String serverIp) {
-		for (BattleServer server : getBalancer(ServerType.LOBBY).getList()) {
-			sendDataToServer(server.getServerInfo(), "AddServer", serverIp.toLowerCase());
-		}
-	}
-
-	public void sendRemoveToLobbies(String serverIp) {
-		for (BattleServer server : getBalancer(ServerType.LOBBY).getList()) {
-			sendDataToServer(server.getServerInfo(), "RemoveServer", serverIp.toLowerCase());
-		}
 	}
 
 	public void sendDataToServer(ServerInfo info, String... data) {

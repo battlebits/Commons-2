@@ -1,19 +1,6 @@
 package br.com.battlebits.common;
 
-import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import br.com.battlebits.commons.BattlebitsAPI;
-import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
-import br.com.battlebits.commons.core.permission.Group;
-import br.com.battlebits.commons.core.server.ServerStaff;
 import redis.clients.jedis.Jedis;
 
 public class RedisTest {
@@ -21,26 +8,26 @@ public class RedisTest {
 	public static void main(String[] args) {
 		RedisBackend backend = new RedisBackend();
 		backend.startConnection();
-
-		Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.STATIC).create();
-
-		JsonParser parser = new JsonParser();
+//
+//		Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.STATIC).create();
+//
+//		JsonParser parser = new JsonParser();
 
 		// str
 		try (Jedis jedis = backend.getPool().getResource()) {
-			
-			Map<String, String> fields = jedis.hgetAll("account:e24695ad-6618-471e-826a-2438f043a293");
-
-			JsonObject obj = new JsonObject();
-
-			for (Entry<String, String> entry : fields.entrySet()) {
-				obj.add(entry.getKey(), parser.parse(entry.getValue()));
-			}
-
-			BattlePlayer parsed = BattlebitsAPI.getGson().fromJson(obj.toString(), BattlePlayer.class);
-			parsed.getGroups().put(ServerStaff.NETWORK, Group.DONO);
-
-			jedis.hset("account:e24695ad-6618-471e-826a-2438f043a293", "groups", gson.toJson(parsed.getGroups()));
+			jedis.flushDB();
+//			Map<String, String> fields = jedis.hgetAll("account:e24695ad-6618-471e-826a-2438f043a293");
+//
+//			JsonObject obj = new JsonObject();
+//
+//			for (Entry<String, String> entry : fields.entrySet()) {
+//				obj.add(entry.getKey(), parser.parse(entry.getValue()));
+//			}
+//
+//			BattlePlayer parsed = BattlebitsAPI.getGson().fromJson(obj.toString(), BattlePlayer.class);
+//			parsed.getGroups().put(ServerStaff.NETWORK, Group.DONO);
+//
+//			jedis.hset("account:e24695ad-6618-471e-826a-2438f043a293", "groups", gson.toJson(parsed.getGroups()));
 
 			// System.out.println(obj.toJSONString());
 

@@ -1,6 +1,8 @@
 package br.com.battlebits.commons.bungee;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import br.com.battlebits.commons.BattlebitsAPI;
@@ -61,9 +63,10 @@ public class BungeeMain extends Plugin {
 		BattlebitsAPI.setLogger(getLogger());
 		@SuppressWarnings("deprecation")
 		ListenerInfo info = getProxy().getConfig().getListeners().iterator().next();
-		BattlebitsAPI
-				.setServerId(DataServer.getServerId(info.getHost().getHostName() + ":" + info.getHost().getPort()));
-		DataServer.newServer(ServerType.NETWORK, BattlebitsAPI.getServerId(), info.getMaxPlayers());
+		BattlebitsAPI.setServerAddress(info.getHost().getHostName() + ":" + info.getHost().getPort());
+		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));
+		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + BattlebitsAPI.getServerId());
+		DataServer.newServer(info.getMaxPlayers());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
 		}
@@ -78,12 +81,32 @@ public class BungeeMain extends Plugin {
 		}
 		getProxy().getScheduler().runAsync(this, pubSubListener = new PubSubListener(new BungeePubSubHandler(),
 				"account-field", "clan-field", "server-info"));
-		// TODO Get Servers Online on Redis and add them
+		for (Entry<String, Map<String, String>> entry : DataServer.getAllServers().entrySet()) {
+			try {
+				if (!entry.getValue().containsKey("type"))
+					continue;
+				if (!entry.getValue().containsKey("address"))
+					continue;
+				if (!entry.getValue().containsKey("maxplayers"))
+					continue;
+				if (!entry.getValue().containsKey("onlineplayers"))
+					continue;
+				if (ServerType.getServerType(entry.getValue().get("type").toUpperCase()) == ServerType.NETWORK)
+					continue;
+
+				BungeeMain.getPlugin().getServerManager().addActiveServer(entry.getValue().get("address"),
+						entry.getKey(), Integer.valueOf(entry.getValue().get("maxplayers")));
+				BungeeMain.getPlugin().getServerManager().getServer(entry.getKey())
+						.setOnlinePlayers(Integer.valueOf(entry.getValue().get("onlineplayers")));
+			} catch (Exception e) {
+			}
+		}
+
 	}
 
 	@Override
 	public void onDisable() {
-		DataServer.stopServer(ServerType.NETWORK, BattlebitsAPI.getServerId());
+		DataServer.stopServer();
 		BattlebitsAPI.getMongo().closeConnection();
 		BattlebitsAPI.getRedis().closeConnection();
 	}

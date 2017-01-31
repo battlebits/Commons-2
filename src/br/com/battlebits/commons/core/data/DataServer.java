@@ -72,17 +72,40 @@ public class DataServer extends Data {
 		return ipAddress;
 	}
 
-	public static void newServer(ServerType serverType, String serverId, int maxPlayers) {
+	public static Map<String, Map<String, String>> getAllServers() {
+		Map<String, Map<String, String>> map = new HashMap<>();
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			String[] str = new String[ServerType.values().length];
+			for (int i = 0; i < ServerType.values().length; i++) {
+				str[i] = "server:type:" + ServerType.values()[i].toString().toLowerCase();
+			}
+			for (String server : jedis.sunion(str)) {
+				Map<String, String> m = jedis.hgetAll("server:" + server);
+				if (m.get("type").equals("network"))
+					continue;
+				m.put("onlineplayers", getPlayerCount(server) + "");
+				map.put(server, m);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new HashMap<>();
+		}
+		return map;
+	}
+
+	public static void newServer(int maxPlayers) {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
-			pipe.sadd("server:type:" + serverType.toString().toLowerCase(), serverId);
+			pipe.sadd("server:type:" + ServerType.getServerType(BattlebitsAPI.getServerId()).toString().toLowerCase(),
+					BattlebitsAPI.getServerId());
 			HashMap<String, String> map = new HashMap<>();
-			map.put("type", serverType.toString().toLowerCase());
+			map.put("type", ServerType.getServerType(BattlebitsAPI.getServerId()).toString().toLowerCase());
 			map.put("maxplayers", maxPlayers + "");
 			map.put("joinenabled", "true");
-			pipe.hmset("server:" + serverId, map);
-			pipe.del("server:" + serverId + ":players");
-			BattleServer server = new BattleServer(serverId, 0, maxPlayers, true);
+			map.put("address", BattlebitsAPI.getServerAddress());
+			pipe.hmset("server:" + BattlebitsAPI.getServerId(), map);
+			pipe.del("server:" + BattlebitsAPI.getServerId() + ":players");
+			BattleServer server = new BattleServer(BattlebitsAPI.getServerId(), 0, maxPlayers, true);
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<StartPayload>(BattlebitsAPI.getServerId(),
 							Action.START, new StartPayload(BattlebitsAPI.getServerAddress(), server))));
@@ -90,11 +113,11 @@ public class DataServer extends Data {
 		}
 	}
 
-	public static void updateStatus(String serverId, MinigameState state, int time) {
+	public static void updateStatus(MinigameState state, int time) {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
-			pipe.hset("server:" + serverId, "state", state.toString().toLowerCase());
-			pipe.hset("server:" + serverId, "time", time + "");
+			pipe.hset("server:" + BattlebitsAPI.getServerId(), "state", state.toString().toLowerCase());
+			pipe.hset("server:" + BattlebitsAPI.getServerId(), "time", time + "");
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<UpdatePayload>(BattlebitsAPI.getServerId(),
 							Action.UPDATE, new UpdatePayload(time, state))));
@@ -102,10 +125,10 @@ public class DataServer extends Data {
 		}
 	}
 
-	public static void setJoinEnabled(String serverId, boolean bol) {
+	public static void setJoinEnabled(boolean bol) {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
-			pipe.hset("server:" + serverId, "joinenabled", bol + "");
+			pipe.hset("server:" + BattlebitsAPI.getServerId(), "joinenabled", bol + "");
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<JoinEnablePayload>(BattlebitsAPI.getServerId(),
 							Action.JOIN_ENABLE, new JoinEnablePayload(bol))));
@@ -113,23 +136,24 @@ public class DataServer extends Data {
 		}
 	}
 
-	public static void stopServer(ServerType serverType, String serverId) {
+	public static void stopServer() {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
-			pipe.srem("server:type:" + serverType.toString().toLowerCase(), serverId);
-			pipe.del("server:" + serverId);
-			pipe.del("server:" + serverId + ":players");
+			pipe.srem("server:type:" + ServerType.getServerType(BattlebitsAPI.getServerId()).toString().toLowerCase(),
+					BattlebitsAPI.getServerId());
+			pipe.del("server:" + BattlebitsAPI.getServerId());
+			pipe.del("server:" + BattlebitsAPI.getServerId() + ":players");
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<StopPayload>(BattlebitsAPI.getServerId(),
-							Action.STOP, new StopPayload(serverId))));
+							Action.STOP, new StopPayload(BattlebitsAPI.getServerId()))));
 			pipe.sync();
 		}
 	}
 
-	public static void joinPlayer(String serverId, UUID uuid) {
+	public static void joinPlayer(UUID uuid) {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
-			pipe.sadd("server:" + serverId + ":players", uuid.toString());
+			pipe.sadd("server:" + BattlebitsAPI.getServerId() + ":players", uuid.toString());
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<JoinPayload>(BattlebitsAPI.getServerId(),
 							Action.JOIN, new JoinPayload(uuid))));
@@ -137,10 +161,10 @@ public class DataServer extends Data {
 		}
 	}
 
-	public static void leavePlayer(String serverId, UUID uuid) {
+	public static void leavePlayer(UUID uuid) {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
-			pipe.srem("server:" + serverId + ":players", uuid.toString());
+			pipe.srem("server:" + BattlebitsAPI.getServerId() + ":players", uuid.toString());
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<LeavePayload>(BattlebitsAPI.getServerId(),
 							Action.LEAVE, new LeavePayload(uuid))));

@@ -66,7 +66,6 @@ public class BungeePubSubHandler extends JedisPubSub {
 		} else if (channel.equals("server-info")) {
 			JsonObject jsonObject = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
 			String source = jsonObject.get("source").getAsString();
-
 			if (source.equals(BattlebitsAPI.getServerId()))
 				return;
 			ServerType sourceType = ServerType.getServerType(source);

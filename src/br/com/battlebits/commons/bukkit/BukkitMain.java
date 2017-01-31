@@ -28,7 +28,6 @@ import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
-import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
@@ -45,6 +44,7 @@ public class BukkitMain extends JavaPlugin {
 	private boolean oldTag = false;
 	@Setter
 	private boolean tagControl = true;
+	private PubSubListener pubSubListener;
 
 	@Override
 	public void onLoad() {
@@ -70,8 +70,8 @@ public class BukkitMain extends JavaPlugin {
 		BattlebitsAPI.setServerAddress(Bukkit.getIp() + ":" + Bukkit.getPort());
 		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + BattlebitsAPI.getServerId());
-		DataServer.newServer(ServerType.getServerType(BattlebitsAPI.getServerId()), BattlebitsAPI.getServerId(),
-				Bukkit.getMaxPlayers());
+		System.out.println(Bukkit.getMaxPlayers());
+		DataServer.newServer(Bukkit.getMaxPlayers());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
@@ -79,10 +79,9 @@ public class BukkitMain extends JavaPlugin {
 		registerListeners();
 		registerCommonManagement();
 		enableCommonManagement();
+		System.out.println("PubSubRegistrando");
 		getServer().getScheduler().runTaskAsynchronously(this,
-				new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field"));
-		// this.getServer().getMessenger().registerIncomingPluginChannel(this,
-		// BattlebitsAPI.getBungeeChannel(), new MessageListener());
+				pubSubListener = new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field"));
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
 		try {
 			new CommandLoader(new BukkitCommandFramework(plugin))
@@ -95,7 +94,7 @@ public class BukkitMain extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		DataServer.stopServer(ServerType.getServerType(BattlebitsAPI.getServerId()), BattlebitsAPI.getServerId());
+		DataServer.stopServer();
 		BattlebitsAPI.getMongo().closeConnection();
 		BattlebitsAPI.getRedis().closeConnection();
 	}

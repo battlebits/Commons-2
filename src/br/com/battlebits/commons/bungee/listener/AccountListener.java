@@ -124,7 +124,7 @@ public class AccountListener implements Listener {
 				BattlebitsAPI.debug("BANNING > FINISHED");
 				player.checkForMultipliers();
 				event.completeIntent(BungeeMain.getPlugin());
-				DataServer.joinPlayer(BattlebitsAPI.getServerId(), uuid);
+				DataServer.joinPlayer(uuid);
 				player = null;
 				ban = null;
 			}
@@ -153,7 +153,7 @@ public class AccountListener implements Listener {
 			}
 		}
 		DataPlayer.cacheRedisPlayer(player.getUniqueId());
-		DataServer.leavePlayer(BattlebitsAPI.getServerId(), player.getUniqueId());
+		DataServer.leavePlayer(player.getUniqueId());
 		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(player.getUniqueId());
 		player = null;
 	}
