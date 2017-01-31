@@ -12,9 +12,19 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bungee.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.bungee.loadbalancer.server.MinigameState;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.Action;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.JoinEnablePayload;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.JoinPayload;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.LeavePayload;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StartPayload;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StopPayload;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.UpdatePayload;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
@@ -72,8 +82,11 @@ public class DataServer extends Data {
 			map.put("joinenabled", "true");
 			pipe.hmset("server:" + serverId, map);
 			pipe.del("server:" + serverId + ":players");
+			BattleServer server = new BattleServer(serverId, 0, maxPlayers, true);
+			pipe.publish("server-info",
+					BattlebitsAPI.getGson().toJson(new DataServerMessage<StartPayload>(BattlebitsAPI.getServerId(),
+							Action.START, new StartPayload(server))));
 			pipe.sync();
-			// TODO Publish Server Start
 		}
 	}
 
@@ -82,8 +95,10 @@ public class DataServer extends Data {
 			Pipeline pipe = jedis.pipelined();
 			pipe.hset("server:" + serverId, "state", state.toString().toLowerCase());
 			pipe.hset("server:" + serverId, "time", time + "");
+			pipe.publish("server-info",
+					BattlebitsAPI.getGson().toJson(new DataServerMessage<UpdatePayload>(BattlebitsAPI.getServerId(),
+							Action.UPDATE, new UpdatePayload(time, state))));
 			pipe.sync();
-			// TODO Publish Minigame Update
 		}
 	}
 
@@ -91,8 +106,10 @@ public class DataServer extends Data {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.hset("server:" + serverId, "joinenabled", bol + "");
+			pipe.publish("server-info",
+					BattlebitsAPI.getGson().toJson(new DataServerMessage<JoinEnablePayload>(BattlebitsAPI.getServerId(),
+							Action.JOIN_ENABLE, new JoinEnablePayload(bol))));
 			pipe.sync();
-			// TODO Publish Join Status update
 		}
 	}
 
@@ -102,8 +119,10 @@ public class DataServer extends Data {
 			pipe.srem("server:type:" + serverType.toString().toLowerCase(), serverId);
 			pipe.del("server:" + serverId);
 			pipe.del("server:" + serverId + ":players");
+			pipe.publish("server-info",
+					BattlebitsAPI.getGson().toJson(new DataServerMessage<StopPayload>(BattlebitsAPI.getServerId(),
+							Action.STOP, new StopPayload(serverId))));
 			pipe.sync();
-			// TODO Publish Server Stop
 		}
 	}
 
@@ -111,8 +130,10 @@ public class DataServer extends Data {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.sadd("server:" + serverId + ":players", uuid.toString());
+			pipe.publish("server-info",
+					BattlebitsAPI.getGson().toJson(new DataServerMessage<JoinPayload>(BattlebitsAPI.getServerId(),
+							Action.JOIN, new JoinPayload(uuid))));
 			pipe.sync();
-			// TODO Publish Player Join
 		}
 	}
 
@@ -120,8 +141,10 @@ public class DataServer extends Data {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.srem("server:" + serverId + ":players", uuid.toString());
+			pipe.publish("server-info",
+					BattlebitsAPI.getGson().toJson(new DataServerMessage<LeavePayload>(BattlebitsAPI.getServerId(),
+							Action.LEAVE, new LeavePayload(uuid))));
 			pipe.sync();
-			// TODO Publish Player Leave
 		}
 	}
 
@@ -142,6 +165,55 @@ public class DataServer extends Data {
 			}
 		}
 		return number;
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	static class DataServerMessage<T> {
+		private final String source;
+		private final Action action;
+		private final T payload;
+
+		enum Action {
+			START, STOP, UPDATE, JOIN_ENABLE, JOIN, LEAVE,
+		}
+
+		@Getter
+		@RequiredArgsConstructor
+		static class StartPayload {
+			private final BattleServer server;
+		}
+
+		@Getter
+		@RequiredArgsConstructor
+		static class StopPayload {
+			private final String serverId;
+		}
+
+		@Getter
+		@RequiredArgsConstructor
+		static class UpdatePayload {
+			private final int time;
+			private final MinigameState state;
+		}
+
+		@Getter
+		@RequiredArgsConstructor
+		static class JoinEnablePayload {
+			private final boolean enable;
+		}
+
+		@Getter
+		@RequiredArgsConstructor
+		static class JoinPayload {
+			private final UUID uniqueId;
+		}
+
+		@Getter
+		@RequiredArgsConstructor
+		static class LeavePayload {
+			private final UUID uniqueId;
+		}
 	}
 
 }
