@@ -69,7 +69,8 @@ public class BukkitMain extends JavaPlugin {
 		}
 		BattlebitsAPI.setLogger(getLogger());
 		BattlebitsAPI.setServerId(DataServer.getServerId(Bukkit.getIp() + ":" + Bukkit.getPort()));
-		DataServer.newServer(ServerType.getServerType(BattlebitsAPI.getServerId()), BattlebitsAPI.getServerId());
+		DataServer.newServer(ServerType.getServerType(BattlebitsAPI.getServerId()), BattlebitsAPI.getServerId(),
+				Bukkit.getMaxPlayers());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));

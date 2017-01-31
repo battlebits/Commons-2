@@ -10,7 +10,8 @@ import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.bungee.loadbalancer.BaseBalancer;
 import br.com.battlebits.commons.bungee.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.bungee.loadbalancer.server.HungerGamesServer;
-import br.com.battlebits.commons.bungee.loadbalancer.server.HungerGamesServer.HungerGamesState;
+import br.com.battlebits.commons.bungee.loadbalancer.server.MinigameServer;
+import br.com.battlebits.commons.bungee.loadbalancer.server.MinigameState;
 import br.com.battlebits.commons.bungee.loadbalancer.type.LeastConnection;
 import br.com.battlebits.commons.bungee.loadbalancer.type.MostConnection;
 import br.com.battlebits.commons.core.server.ServerType;
@@ -83,7 +84,7 @@ public class ServerManager {
 	}
 
 	public void updateActiveServer(String serverId, int onlinePlayers, int maxPlayers, boolean canJoin, int tempo,
-			HungerGamesState state) {
+			MinigameState state) {
 		serverId = serverId.toLowerCase();
 		BattleServer server = activeServers.get(serverId);
 		if (server == null) {
@@ -96,9 +97,9 @@ public class ServerManager {
 		}
 		server.setOnlinePlayers(onlinePlayers);
 		server.setJoinEnabled(canJoin);
-		if (state != null && server instanceof HungerGamesServer) {
-			((HungerGamesServer) server).setState(state);
-			((HungerGamesServer) server).setTempo(tempo);
+		if (state != null && server instanceof MinigameServer) {
+			((MinigameServer) server).setState(state);
+			((MinigameServer) server).setTime(tempo);
 		}
 		addToBalancers(serverId, server);
 	}

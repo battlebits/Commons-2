@@ -58,7 +58,7 @@ public class BungeeMain extends Plugin {
 		ListenerInfo info = getProxy().getConfig().getListeners().iterator().next();
 		BattlebitsAPI
 				.setServerId(DataServer.getServerId(info.getHost().getHostName() + ":" + info.getHost().getPort()));
-		DataServer.newServer(ServerType.NETWORK, BattlebitsAPI.getServerId());
+		DataServer.newServer(ServerType.NETWORK, BattlebitsAPI.getServerId(), info.getMaxPlayers());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
 		}

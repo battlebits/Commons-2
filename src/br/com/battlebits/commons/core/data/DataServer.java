@@ -12,12 +12,13 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bungee.loadbalancer.server.MinigameState;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
-public class DataServer {
+public class DataServer extends Data {
 	// TRANSLATIONS
 	@SuppressWarnings("unchecked")
 	public static Map<String, String> loadTranslation(Language language) {
@@ -61,14 +62,37 @@ public class DataServer {
 		return ipAddress;
 	}
 
-	private static long EXPIRE_TIME = Long.MIN_VALUE;
-
-	public static void newServer(ServerType serverType, String serverId) {
+	public static void newServer(ServerType serverType, String serverId, int maxPlayers) {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.sadd("server:type:" + serverType.toString().toLowerCase(), serverId);
+			HashMap<String, String> map = new HashMap<>();
+			map.put("type", serverType.toString().toLowerCase());
+			map.put("maxplayers", maxPlayers + "");
+			map.put("joinenabled", "true");
+			pipe.hmset("server:" + serverId, map);
 			pipe.del("server:" + serverId + ":players");
 			pipe.sync();
+			// TODO Publish Server Start
+		}
+	}
+
+	public static void updateStatus(String serverId, MinigameState state, int time) {
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			Pipeline pipe = jedis.pipelined();
+			pipe.hset("server:" + serverId, "state", state.toString().toLowerCase());
+			pipe.hset("server:" + serverId, "time", time + "");
+			pipe.sync();
+			// TODO Publish Minigame Update
+		}
+	}
+
+	public static void setJoinEnabled(String serverId, boolean bol) {
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			Pipeline pipe = jedis.pipelined();
+			pipe.hset("server:" + serverId, "joinenabled", bol + "");
+			pipe.sync();
+			// TODO Publish Join Status update
 		}
 	}
 
@@ -76,8 +100,10 @@ public class DataServer {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.srem("server:type:" + serverType.toString().toLowerCase(), serverId);
+			pipe.del("server:" + serverId);
 			pipe.del("server:" + serverId + ":players");
 			pipe.sync();
+			// TODO Publish Server Stop
 		}
 	}
 
@@ -85,9 +111,8 @@ public class DataServer {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.sadd("server:" + serverId + ":players", uuid.toString());
-			pipe.expire("server:" + serverId + ":players", 300);
-			EXPIRE_TIME = System.currentTimeMillis() + 300000;
 			pipe.sync();
+			// TODO Publish Player Join
 		}
 	}
 
@@ -95,9 +120,8 @@ public class DataServer {
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.srem("server:" + serverId + ":players", uuid.toString());
-			pipe.expire("server:" + serverId + ":players", 300);
-			EXPIRE_TIME = System.currentTimeMillis() + 300000;
 			pipe.sync();
+			// TODO Publish Player Leave
 		}
 	}
 
@@ -118,10 +142,6 @@ public class DataServer {
 			}
 		}
 		return number;
-	}
-
-	public static long getTimeToExpire() {
-		return EXPIRE_TIME - System.currentTimeMillis();
 	}
 
 }
