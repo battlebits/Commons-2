@@ -70,7 +70,6 @@ public class BukkitMain extends JavaPlugin {
 		BattlebitsAPI.setServerAddress(Bukkit.getIp() + ":" + Bukkit.getPort());
 		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + BattlebitsAPI.getServerId());
-		System.out.println(Bukkit.getMaxPlayers());
 		DataServer.newServer(Bukkit.getMaxPlayers());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
 		for (Language lang : Language.values()) {
@@ -79,7 +78,6 @@ public class BukkitMain extends JavaPlugin {
 		registerListeners();
 		registerCommonManagement();
 		enableCommonManagement();
-		System.out.println("PubSubRegistrando");
 		getServer().getScheduler().runTaskAsynchronously(this,
 				pubSubListener = new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field"));
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);

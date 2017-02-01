@@ -22,7 +22,6 @@ public class PubSubListener implements Runnable {
 		try (Jedis rsc = BattlebitsAPI.getRedis().getPool().getResource()) {
 			try {
 				rsc.subscribe(jpsh, channels);
-				System.out.println("Registrado");
 			} catch (Exception e) {
 				BattlebitsAPI.getLogger().log(Level.INFO, "PubSub error, attempting to recover.", e);
 				try {

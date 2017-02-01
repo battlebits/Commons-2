@@ -79,7 +79,6 @@ public class TranslationInjector implements Injector {
 							packet.getStrings().write(1, translate(message, lang));
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_TEAM) {
 							String text = packet.getStrings().read(2) + packet.getStrings().read(3);
-							System.out.println(text);
 							Matcher matcher = finder.matcher(text);
 							boolean matched = false;
 							while (matcher.find()) {
