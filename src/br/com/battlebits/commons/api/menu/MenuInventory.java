@@ -118,15 +118,15 @@ public class MenuInventory {
 	public void updateTitle(Player p) {
 		try {
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.OPEN_WINDOW);
-			packet.getChatComponents().write(0,
-					WrappedChatComponent.fromText(T.t(BattlePlayer.getLanguage(p.getUniqueId()), title)));
-			int id = -1;
+			String message = T.t(BattlePlayer.getLanguage(p.getUniqueId()), title);
+			packet.getChatComponents().write(0, WrappedChatComponent.fromJson(message));
 			Method getHandle = MinecraftReflection.getCraftPlayerClass().getMethod("getHandle");
 			Object entityPlayer = getHandle.invoke(p);
 			Field activeContainerField = entityPlayer.getClass().getField("activeContainer");
 			Object activeContainer = activeContainerField.get(entityPlayer);
 			Field windowIdField = activeContainer.getClass().getField("windowId");
-			id = windowIdField.getInt(activeContainer);
+			int id = windowIdField.getInt(activeContainer);
+			packet.getStrings().write(0, "minecraft:chest");
 			packet.getIntegers().write(0, id);
 			packet.getIntegers().write(1, rows * 9);
 			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(p, packet);
