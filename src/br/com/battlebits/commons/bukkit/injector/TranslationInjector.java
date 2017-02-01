@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -56,17 +57,13 @@ public class TranslationInjector implements Injector {
 								}
 							}
 						} else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
-							// List<ItemStack> items = new ArrayList<>();
 							for (ItemStack item : packet.getItemArrayModifier().read(0)) {
 								if (item == null) {
-									// items.add(null);
 									continue;
 								}
-								// items.add(translateItemStack(item, lang));
+
 								translateItemStack(item, lang);
 							}
-							// packet.getItemArrayModifier().write(0,
-							// (ItemStack[]) items.toArray());
 						} else if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
 							ItemStack item = packet.getItemModifier().read(0);
 							packet.getItemModifier().write(0, translateItemStack(item, lang));
@@ -74,6 +71,13 @@ public class TranslationInjector implements Injector {
 								|| event.getPacketType() == PacketType.Play.Server.SCOREBOARD_SCORE) {
 							String message = event.getPacket().getStrings().read(0);
 							packet.getStrings().write(0, translate(message, lang));
+							if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW) {
+								if (ProtocolLibrary.getProtocolManager().getProtocolVersion(event.getPlayer()) < 47) {
+									message = packet.getStrings().read(0);
+									packet.getStrings().write(0,
+											message.substring(0, message.length() > 32 ? 32 : message.length()));
+								}
+							}
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_OBJECTIVE) {
 							String message = event.getPacket().getStrings().read(1);
 							packet.getStrings().write(1, translate(message, lang));
@@ -173,7 +177,7 @@ public class TranslationInjector implements Injector {
 	}
 
 	private String translate(String message, Language lang) {
-		if(message == null || message.isEmpty())
+		if (message == null || message.isEmpty())
 			return "";
 		Matcher matcher = finder.matcher(message);
 		while (matcher.find()) {
