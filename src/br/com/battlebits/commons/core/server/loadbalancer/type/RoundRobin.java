@@ -2,8 +2,9 @@ package br.com.battlebits.commons.core.server.loadbalancer.type;
 
 import br.com.battlebits.commons.core.server.loadbalancer.BaseBalancer;
 import br.com.battlebits.commons.core.server.loadbalancer.element.LoadBalancerObject;
+import br.com.battlebits.commons.core.server.loadbalancer.element.NumberConnection;
 
-public class RoundRobin<T extends LoadBalancerObject> extends BaseBalancer<T> {
+public class RoundRobin<T extends LoadBalancerObject & NumberConnection> extends BaseBalancer<T> {
 
 	private int next = 0;
 
@@ -31,7 +32,11 @@ public class RoundRobin<T extends LoadBalancerObject> extends BaseBalancer<T> {
 
 	@Override
 	public int getTotalNumber() {
-		return 0;
+		int number = 0;
+		for (T item : nextObj) {
+			number += item.getActualNumber();
+		}
+		return number;
 	}
 
 }

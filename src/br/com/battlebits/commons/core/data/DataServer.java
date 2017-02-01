@@ -81,8 +81,6 @@ public class DataServer extends Data {
 			}
 			for (String server : jedis.sunion(str)) {
 				Map<String, String> m = jedis.hgetAll("server:" + server);
-				if (m.get("type").equals("network"))
-					continue;
 				m.put("onlineplayers", getPlayerCount(server) + "");
 				map.put(server, m);
 			}

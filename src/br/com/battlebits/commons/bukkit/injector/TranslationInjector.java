@@ -174,6 +174,8 @@ public class TranslationInjector implements Injector {
 	}
 
 	private String translate(String message, Language lang) {
+		if(message == null || message.isEmpty())
+			return "";
 		Matcher matcher = finder.matcher(message);
 		while (matcher.find()) {
 			message = message.replace(matcher.group(), T.t(lang, matcher.group(2)));

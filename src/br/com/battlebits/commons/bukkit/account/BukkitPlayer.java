@@ -93,7 +93,7 @@ public class BukkitPlayer extends BattlePlayer {
 	public void setJoinData(String userName, String ipAdrress, String countryCode, String timeZoneCode) {
 		super.setJoinData(userName, ipAdrress, countryCode, timeZoneCode);
 		loadTags();
-		if (getTag() == Tag.STAFF)
+		if (getTag() == Tag.STAFF || !hasGroupPermission(Group.YOUTUBER))
 			setTag(getDefaultTag());
 	}
 

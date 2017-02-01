@@ -17,6 +17,8 @@ import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import br.com.battlebits.commons.bukkit.BukkitMain;
+import br.com.battlebits.commons.core.account.BattlePlayer;
+import br.com.battlebits.commons.core.translate.T;
 
 public class MenuInventory {
 
@@ -116,7 +118,8 @@ public class MenuInventory {
 	public void updateTitle(Player p) {
 		try {
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.OPEN_WINDOW);
-			packet.getChatComponents().write(0, WrappedChatComponent.fromText(title));
+			packet.getChatComponents().write(0,
+					WrappedChatComponent.fromText(T.t(BattlePlayer.getLanguage(p.getUniqueId()), title)));
 			int id = -1;
 			Method getHandle = MinecraftReflection.getCraftPlayerClass().getMethod("getHandle");
 			Object entityPlayer = getHandle.invoke(p);

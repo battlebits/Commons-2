@@ -35,6 +35,10 @@ public class ServerManager {
 		return balancers.get(type);
 	}
 
+	public void putBalancer(ServerType type, BaseBalancer<BattleServer> balancer) {
+		balancers.put(type, balancer);
+	}
+
 	public void addActiveServer(String serverAddress, String serverIp, int maxPlayers) {
 		updateActiveServer(serverIp, 0, maxPlayers, true);
 	}
