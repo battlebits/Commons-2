@@ -7,6 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -16,8 +17,10 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Splitter;
 
+import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.translate.Language;
@@ -38,7 +41,10 @@ public class TranslationInjector implements Injector {
 						PacketType.Play.Server.SCOREBOARD_OBJECTIVE, //
 						PacketType.Play.Server.SCOREBOARD_TEAM, //
 						PacketType.Play.Server.SCOREBOARD_SCORE, //
-						PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER) {
+						PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER, //
+						PacketType.Play.Server.SPAWN_ENTITY_LIVING, //
+						PacketType.Play.Server.ENTITY_METADATA) {
+					@SuppressWarnings("deprecation")
 					@Override
 					public void onPacketSending(PacketEvent event) {
 						if (event.getPlayer() == null)
@@ -60,7 +66,6 @@ public class TranslationInjector implements Injector {
 								if (item == null) {
 									continue;
 								}
-
 								translateItemStack(item, lang);
 							}
 						} else if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
@@ -71,9 +76,10 @@ public class TranslationInjector implements Injector {
 							packet.getStrings().write(0, translate(message, lang));
 						} else if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW) {
 							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
-							String message = translate(component.getJson(), lang);
+							String message = translate(
+									BattlebitsAPI.getParser().parse(component.getJson()).getAsString(), lang);
 							message = message.substring(0, message.length() > 32 ? 32 : message.length());
-							packet.getChatComponents().write(0, WrappedChatComponent.fromJson(message));
+							packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_OBJECTIVE) {
 							String message = event.getPacket().getStrings().read(1);
 							packet.getStrings().write(1, translate(message, lang));
@@ -135,6 +141,33 @@ public class TranslationInjector implements Injector {
 							if (footer != null)
 								packet.getChatComponents().write(1,
 										WrappedChatComponent.fromJson(translate(footer.getJson(), lang)));
+						} else if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
+							List<WrappedWatchableObject> objects = packet.getWatchableCollectionModifier().read(0);
+							for (WrappedWatchableObject obj : objects) {
+								if (obj.getIndex() == 2) {
+									String str = (String) obj.getRawValue();
+									str = translate(str, lang);
+									obj.setValue(str);
+									break;
+								}
+							}
+						} else if (event.getPacketType() == PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
+
+							int type = packet.getIntegers().read(1);
+
+							if (type != EntityType.ARMOR_STAND.getTypeId()) {
+								return;
+							}
+							List<WrappedWatchableObject> objects = packet.getDataWatcherModifier().read(0)
+									.getWatchableObjects();
+							for (WrappedWatchableObject obj : objects) {
+								if (obj.getIndex() == 2) {
+									String str = (String) obj.getRawValue();
+									str = translate(str, lang);
+									obj.setValue(str);
+									break;
+								}
+							}
 						}
 					}
 
@@ -155,7 +188,6 @@ public class TranslationInjector implements Injector {
 				List<String> newlore = new ArrayList<>();
 				for (String message : meta.getLore()) {
 					message = translate(message, lang);
-					;
 					if (message.contains("\n")) {
 						for (String s : message.split("\n"))
 							newlore.addAll(StringLoreUtils.formatForLore(s));
@@ -177,7 +209,7 @@ public class TranslationInjector implements Injector {
 			return "";
 		Matcher matcher = finder.matcher(message);
 		while (matcher.find()) {
-			message = message.replace(matcher.group(), T.t(lang, matcher.group(2)));
+			message = message.replace(matcher.group(), T.t(lang, matcher.group(2).toLowerCase()));
 		}
 		return message;
 	}
