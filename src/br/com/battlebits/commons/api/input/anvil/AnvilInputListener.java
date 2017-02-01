@@ -30,9 +30,12 @@ class AnvilInputListener implements Listener {
 							if (e.getCurrentItem().getType() != Material.AIR) {
 								if (e.getCurrentItem().hasItemMeta()) {
 									if (e.getCurrentItem().getItemMeta().hasDisplayName()) {
-										if (ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName().replace("&", "§")).length() >= 1) {
+										if (ChatColor.stripColor(
+												e.getCurrentItem().getItemMeta().getDisplayName().replace("&", "§"))
+												.length() >= 1) {
 											inputManager.handleClick(((Player) e.getWhoClicked()),
-													ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName().replace("&", "§")));
+													ChatColor.stripColor(e.getCurrentItem().getItemMeta()
+															.getDisplayName().replace("&", "§")));
 											e.setCancelled(true);
 											return;
 										}
