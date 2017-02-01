@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.core.loadbalancer.element;
+package br.com.battlebits.commons.core.server.loadbalancer.element;
 
 public interface NumberConnection {
 

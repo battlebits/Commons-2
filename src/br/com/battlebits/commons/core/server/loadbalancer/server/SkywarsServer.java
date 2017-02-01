@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.core.loadbalancer.server;
+package br.com.battlebits.commons.core.server.loadbalancer.server;
 
 public class SkywarsServer extends MinigameServer {
 
@@ -10,6 +10,11 @@ public class SkywarsServer extends MinigameServer {
 	@Override
 	public boolean canBeSelected() {
 		return super.canBeSelected() && (getState() == MinigameState.PREGAME && getTime() > 5);
+	}
+
+	@Override
+	public boolean isInProgress() {
+		return getState() != MinigameState.PREGAME;
 	}
 
 }

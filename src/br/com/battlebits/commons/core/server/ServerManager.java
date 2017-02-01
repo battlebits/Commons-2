@@ -3,13 +3,13 @@ package br.com.battlebits.commons.core.server;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.com.battlebits.commons.core.loadbalancer.BaseBalancer;
-import br.com.battlebits.commons.core.loadbalancer.server.BattleServer;
-import br.com.battlebits.commons.core.loadbalancer.server.HungerGamesServer;
-import br.com.battlebits.commons.core.loadbalancer.server.MinigameServer;
-import br.com.battlebits.commons.core.loadbalancer.server.MinigameState;
-import br.com.battlebits.commons.core.loadbalancer.type.LeastConnection;
-import br.com.battlebits.commons.core.loadbalancer.type.MostConnection;
+import br.com.battlebits.commons.core.server.loadbalancer.BaseBalancer;
+import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
+import br.com.battlebits.commons.core.server.loadbalancer.server.HungerGamesServer;
+import br.com.battlebits.commons.core.server.loadbalancer.server.MinigameServer;
+import br.com.battlebits.commons.core.server.loadbalancer.server.MinigameState;
+import br.com.battlebits.commons.core.server.loadbalancer.type.LeastConnection;
+import br.com.battlebits.commons.core.server.loadbalancer.type.MostConnection;
 
 public class ServerManager {
 

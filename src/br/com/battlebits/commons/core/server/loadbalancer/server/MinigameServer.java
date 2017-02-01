@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.core.loadbalancer.server;
+package br.com.battlebits.commons.core.server.loadbalancer.server;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +21,7 @@ public abstract class MinigameServer extends BattleServer {
 	public int getActualNumber() {
 		return super.getActualNumber();
 	}
+
+	public abstract boolean isInProgress();
 
 }

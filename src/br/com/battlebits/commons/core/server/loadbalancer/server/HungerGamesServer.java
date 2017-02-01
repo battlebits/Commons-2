@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.core.loadbalancer.server;
+package br.com.battlebits.commons.core.server.loadbalancer.server;
 
 public class HungerGamesServer extends MinigameServer {
 
@@ -9,9 +9,13 @@ public class HungerGamesServer extends MinigameServer {
 
 	@Override
 	public boolean canBeSelected() {
-		return super.canBeSelected() && getState() != MinigameState.INVENCIBILITY
-				&& getState() != MinigameState.GAMETIME
+		return super.canBeSelected() && !isInProgress()
 				&& ((getState() == MinigameState.PREGAME && getTime() >= 15) || getState() == MinigameState.WAITING);
+	}
+
+	@Override
+	public boolean isInProgress() {
+		return getState() == MinigameState.GAMETIME || getState() == MinigameState.INVENCIBILITY;
 	}
 
 }

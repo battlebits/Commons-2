@@ -19,9 +19,9 @@ import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.LeavePay
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StartPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StopPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.UpdatePayload;
-import br.com.battlebits.commons.core.loadbalancer.server.BattleServer;
-import br.com.battlebits.commons.core.loadbalancer.server.MinigameState;
 import br.com.battlebits.commons.core.server.ServerType;
+import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
+import br.com.battlebits.commons.core.server.loadbalancer.server.MinigameState;
 import br.com.battlebits.commons.core.translate.Language;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
-package br.com.battlebits.commons.core.loadbalancer.type;
+package br.com.battlebits.commons.core.server.loadbalancer.type;
 
-import br.com.battlebits.commons.core.loadbalancer.BaseBalancer;
-import br.com.battlebits.commons.core.loadbalancer.element.LoadBalancerObject;
+import br.com.battlebits.commons.core.server.loadbalancer.BaseBalancer;
+import br.com.battlebits.commons.core.server.loadbalancer.element.LoadBalancerObject;
 
 public class RoundRobin<T extends LoadBalancerObject> extends BaseBalancer<T> {
 
