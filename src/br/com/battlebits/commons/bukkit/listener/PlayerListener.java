@@ -14,12 +14,14 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Scoreboard;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.api.admin.AdminMode;
 import br.com.battlebits.commons.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeLeagueEvent;
+import br.com.battlebits.commons.bukkit.event.account.PlayerLanguageEvent;
 import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.translate.T;
@@ -70,6 +72,15 @@ public class PlayerListener implements Listener {
 					event.getPlayer().sendMessage("§%merry-christmas%§");
 				}
 			}.runTaskLater(BukkitMain.getPlugin(), 2);
+	}
+
+	@EventHandler
+	public void onLanguage(PlayerLanguageEvent event) {
+		Player p = event.getPlayer();
+		Scoreboard board = p.getScoreboard();
+		p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+		p.setScoreboard(board);
+		p.updateInventory();
 	}
 
 	@EventHandler

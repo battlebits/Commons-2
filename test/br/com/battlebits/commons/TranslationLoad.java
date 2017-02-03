@@ -1,4 +1,4 @@
-package br.com.battlebits.common;
+package br.com.battlebits.commons;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,12 +16,12 @@ import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.sql.MySQLBackend;
 import br.com.battlebits.commons.core.translate.Language;
 
-public class TrasnlationLoad {
+public class TranslationLoad {
 
 	public static void main(String[] args) {
 		BattlebitsAPI.setLogger(Logger.getGlobal());
-		MySQLBackend mysql = new MySQLBackend("localhost", "ycommon", "root", "", 3306);
-		MongoBackend mongo = new MongoBackend();
+		MySQLBackend mysql = new MySQLBackend("localhost", "ycommon", "root", "sMYDzGASzVE5hpCD", 3306);
+		MongoBackend mongo = new MongoBackend("localhost", "commons", "commons", "", 27017);
 		try {
 			mysql.startConnection();
 			mongo.startConnection();
@@ -46,5 +46,12 @@ public class TrasnlationLoad {
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
+		try {
+			mysql.closeConnection();
+			mongo.closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Traduções carregadas");
 	}
 }

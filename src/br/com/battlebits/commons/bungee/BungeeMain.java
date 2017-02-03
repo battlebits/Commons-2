@@ -1,5 +1,7 @@
 package br.com.battlebits.commons.bungee;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,7 +21,6 @@ import br.com.battlebits.commons.bungee.redis.BungeePubSubHandler;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
-import br.com.battlebits.commons.core.backend.sql.MySQLBackend;
 import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.server.ServerManager;
@@ -31,6 +32,9 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
 @Getter
 public class BungeeMain extends Plugin {
@@ -40,9 +44,20 @@ public class BungeeMain extends Plugin {
 	private BanManager banManager = new BanManager();
 
 	// CONNECTIONS
-	private MySQLBackend mysqlBackend;
+
+	private Configuration config;
 
 	private PubSubListener pubSubListener;
+
+	private String mongoHostname;
+	private String mongoDatabase;
+	private String mongoUsername;
+	private String mongoPassword;
+	private int mongoPort = 27017;
+
+	private String redisHostname;
+	private String redisPassword;
+	private int redisPort = 6379;
 
 	@Override
 	public void onLoad() {
@@ -52,8 +67,16 @@ public class BungeeMain extends Plugin {
 	@Override
 	public void onEnable() {
 		try {
-			MongoBackend mongoBackend = new MongoBackend();
-			RedisBackend redisBackend = new RedisBackend();
+			config = ConfigurationProvider.getProvider(YamlConfiguration.class)
+					.load(new File(getDataFolder(), "config.yml"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		loadConfiguration();
+		try {
+			MongoBackend mongoBackend = new MongoBackend(mongoHostname, mongoDatabase, mongoUsername, mongoPassword,
+					mongoPort);
+			RedisBackend redisBackend = new RedisBackend(redisHostname, redisPassword, redisPort);
 			mongoBackend.startConnection();
 			redisBackend.startConnection();
 			BattlebitsAPI.setMongo(mongoBackend);
@@ -64,7 +87,7 @@ public class BungeeMain extends Plugin {
 		BattlebitsAPI.setLogger(getLogger());
 		@SuppressWarnings("deprecation")
 		ListenerInfo info = getProxy().getConfig().getListeners().iterator().next();
-		BattlebitsAPI.setServerAddress(info.getHost().getHostName() + ":" + info.getHost().getPort());
+		BattlebitsAPI.setServerAddress(info.getHost().getHostString() + ":" + info.getHost().getPort());
 		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + BattlebitsAPI.getServerId());
 		DataServer.newServer(info.getMaxPlayers());
@@ -119,6 +142,18 @@ public class BungeeMain extends Plugin {
 		getProxy().getPluginManager().registerListener(this, new MessageListener(serverManager));
 		getProxy().getPluginManager().registerListener(this, new ScreenshareListener());
 		getProxy().getPluginManager().registerListener(this, new ServerListener());
+	}
+
+	private void loadConfiguration() {
+		mongoHostname = config.getString("mongo.hostname");
+		mongoPort = config.getInt("mongo.port");
+		mongoDatabase = config.getString("mongo.database");
+		mongoUsername = config.getString("mongo.username");
+		mongoPassword = config.getString("mongo.password");
+
+		redisHostname = config.getString("redis.hostname");
+		redisPassword = config.getString("redis.password");
+		redisPort = config.getInt("redis.port");
 	}
 
 	public boolean serverExists(String paramString) {

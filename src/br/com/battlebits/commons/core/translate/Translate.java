@@ -2,6 +2,8 @@ package br.com.battlebits.commons.core.translate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.core.data.DataServer;
@@ -9,7 +11,8 @@ import net.md_5.bungee.api.ChatColor;
 
 public class Translate {
 	private static Map<String, Map<Language, Map<String, String>>> languageTranslations = new HashMap<>();
-
+	private static Pattern finder = Pattern.compile("§%(([\\S^)]+)%§)");
+	
 	public static String getTranslation(Language language, String messageId) {
 		return getTranslation(language, messageId, null, null);
 	}
@@ -37,7 +40,10 @@ public class Translate {
 
 	public static String getTranslation(Language language, String messageId, String[] target, String[] replacement) {
 		String message = null;
-
+		Matcher matcher = finder.matcher(messageId);
+		while (matcher.find()) {
+			messageId = matcher.group(2).toLowerCase();
+		}
 		for (Map<Language, Map<String, String>> translations : languageTranslations.values()) {
 			if (!translations.containsKey(language)) {
 				BattlebitsAPI.debug(language.toString() + " > NAO ENCONTRADA");

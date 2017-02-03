@@ -151,15 +151,18 @@ public class DataPlayer extends Data {
 					: entry.getValue().getAsString();
 			playerElements.put(key, value);
 		}
-
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			jedis.hmset("account:" + player.getUniqueId().toString(), playerElements);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		BattlebitsAPI.debug("REDIS > SAVE SUCCESS");
 	}
 
 	public static void saveBattlePlayer(BattlePlayer player, String fieldName) {
+		System.out.println("REDIS");
 		saveBattleFieldRedis(player, fieldName);
+		System.out.println("MONGO");
 		saveBattleFieldMongo(player, fieldName);
 	}
 
@@ -181,6 +184,8 @@ public class DataPlayer extends Data {
 			pipe.publish("account-field", json.toString());
 
 			pipe.sync();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

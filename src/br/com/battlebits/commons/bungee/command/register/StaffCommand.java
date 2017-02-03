@@ -60,7 +60,7 @@ public class StaffCommand implements CommandClass {
 					finderPrefix + Translate.getTranslation(language, "command-finder-player-not-allowed")));
 			return;
 		}
-		String tag = Tag.valueOf(player.getServerGroup().toString()).getPrefix(language);
+		String tag = Tag.valueOf(player.getServerGroup().toString()).getPrefix();
 		String format = tag + (ChatColor.stripColor(tag).trim().length() > 0 ? " " : "") + player.getName();
 
 		TextComponent playerMessage = new TextComponent(format);
@@ -104,7 +104,7 @@ public class StaffCommand implements CommandClass {
 					continue;
 			for (UUID uuid : groups.get(group)) {
 				BattlePlayer bP = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
-				String tag = Tag.valueOf(bP.getServerGroup().toString()).getPrefix(lang);
+				String tag = Tag.valueOf(bP.getServerGroup().toString()).getPrefix();
 				String format = tag + (ChatColor.stripColor(tag).trim().length() > 0 ? " " : "") + bP.getName();
 				TextComponent playerMessage = new TextComponent(format);
 				TextComponent space = new TextComponent(ChatColor.WHITE + " - ");

@@ -54,7 +54,7 @@ public class TagListener implements Listener {
 				if (manager.getPlugin().isOldTag()) {
 					id = chars[bp.getTag().ordinal()] + "";
 				}
-				String tag = bp.getTag().getPrefix(player.getLanguage());
+				String tag = bp.getTag().getPrefix();
 				String league = " §7(" + bp.getLeague().getSymbol() + "§7)";
 				if (manager.getPlugin().isOldTag()) {
 					tag = tag.substring(tag.length() - 2, tag.length());
@@ -92,7 +92,7 @@ public class TagListener implements Listener {
 				BukkitPlayer bp = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(o.getUniqueId());
 				if (bp == null)
 					continue;
-				String tag = e.getNewTag().getPrefix(bp.getLanguage());
+				String tag = e.getNewTag().getPrefix();
 				String league = " §7(" + player.getLeague().getSymbol() + "§7)";
 				if (manager.getPlugin().isOldTag()) {
 					tag = tag.substring(tag.length() - 2, tag.length());

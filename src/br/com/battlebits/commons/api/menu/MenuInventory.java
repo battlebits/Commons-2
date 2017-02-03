@@ -48,8 +48,16 @@ public class MenuInventory {
 		setItem(firstEmpty(), item);
 	}
 
+	public void setItem(ItemStack item, int slot) {
+		setItem(slot, new MenuItem(item));
+	}
+
 	public void setItem(int slot, ItemStack item) {
 		setItem(slot, new MenuItem(item));
+	}
+
+	public void setItem(MenuItem item, int slot) {
+		setItem(slot, item);
 	}
 
 	public void setItem(int slot, MenuItem item) {

@@ -1,4 +1,4 @@
-package br.com.battlebits.common;
+package br.com.battlebits.commons;
 
 import java.lang.reflect.Modifier;
 import java.util.UUID;

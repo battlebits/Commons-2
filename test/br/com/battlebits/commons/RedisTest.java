@@ -1,4 +1,4 @@
-package br.com.battlebits.common;
+package br.com.battlebits.commons;
 
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import redis.clients.jedis.Jedis;

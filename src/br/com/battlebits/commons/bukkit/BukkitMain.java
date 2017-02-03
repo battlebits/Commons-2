@@ -2,6 +2,7 @@ package br.com.battlebits.commons.bukkit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -11,6 +12,7 @@ import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.api.item.ActionItemListener;
 import br.com.battlebits.commons.api.menu.MenuListener;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
+import br.com.battlebits.commons.bukkit.generator.VoidGenerator;
 import br.com.battlebits.commons.bukkit.injector.ActionItemInjector;
 import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
@@ -31,6 +33,7 @@ import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.util.updater.AutoUpdater;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,8 +49,19 @@ public class BukkitMain extends JavaPlugin {
 	private boolean tagControl = true;
 	private PubSubListener pubSubListener;
 
+	private String mongoHostname;
+	private String mongoDatabase;
+	private String mongoUsername;
+	private String mongoPassword;
+	private int mongoPort = 27017;
+
+	private String redisHostname;
+	private String redisPassword;
+	private int redisPort = 6379;
+
 	@Override
 	public void onLoad() {
+		getPlugin().setEnabled(!new AutoUpdater(this, "senha").run());
 		plugin = this;
 		procotolManager = ProtocolLibrary.getProtocolManager();
 		new TranslationInjector().inject(this);
@@ -56,9 +70,11 @@ public class BukkitMain extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		loadConfiguration();
 		try {
-			MongoBackend mongoBackend = new MongoBackend();
-			RedisBackend redisBackend = new RedisBackend();
+			MongoBackend mongoBackend = new MongoBackend(mongoHostname, mongoDatabase, mongoUsername, mongoPassword,
+					mongoPort);
+			RedisBackend redisBackend = new RedisBackend(redisHostname, redisPassword, redisPort);
 			mongoBackend.startConnection();
 			redisBackend.startConnection();
 			BattlebitsAPI.setMongo(mongoBackend);
@@ -95,6 +111,18 @@ public class BukkitMain extends JavaPlugin {
 		DataServer.stopServer();
 		BattlebitsAPI.getMongo().closeConnection();
 		BattlebitsAPI.getRedis().closeConnection();
+	}
+
+	private void loadConfiguration() {
+		mongoHostname = getConfig().getString("mongo.hostname");
+		mongoPort = getConfig().getInt("mongo.port");
+		mongoDatabase = getConfig().getString("mongo.database");
+		mongoUsername = getConfig().getString("mongo.username");
+		mongoPassword = getConfig().getString("mongo.password");
+
+		redisHostname = getConfig().getString("redis.hostname");
+		redisPassword = getConfig().getString("redis.password");
+		redisPort = getConfig().getInt("redis.port");
 	}
 
 	private void registerListeners() {
@@ -143,6 +171,11 @@ public class BukkitMain extends JavaPlugin {
 	private void enableCommonManagement() {
 		permissionManager.onEnable();
 		tagManager.onEnable();
+	}
+
+	@Override
+	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+		return new VoidGenerator();
 	}
 
 }

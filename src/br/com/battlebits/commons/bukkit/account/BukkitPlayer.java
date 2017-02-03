@@ -10,10 +10,12 @@ import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeLeagueEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeTagEvent;
+import br.com.battlebits.commons.bukkit.event.account.PlayerLanguageEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.account.League;
 import br.com.battlebits.commons.core.account.Tag;
 import br.com.battlebits.commons.core.permission.Group;
+import br.com.battlebits.commons.core.translate.Language;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -95,6 +97,12 @@ public class BukkitPlayer extends BattlePlayer {
 		loadTags();
 		if (getTag() == Tag.STAFF || !hasGroupPermission(Group.YOUTUBER))
 			setTag(getDefaultTag());
+	}
+
+	@Override
+	public void setLanguage(Language language) {
+		super.setLanguage(language);
+		Bukkit.getPluginManager().callEvent(new PlayerLanguageEvent(getBukkitPlayer(), this, language));
 	}
 
 	public UUID getLastTellUUID() {

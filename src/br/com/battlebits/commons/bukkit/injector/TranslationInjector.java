@@ -51,8 +51,10 @@ public class TranslationInjector implements Injector {
 							return;
 						if (event.getPlayer().getUniqueId() == null)
 							return;
+						if (event.getPacket() == null)
+							return;
 						Language lang = BattlePlayer.getLanguage(event.getPlayer().getUniqueId());
-						PacketContainer packet = event.getPacket();
+						PacketContainer packet = event.getPacket().deepClone();
 						if (event.getPacketType() == PacketType.Play.Server.CHAT) {
 							for (int i = 0; i < packet.getChatComponents().size(); i++) {
 								WrappedChatComponent chatComponent = packet.getChatComponents().read(i);
@@ -68,6 +70,7 @@ public class TranslationInjector implements Injector {
 								}
 								translateItemStack(item, lang);
 							}
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
 							ItemStack item = packet.getItemModifier().read(0);
 							packet.getItemModifier().write(0, translateItemStack(item, lang));
@@ -84,9 +87,30 @@ public class TranslationInjector implements Injector {
 							String message = event.getPacket().getStrings().read(1);
 							packet.getStrings().write(1, translate(message, lang));
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_TEAM) {
-							String text = packet.getStrings().read(2) + packet.getStrings().read(3);
-							Matcher matcher = finder.matcher(text);
+							String pre = packet.getStrings().read(2);
+							String su = packet.getStrings().read(3);
 							boolean matched = false;
+							Matcher matcher = finder.matcher(pre);
+							while (matcher.find()) {
+								pre = pre.replace(matcher.group(), T.t(lang, matcher.group(2)));
+								matched = true;
+							}
+							matcher = finder.matcher(su);
+							while (matcher.find()) {
+								su = su.replace(matcher.group(), T.t(lang, matcher.group(2)));
+								matched = true;
+							}
+							if (matched) {
+								if (pre.length() <= 16 && su.length() <= 16) {
+									packet.getStrings().write(2, pre);
+									packet.getStrings().write(3, su);
+									event.setPacket(packet);
+									return;
+								}
+							}
+							String text = packet.getStrings().read(2) + packet.getStrings().read(3);
+							matcher = finder.matcher(text);
+							matched = false;
 							while (matcher.find()) {
 								text = text.replace(matcher.group(), T.t(lang, matcher.group(2)));
 								matched = true;
@@ -169,6 +193,7 @@ public class TranslationInjector implements Injector {
 								}
 							}
 						}
+						event.setPacket(packet);
 					}
 
 				});

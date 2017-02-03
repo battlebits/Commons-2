@@ -1,6 +1,8 @@
 package br.com.battlebits.commons.bungee.command.register;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.ClearRedis;
+import br.com.battlebits.commons.TranslationLoad;
 import br.com.battlebits.commons.bungee.command.BungeeCommandArgs;
 import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
@@ -20,10 +22,13 @@ public class DebugCommand implements CommandClass {
 		cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText("Traduções BUNGEE recarregadas"));
 	}
 
-	@Command(name = "reloadservers", usage = "/<command>", aliases = { "rlservers", "reloadserver",
-			"rlserver" }, groupToUse = Group.DONO, noPermMessageId = "command-no-access")
-	public void reloadServers(BungeeCommandArgs cmdArgs) {
-		// TODO BungeeMain.getPlugin().getServerManager().loadServers();
-		cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText("Servidores recarregados!"));
+	@Command(name = "installtranslations", usage = "/<command>", aliases = {}, groupToUse = Group.DONO, noPermMessageId = "command-no-access")
+	public void installtranslations(BungeeCommandArgs cmdArgs) {
+		TranslationLoad.main(new String[0]);
+	}
+
+	@Command(name = "clearredis", usage = "/<command>", aliases = {}, groupToUse = Group.DONO, noPermMessageId = "command-no-access")
+	public void clearredis(BungeeCommandArgs cmdArgs) {
+		ClearRedis.main(new String[0]);
 	}
 }

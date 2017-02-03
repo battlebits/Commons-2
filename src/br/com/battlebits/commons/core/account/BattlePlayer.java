@@ -352,8 +352,11 @@ public class BattlePlayer {
 	}
 
 	public void setJoinData(String userName, String ipAdrress, String countryCode, String timeZoneCode) {
+		System.out.println("CHECK RANKS");
 		checkRanks();
+		System.out.println("SET NAME");
 		setName(userName);
+		System.out.println("CONFIG");
 		configuration.setPlayer(this);
 		this.ipAddress = ipAdrress;
 		setTimeZone(timeZoneCode);
@@ -361,18 +364,18 @@ public class BattlePlayer {
 		setCountryCode(countryCode);
 		this.online = true;
 		setServerConnectedType(ServerType.NONE);
-
+		System.out.println("SAVE REDIS");
 		DataPlayer.saveBattlePlayer(this, "joinTime");
-		DataPlayer.saveBattlePlayer(this, "countryCode");
 		DataPlayer.saveBattlePlayer(this, "online");
-		DataPlayer.saveBattlePlayer(this, "serverConnectedType");
 	}
 
 	private void setName(String name) {
 		if (!this.name.equals(name)) {
+			System.out.println("CHANGE");
 			this.name = name;
 			DataPlayer.saveBattlePlayer(this, "name");
 		}
+		System.out.println("NO SAVE");
 	}
 
 	public boolean setTag(Tag tag) {

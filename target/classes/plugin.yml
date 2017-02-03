@@ -1,5 +1,6 @@
 name: Commons
 authors: [GustavoInacio, vitorrdgs, LuanPereira]
 main: br.com.battlebits.commons.bukkit.BukkitMain
-version: ${project.version}
+version: 2.0
 depend: [ProtocolLib]
+load: STARTUP
