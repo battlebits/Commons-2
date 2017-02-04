@@ -27,9 +27,13 @@ public class AutoUpdater {
 	private boolean failed = false;
 
 	public AutoUpdater(Plugin plugin, String password) {
+		this(plugin, plugin.getName(), plugin.getDescription().getVersion(), password);
+	}
+
+	public AutoUpdater(Plugin plugin, String pluginName, String actualVersion, String password) {
 		this.plugin = plugin;
-		this.pluginName = plugin.getName();
-		versaoAtual = plugin.getDescription().getVersion();
+		this.pluginName = pluginName;
+		versaoAtual = actualVersion;
 		this.pluginPwd = password;
 	}
 
