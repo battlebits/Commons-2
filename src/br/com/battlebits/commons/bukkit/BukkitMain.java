@@ -61,7 +61,7 @@ public class BukkitMain extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
-		getPlugin().setEnabled(!new AutoUpdater(this, "vAPS4jf?&R_}E25T").run());
+		new AutoUpdater(this, "vAPS4jf?&R_}E25T").run();
 		plugin = this;
 		procotolManager = ProtocolLibrary.getProtocolManager();
 		new TranslationInjector().inject(this);

@@ -51,6 +51,17 @@ public class PlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onJoin(PlayerJoinEvent event) {
+		if (BattlebitsAPI.isChristmas())
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					event.getPlayer().sendMessage("§%merry-christmas%§");
+				}
+			}.runTaskLater(BukkitMain.getPlugin(), 2);
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onJoinMonitor(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		VanishAPI.getInstance().updateVanishToPlayer(player);
 		for (Player online : Bukkit.getOnlinePlayers()) {
@@ -64,14 +75,6 @@ public class PlayerListener implements Listener {
 			} else if (!online.canSee(player))
 				online.showPlayer(player);
 		}
-
-		if (BattlebitsAPI.isChristmas())
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					event.getPlayer().sendMessage("§%merry-christmas%§");
-				}
-			}.runTaskLater(BukkitMain.getPlugin(), 2);
 	}
 
 	@EventHandler

@@ -24,7 +24,7 @@ public class MongoBackend implements Backend {
 	}
 
 	@Override
-	public void startConnection(){
+	public void startConnection() {
 		List<ServerAddress> seeds = new ArrayList<ServerAddress>();
 		seeds.add(new ServerAddress(hostname, port));
 		List<MongoCredential> credentials = new ArrayList<MongoCredential>();
@@ -35,7 +35,7 @@ public class MongoBackend implements Backend {
 	}
 
 	@Override
-	public void closeConnection(){
+	public void closeConnection() {
 		client.close();
 	}
 
