@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bukkit.plugin.Plugin;
 
 public class AutoUpdater {
@@ -70,7 +71,7 @@ public class AutoUpdater {
 		FileInputStream fileInput = null;
 		BufferedInputStream bufferedInput = null;
 		try {
-			socket = new Socket("localhost", 63973);
+			socket = new Socket("update.battlebits.com.br", 63973);
 
 			output = socket.getOutputStream();
 			input = socket.getInputStream();
@@ -86,7 +87,7 @@ public class AutoUpdater {
 				throw new FailedException("Usuario nao e valido");
 			}
 
-			dataOutput.writeUTF(pluginPwd);
+			dataOutput.writeUTF(DigestUtils.sha384Hex(pluginPwd));
 			dataOutput.flush();
 
 			answer = dataInput.readUTF();
