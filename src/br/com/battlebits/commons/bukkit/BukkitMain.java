@@ -3,6 +3,7 @@ package br.com.battlebits.commons.bukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -65,6 +66,18 @@ public class BukkitMain extends JavaPlugin {
 	@Override
 	public void onLoad() {
 		new AutoUpdater(this, "vAPS4jf?&R_}E25T").run();
+		Plugin plugin = getServer().getPluginManager().getPlugin("ViaVersion");
+		if (plugin != null)
+			new AutoUpdater(plugin, "Yw7~=#/7Uw(L:;QG").run();
+		plugin = getServer().getPluginManager().getPlugin("ProtocolSupport");
+		if (plugin != null)
+			new AutoUpdater(plugin, "Y285jZEB<-CPs{8x").run();
+		plugin = getServer().getPluginManager().getPlugin("ProtocolLib");
+		if (plugin != null)
+			new AutoUpdater(plugin, "LV3SMrVwM_-BR~q7").run();
+		plugin = getServer().getPluginManager().getPlugin("ProtocolSupportLegacyHologram");
+		if (plugin != null)
+			new AutoUpdater(plugin, "r'E9q(@P?2dVc4Ng").run();
 		plugin = this;
 		procotolManager = ProtocolLibrary.getProtocolManager();
 		new TranslationInjector().inject(this);
