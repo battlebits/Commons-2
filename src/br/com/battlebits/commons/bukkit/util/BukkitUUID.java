@@ -10,7 +10,7 @@ import br.com.battlebits.commons.util.mojang.UUIDGetter;
 public class BukkitUUID implements UUIDGetter {
 	@Override
 	public UUID getUuid(String str) {
-		Player player = BukkitMain.getPlugin().getServer().getPlayer(str);
+		Player player = BukkitMain.getInstance().getServer().getPlayer(str);
 		if (player == null)
 			return null;
 		return player.getUniqueId();

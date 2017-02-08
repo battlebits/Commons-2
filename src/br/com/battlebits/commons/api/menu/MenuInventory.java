@@ -134,7 +134,7 @@ public class MenuInventory {
 			packet.getStrings().write(0, "minecraft:chest");
 			packet.getIntegers().write(0, id);
 			packet.getIntegers().write(1, rows * 9);
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(p, packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(p, packet);
 			int i = 0;
 			for (ItemStack item : p.getInventory().getContents()) {
 				p.getInventory().setItem(i, item);

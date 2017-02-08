@@ -45,7 +45,7 @@ public class AnvilInputGui {
 			packet.getIntegers().write(1, 0);
 			packet.getStrings().write(0, "minecraft:anvil");
 			packet.getChatComponents().write(0, WrappedChatComponent.fromText("Repairing"));
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(getPlayer(), packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(getPlayer(), packet);
 
 			Field f = Reflection.getField(entityPlayer.getClass(), "activeContainer");
 

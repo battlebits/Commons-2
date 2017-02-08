@@ -30,7 +30,7 @@ public class BukkitPubSubHandler extends JedisPubSub {
 				return;
 			}
 			UUID uuid = UUID.fromString(obj.getAsJsonPrimitive("uniqueId").getAsString());
-			Player p = BukkitMain.getPlugin().getServer().getPlayer(uuid);
+			Player p = BukkitMain.getInstance().getServer().getPlayer(uuid);
 			if (p == null)
 				return;
 			String field = obj.getAsJsonPrimitive("field").getAsString();

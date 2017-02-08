@@ -46,7 +46,7 @@ public class BukkitMain extends JavaPlugin {
 	private PermissionManager permissionManager;
 	private TagManager tagManager;
 	@Getter
-	private static BukkitMain plugin;
+	private static BukkitMain instance;
 	private boolean oldTag = false;
 	@Setter
 	private boolean tagControl = true;
@@ -66,6 +66,7 @@ public class BukkitMain extends JavaPlugin {
 
 	@Override
 	public void onLoad() {
+		instance = this;
 		new AutoUpdater(this, "vAPS4jf?&R_}E25T").run();
 		Plugin plugin = getServer().getPluginManager().getPlugin("ViaVersion");
 		if (plugin != null)
@@ -117,7 +118,7 @@ public class BukkitMain extends JavaPlugin {
 				pubSubListener = new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field"));
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
 		try {
-			new CommandLoader(new BukkitCommandFramework(plugin))
+			new CommandLoader(new BukkitCommandFramework(this))
 					.loadCommandsFromPackage("br.com.battlebits.commons.bukkit.command.register");
 		} catch (Exception e) {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");

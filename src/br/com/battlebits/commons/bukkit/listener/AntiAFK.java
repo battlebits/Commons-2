@@ -26,7 +26,7 @@ public class AntiAFK implements Listener {
 
 	public void addTime(Player p) {
 		int time = 0;
-		if (!BukkitMain.getPlugin().isAntiAfkEnabled())
+		if (!BukkitMain.getInstance().isAntiAfkEnabled())
 			return;
 		if (afkMap.containsKey(p.getUniqueId()))
 			time = afkMap.get(p.getUniqueId());
@@ -45,7 +45,7 @@ public class AntiAFK implements Listener {
 	public void onPlayerQuitListener(UpdateEvent event) {
 		if (event.getType() != UpdateType.SECOND)
 			return;
-		if (!BukkitMain.getPlugin().isAntiAfkEnabled())
+		if (!BukkitMain.getInstance().isAntiAfkEnabled())
 			return;
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			Location loc = locations.get(p.getUniqueId());

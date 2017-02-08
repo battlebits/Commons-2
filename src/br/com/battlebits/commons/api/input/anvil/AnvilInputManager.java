@@ -18,7 +18,7 @@ public class AnvilInputManager {
 	public AnvilInputManager() {
 		uuidAnvils = new HashMap<>();
 		anvilInputListener = new AnvilInputListener(this);
-		Bukkit.getPluginManager().registerEvents(anvilInputListener, BukkitMain.getPlugin());
+		Bukkit.getPluginManager().registerEvents(anvilInputListener, BukkitMain.getInstance());
 	}
 
 	public void stop() {

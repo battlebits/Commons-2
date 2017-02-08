@@ -49,7 +49,7 @@ public class TitleAPI {
 		packet.getTitleActions().write(0, TitleAction.TITLE);
 		packet.getChatComponents().write(0, WrappedChatComponent.fromText(string));
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, packet);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -60,7 +60,7 @@ public class TitleAPI {
 		packet.getTitleActions().write(0, TitleAction.SUBTITLE);
 		packet.getChatComponents().write(0, WrappedChatComponent.fromText(string));
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, packet);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -73,7 +73,7 @@ public class TitleAPI {
 		packet.getIntegers().write(1, stayTime * (ticks ? 1 : 20));
 		packet.getIntegers().write(2, fadeOutTime * (ticks ? 1 : 20));
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, packet);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -83,7 +83,7 @@ public class TitleAPI {
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.TITLE);
 		packet.getTitleActions().write(0, TitleAction.RESET);
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, packet);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
@@ -93,7 +93,7 @@ public class TitleAPI {
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.TITLE);
 		packet.getTitleActions().write(0, TitleAction.CLEAR);
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, packet);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}

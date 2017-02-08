@@ -40,7 +40,7 @@ public class BukkitPlayer extends BattlePlayer {
 			tag = getDefaultTag();
 		}
 		PlayerChangeTagEvent event = new PlayerChangeTagEvent(getBukkitPlayer(), getTag(), tag, forcetag);
-		BukkitMain.getPlugin().getServer().getPluginManager().callEvent(event);
+		BukkitMain.getInstance().getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			if (!forcetag)
 				super.setTag(tag);
@@ -69,7 +69,7 @@ public class BukkitPlayer extends BattlePlayer {
 	@Override
 	public void setLeague(League liga) {
 		PlayerChangeLeagueEvent event = new PlayerChangeLeagueEvent(getBukkitPlayer(), this, getLeague(), liga);
-		BukkitMain.getPlugin().getServer().getPluginManager().callEvent(event);
+		BukkitMain.getInstance().getServer().getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			super.setLeague(liga);
 		}

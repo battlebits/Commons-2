@@ -23,7 +23,7 @@ public class TagCommand implements CommandClass {
 			String[] args = cmdArgs.getArgs();
 			BukkitPlayer player = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 			String prefix = Translate.getTranslation(player.getLanguage(), "command-tag-prefix") + " ";
-			if (!BukkitMain.getPlugin().isTagControl()) {
+			if (!BukkitMain.getInstance().isTagControl()) {
 				p.sendMessage(prefix + "§%command-tag-not-enabled%§");
 				return;
 			}

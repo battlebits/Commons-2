@@ -30,7 +30,7 @@ public class BungeeCordMessenger implements PluginMessageListener {
 			}
 			AdminMode.getInstance().setAdmin(player);
 			UUID uuid = UUID.fromString(uuidStr);
-			Player p = BukkitMain.getPlugin().getServer().getPlayer(uuid);
+			Player p = BukkitMain.getInstance().getServer().getPlayer(uuid);
 			player.chat("/tp " + p.getName());
 		}
 	}

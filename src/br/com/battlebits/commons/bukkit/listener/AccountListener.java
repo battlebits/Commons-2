@@ -126,7 +126,7 @@ public class AccountListener implements Listener {
 			public void run() {
 				DataServer.joinPlayer(event.getPlayer().getUniqueId());
 			}
-		}.runTaskAsynchronously(BukkitMain.getPlugin());
+		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

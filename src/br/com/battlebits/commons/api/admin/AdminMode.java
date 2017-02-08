@@ -32,7 +32,7 @@ public class AdminMode {
 		if (!admin.contains(p.getUniqueId()))
 			admin.add(p.getUniqueId());
 		PlayerAdminModeEvent event = new PlayerAdminModeEvent(p, PlayerAdminModeEvent.AdminMode.ADMIN, GameMode.CREATIVE);
-		BukkitMain.getPlugin().getServer().getPluginManager().callEvent(event);
+		BukkitMain.getInstance().getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled())
 			return;
 		p.setGameMode(event.getGameMode());
@@ -46,7 +46,7 @@ public class AdminMode {
 
 	public void setPlayer(Player p) {
 		PlayerAdminModeEvent event = new PlayerAdminModeEvent(p, PlayerAdminModeEvent.AdminMode.PLAYER, GameMode.SURVIVAL);
-		BukkitMain.getPlugin().getServer().getPluginManager().callEvent(event);
+		BukkitMain.getInstance().getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled())
 			return;
 		if (admin.contains(p.getUniqueId())) {

@@ -327,7 +327,7 @@ public class ModeratorCommand implements CommandClass {
 			return;
 		}
 
-		Player target = BukkitMain.getPlugin().getServer().getPlayer(args[0]);
+		Player target = BukkitMain.getInstance().getServer().getPlayer(args[0]);
 		if (target == null) {
 			sender.sendMessage(prefix + Translate.getTranslation(language, "player-not-found"));
 			return;

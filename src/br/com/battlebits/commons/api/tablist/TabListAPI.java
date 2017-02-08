@@ -74,7 +74,7 @@ public class TabListAPI {
 		packet.getChatComponents().write(1, WrappedChatComponent.fromText(rawFooter));
 
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(p, packet);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(p, packet);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}

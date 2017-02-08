@@ -70,7 +70,7 @@ public class ActionItemListener implements Listener {
 			}
 			Block b = event.getBlock();
 			int id = compound.getInteger("interactHandler");
-			b.setMetadata("interactHandler", new FixedMetadataValue(BukkitMain.getPlugin(), id));
+			b.setMetadata("interactHandler", new FixedMetadataValue(BukkitMain.getInstance(), id));
 			b.getDrops().clear();
 			b.getDrops().add(ActionItemStack
 					.setTag(new ItemStack(event.getBlock().getType(), 1, event.getBlock().getData()), id));

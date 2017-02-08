@@ -17,7 +17,7 @@ public class ActionBarAPI {
 		chatPacket.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + text + " \"}"));
 		chatPacket.getBytes().write(0, (byte) 2);
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, chatPacket);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, chatPacket);
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("Cannot send packet " + chatPacket, e);
 		}

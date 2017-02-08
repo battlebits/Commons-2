@@ -51,7 +51,7 @@ public class PlayerListener implements Listener {
 					public void run() {
 						DataServer.setJoinEnabled(!Bukkit.hasWhitelist());
 					}
-				}.runTaskLaterAsynchronously(BukkitMain.getPlugin(), 2);
+				}.runTaskLaterAsynchronously(BukkitMain.getInstance(), 2);
 			}
 		}
 	}
@@ -64,7 +64,7 @@ public class PlayerListener implements Listener {
 				public void run() {
 					event.getPlayer().sendMessage("§%merry-christmas%§");
 				}
-			}.runTaskLater(BukkitMain.getPlugin(), 2);
+			}.runTaskLater(BukkitMain.getInstance(), 2);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

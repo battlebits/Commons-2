@@ -106,7 +106,7 @@ public class ChatListener implements Listener {
 								return;
 							p.kickPlayer("ERROR");
 						}
-					}.runTask(BukkitMain.getPlugin());
+					}.runTask(BukkitMain.getInstance());
 					continue;
 				}
 				if ((!receiver.getConfiguration().isIgnoreAll())
@@ -171,7 +171,7 @@ public class ChatListener implements Listener {
 				e.printStackTrace();
 			}
 		}
-		BukkitMain.getPlugin().getLogger().info("<" + player.getName() + "> " + event.getMessage());
+		BukkitMain.getInstance().getLogger().info("<" + player.getName() + "> " + event.getMessage());
 		player = null;
 	}
 }

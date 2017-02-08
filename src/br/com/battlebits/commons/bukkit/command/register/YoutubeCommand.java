@@ -42,7 +42,7 @@ public class YoutubeCommand implements CommandClass {
 				public void run() {
 					fakeremove(args);
 				}
-			}.runTask(BukkitMain.getPlugin());
+			}.runTask(BukkitMain.getInstance());
 			return;
 		}
 
@@ -58,7 +58,7 @@ public class YoutubeCommand implements CommandClass {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				BukkitMain.getPlugin().getTagManager().removePlayerTag(p);
+				BukkitMain.getInstance().getTagManager().removePlayerTag(p);
 				FakePlayerAPI.removePlayerSkin(p, false);
 				FakePlayerAPI.changePlayerName(p, playerName, true);
 				bP.setTag(bP.getTag());
@@ -66,7 +66,7 @@ public class YoutubeCommand implements CommandClass {
 				p.sendMessage(
 						fakePrefix + Translate.getTranslation(args.getLanguage(), "command-fake-changed-success"));
 			}
-		}.runTask(BukkitMain.getPlugin());
+		}.runTask(BukkitMain.getInstance());
 	}
 
 	@Command(name = "fakeremove", aliases = { "removefake",
@@ -85,7 +85,7 @@ public class YoutubeCommand implements CommandClass {
 		}
 		bP.setFakeName("");
 
-		BukkitMain.getPlugin().getTagManager().removePlayerTag(p);
+		BukkitMain.getInstance().getTagManager().removePlayerTag(p);
 		FakePlayerAPI.changePlayerSkin(p, bP.getName(), bP.getUniqueId(), false);
 		FakePlayerAPI.changePlayerName(p, bP.getName(), true);
 		bP.setTag(bP.getTag());
@@ -125,6 +125,6 @@ public class YoutubeCommand implements CommandClass {
 				p.sendMessage(fakePrefix
 						+ Translate.getTranslation(args.getLanguage(), "command-changeskin-changed-success"));
 			}
-		}.runTask(BukkitMain.getPlugin());
+		}.runTask(BukkitMain.getInstance());
 	}
 }

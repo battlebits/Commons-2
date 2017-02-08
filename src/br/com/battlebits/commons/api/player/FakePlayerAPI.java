@@ -79,7 +79,7 @@ public class FakePlayerAPI {
 			if (!online.canSee(player))
 				continue;
 			try {
-				BukkitMain.getPlugin().getProcotolManager().sendServerPacket(online, packet);
+				BukkitMain.getInstance().getProcotolManager().sendServerPacket(online, packet);
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -106,7 +106,7 @@ public class FakePlayerAPI {
 			if (!online.canSee(player))
 				continue;
 			try {
-				BukkitMain.getPlugin().getProcotolManager().sendServerPacket(online, packet);
+				BukkitMain.getInstance().getProcotolManager().sendServerPacket(online, packet);
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -156,9 +156,9 @@ public class FakePlayerAPI {
 		respawnPlayer.getWorldTypeModifier().write(0, player.getWorld().getWorldType());
 		boolean isFlying = player.isFlying();
 		try {
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, removePlayerInfo);
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, addPlayerInfo);
-			BukkitMain.getPlugin().getProcotolManager().sendServerPacket(player, respawnPlayer);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, removePlayerInfo);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, addPlayerInfo);
+			BukkitMain.getInstance().getProcotolManager().sendServerPacket(player, respawnPlayer);
 			player.teleport(player.getLocation());
 			player.setFlying(isFlying);
 		} catch (InvocationTargetException e) {
