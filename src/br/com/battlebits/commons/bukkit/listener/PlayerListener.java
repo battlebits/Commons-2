@@ -22,7 +22,9 @@ import br.com.battlebits.commons.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeLeagueEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerLanguageEvent;
+import br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent;
 import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
+import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.translate.T;
 
@@ -44,7 +46,12 @@ public class PlayerListener implements Listener {
 		if (event.getMessage().toLowerCase().startsWith("/whitelist ")) {
 			if (event.getPlayer().hasPermission("minecraft.command.whitelist")
 					|| event.getPlayer().hasPermission("bukkit.command.whitelist")) {
-				// TODO Cancel Join
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						DataServer.setJoinEnabled(!Bukkit.hasWhitelist());
+					}
+				}.runTaskLaterAsynchronously(BukkitMain.getPlugin(), 2);
 			}
 		}
 	}
@@ -98,20 +105,19 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onJoinUpdate(PlayerJoinEvent event) {
-		// TODO Send Player Join Count (+1)
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onQuitUpdate(PlayerQuitEvent event) {
-		// TODO Send Player Leave Count (+1)
-	}
-
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		AdminMode.getInstance().removeAdmin(event.getPlayer());
 		VanishAPI.getInstance().removeVanish(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onAdminMode(PlayerAdminModeEvent event) {
+		if(event.getAdminMode() == br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent.AdminMode.ADMIN) {
+			DataServer.leavePlayer(event.getPlayer().getUniqueId());
+		} else {
+			DataServer.joinPlayer(event.getPlayer().getUniqueId());
+		}
 	}
 
 	@EventHandler
