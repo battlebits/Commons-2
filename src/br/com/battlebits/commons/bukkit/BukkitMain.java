@@ -15,6 +15,7 @@ import br.com.battlebits.commons.api.menu.MenuListener;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
 import br.com.battlebits.commons.bukkit.generator.VoidGenerator;
 import br.com.battlebits.commons.bukkit.injector.ActionItemInjector;
+import br.com.battlebits.commons.bukkit.injector.ServerInfoInjector;
 import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
 import br.com.battlebits.commons.bukkit.listener.AntiAFK;
@@ -84,6 +85,7 @@ public class BukkitMain extends JavaPlugin {
 		procotolManager = ProtocolLibrary.getProtocolManager();
 		new TranslationInjector().inject(this);
 		new ActionItemInjector().inject(this);
+		new ServerInfoInjector().inject(this);
 	}
 
 	@Override
