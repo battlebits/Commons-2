@@ -18,6 +18,7 @@ import br.com.battlebits.commons.bungee.listener.ServerListener;
 import br.com.battlebits.commons.bungee.manager.BanManager;
 import br.com.battlebits.commons.bungee.manager.BungeeServerManager;
 import br.com.battlebits.commons.bungee.redis.BungeePubSubHandler;
+import br.com.battlebits.commons.bungee.util.BungeeUUID;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
@@ -84,6 +85,7 @@ public class BungeeMain extends Plugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		BattlebitsAPI.setGetter(new BungeeUUID());
 		BattlebitsAPI.setLogger(getLogger());
 		@SuppressWarnings("deprecation")
 		ListenerInfo info = getProxy().getConfig().getListeners().iterator().next();

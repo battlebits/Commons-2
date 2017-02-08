@@ -18,6 +18,7 @@ import br.com.battlebits.commons.core.clan.ClanCommon;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.util.mojang.NameFetcher;
 import br.com.battlebits.commons.util.mojang.UUIDFetcher;
+import br.com.battlebits.commons.util.mojang.UUIDGetter;
 import br.com.battlebits.commons.util.timezone.TimeZone;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,6 +56,9 @@ public class BattlebitsAPI {
 	public static TimeZone DEFAULT_TIME_ZONE = TimeZone.GMT0;
 	@Getter
 	public static Language defaultLanguage = Language.PORTUGUESE;
+
+	@Setter
+	private static UUIDGetter getter;
 
 	@Getter
 	@Setter
@@ -97,6 +101,8 @@ public class BattlebitsAPI {
 	}
 
 	public static UUID getUUIDOf(String string) {
+		if (getter.getUuid(string) != null)
+			return getter.getUuid(string);
 		return uuidFetcher.getUUID(string);
 	}
 

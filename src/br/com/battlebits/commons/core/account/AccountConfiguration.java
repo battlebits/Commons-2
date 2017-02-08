@@ -12,7 +12,7 @@ public class AccountConfiguration {
 	private boolean ignoreAll = false;
 	private boolean tellEnabled = true;
 	private boolean canPlaySound = true;
-	private boolean showAlerts = true;
+	private boolean alertsEnabled = true;
 	private boolean staffChatEnabled = false;
 	private boolean clanChatEnabled = false;
 	@Setter
@@ -43,10 +43,10 @@ public class AccountConfiguration {
 		}
 	}
 
-	public void setShowAlerts(boolean showAlerts) {
-		if (this.showAlerts != showAlerts) {
-			this.showAlerts = showAlerts;
-			DataPlayer.saveConfigField(player, "showAlerts");
+	public void setAlertsEnabled(boolean showAlerts) {
+		if (this.alertsEnabled != showAlerts) {
+			this.alertsEnabled = showAlerts;
+			DataPlayer.saveConfigField(player, "alertsEnabled");
 		}
 	}
 

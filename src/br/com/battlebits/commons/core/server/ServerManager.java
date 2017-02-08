@@ -3,6 +3,7 @@ package br.com.battlebits.commons.core.server;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.core.server.loadbalancer.BaseBalancer;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.core.server.loadbalancer.server.HungerGamesServer;
@@ -40,6 +41,7 @@ public class ServerManager {
 	}
 
 	public void addActiveServer(String serverAddress, String serverIp, int maxPlayers) {
+		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + serverIp);
 		updateActiveServer(serverIp, 0, maxPlayers, true);
 	}
 
@@ -69,6 +71,8 @@ public class ServerManager {
 	}
 
 	public BattleServer getServer(String str) {
+		if (!activeServers.containsKey(str.toLowerCase()))
+			return null;
 		return activeServers.get(str.toLowerCase());
 	}
 

@@ -89,6 +89,14 @@ public class VanishAPI {
 		setPlayerVanishToGroup(player, null);
 	}
 
+	public void updateVanish(Player player) {
+		setPlayerVanishToGroup(player, getVanishedToGroup(player.getUniqueId()));
+	}
+
+	public Group getVanishedToGroup(UUID uuid) {
+		return vanishedToGroup.get(uuid);
+	}
+
 	public void removeVanish(Player p) {
 		vanishedToGroup.remove(p.getUniqueId());
 	}

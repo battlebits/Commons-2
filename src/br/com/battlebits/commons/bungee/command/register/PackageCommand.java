@@ -29,7 +29,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class PackageCommand implements CommandClass {
 
 	@Command(name = "givevip", usage = "/<command> <player> <tempo> <group>", groupToUse = Group.DONO, aliases = {
-			"darvip" }, noPermMessageId = "command-givevip-no-access", runAsync = true)
+			"darvip" }, noPermMessageId = "command-givevip-no-access")
 	public void givevip(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = cmdArgs.getSender();
 		final String[] args = cmdArgs.getArgs();
@@ -110,7 +110,7 @@ public class PackageCommand implements CommandClass {
 	}
 
 	@Command(name = "removevip", usage = "/<command> <player> <group>", groupToUse = Group.DONO, aliases = {
-			"removervip" }, noPermMessageId = "command-removevip-no-access", runAsync = true)
+			"removervip" }, noPermMessageId = "command-removevip-no-access")
 	public void removevip(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = cmdArgs.getSender();
 		final String[] args = cmdArgs.getArgs();
@@ -227,7 +227,7 @@ public class PackageCommand implements CommandClass {
 	}
 
 	@Command(name = "torneioadd", aliases = {
-			"tadd" }, groupToUse = Group.DONO, noPermMessageId = "command-torneio-no-access", runAsync = true)
+			"tadd" }, groupToUse = Group.DONO, noPermMessageId = "command-torneio-no-access")
 	public void torneioadd(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = cmdArgs.getSender();
 		final String[] args = cmdArgs.getArgs();
@@ -279,7 +279,7 @@ public class PackageCommand implements CommandClass {
 	}
 
 	@Command(name = "torneioremove", aliases = {
-			"tremove" }, groupToUse = Group.DONO, noPermMessageId = "command-torneio-no-access", runAsync = true)
+			"tremove" }, groupToUse = Group.DONO, noPermMessageId = "command-torneio-no-access")
 	public void torneioremove(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = cmdArgs.getSender();
 		final String[] args = cmdArgs.getArgs();

@@ -160,9 +160,7 @@ public class DataPlayer extends Data {
 	}
 
 	public static void saveBattlePlayer(BattlePlayer player, String fieldName) {
-		System.out.println("REDIS");
 		saveBattleFieldRedis(player, fieldName);
-		System.out.println("MONGO");
 		saveBattleFieldMongo(player, fieldName);
 	}
 

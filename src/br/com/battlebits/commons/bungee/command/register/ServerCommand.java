@@ -1,10 +1,15 @@
 package br.com.battlebits.commons.bungee.command.register;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.command.BukkitCommandArgs;
 import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.bungee.command.BungeeCommandArgs;
 import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
+import br.com.battlebits.commons.core.command.CommandFramework.Completer;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
@@ -15,6 +20,7 @@ import br.com.battlebits.commons.core.twitter.Twitter;
 import br.com.battlebits.commons.core.twitter.TwitterAccount;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import twitter4j.TwitterException;
 
@@ -55,6 +61,21 @@ public class ServerCommand implements CommandClass {
 				p.sendMessage(TextComponent.fromLegacyText(""));
 			}
 		}
+	}
+
+	@Completer(name = "connect", aliases = { "server", "con" })
+	public List<String> onCompleter(BukkitCommandArgs args) {
+		List<String> list = new ArrayList<>();
+		if (args.isPlayer()) {
+			if (args.getArgs().length == 1) {
+				for (ServerInfo info : BungeeMain.getPlugin().getProxy().getServers().values()) {
+					if (info.getName().toLowerCase().startsWith(args.getArgs()[0].toLowerCase())) {
+						list.add(info.getName());
+					}
+				}
+			}
+		}
+		return list;
 	}
 
 	@Command(name = "hungergames", usage = "/<command>", aliases = { "hg" })

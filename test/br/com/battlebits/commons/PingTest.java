@@ -9,8 +9,8 @@ public class PingTest {
 
 	public static void main(String[] args) {
 		PingTest test = new PingTest();
-		int i = 1000;
-		while (i < 65535) {
+		int i = 1;
+		while (i < 256) {
 			if (test.getValue() > 1000) {
 				try {
 					Thread.sleep(100L);
@@ -29,29 +29,12 @@ public class PingTest {
 					Socket socket = null;
 
 					try {
-						socket = new Socket("164.132.205.101", k);
+						socket = new Socket("187.108.195." + k, 80);
 						socket.setTcpNoDelay(true);
 						socket.setSoTimeout(1000);
 
-						DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-						DataInputStream in = new DataInputStream(socket.getInputStream());
 
-						out.write(0xFE);
-
-						int b;
-						StringBuffer str = new StringBuffer();
-						while ((b = in.read()) != -1) {
-							if (b != 0 && b > 16 && b != 255 && b != 23 && b != 24) {
-								str.append((char) b);
-							}
-						}
-
-						String[] data = str.toString().split("§");
-						String serverMotd = data[0];
-						int onlinePlayers = Integer.parseInt(data[1]);
-						int maxPlayers = Integer.parseInt(data[2]);
-
-						System.out.println(serverMotd + " / " + onlinePlayers + " / " + maxPlayers + " / " + k);
+						System.out.println(socket.getInetAddress().getHostAddress() + " / ");
 
 					} catch (Exception e) {
 					}

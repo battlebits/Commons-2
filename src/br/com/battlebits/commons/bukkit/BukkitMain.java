@@ -24,6 +24,7 @@ import br.com.battlebits.commons.bukkit.permission.PermissionManager;
 import br.com.battlebits.commons.bukkit.redis.BukkitPubSubHandler;
 import br.com.battlebits.commons.bukkit.scheduler.UpdateScheduler;
 import br.com.battlebits.commons.bukkit.scoreboard.tagmanager.TagManager;
+import br.com.battlebits.commons.bukkit.util.BukkitUUID;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
@@ -48,6 +49,8 @@ public class BukkitMain extends JavaPlugin {
 	@Setter
 	private boolean tagControl = true;
 	private PubSubListener pubSubListener;
+	@Setter
+	private boolean antiAfkEnabled = true;
 
 	private String mongoHostname;
 	private String mongoDatabase;
@@ -82,6 +85,7 @@ public class BukkitMain extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		BattlebitsAPI.setGetter(new BukkitUUID());
 		BattlebitsAPI.setLogger(getLogger());
 		BattlebitsAPI.setServerAddress(Bukkit.getIp() + ":" + Bukkit.getPort());
 		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));

@@ -81,7 +81,7 @@ public class BukkitCommandFramework implements CommandFramework {
 					bp = null;
 					p = null;
 				}
-				if (command.runAsync()) {
+				if (command.runAsync() && Bukkit.isPrimaryThread()) {
 					new BukkitRunnable() {
 						@Override
 						public void run() {

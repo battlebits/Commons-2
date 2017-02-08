@@ -31,11 +31,11 @@ public class AdminMode {
 	public void setAdmin(Player p) {
 		if (!admin.contains(p.getUniqueId()))
 			admin.add(p.getUniqueId());
-		PlayerAdminModeEvent event = new PlayerAdminModeEvent(p, PlayerAdminModeEvent.AdminMode.ADMIN);
+		PlayerAdminModeEvent event = new PlayerAdminModeEvent(p, PlayerAdminModeEvent.AdminMode.ADMIN, GameMode.CREATIVE);
 		BukkitMain.getPlugin().getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled())
 			return;
-		p.setGameMode(GameMode.CREATIVE);
+		p.setGameMode(event.getGameMode());
 		Group group = VanishAPI.getInstance().hidePlayer(p);
 		Map<String, String> map = new HashMap<>();
 		map.put("%invisible%", group.toString());
@@ -45,7 +45,7 @@ public class AdminMode {
 	}
 
 	public void setPlayer(Player p) {
-		PlayerAdminModeEvent event = new PlayerAdminModeEvent(p, PlayerAdminModeEvent.AdminMode.PLAYER);
+		PlayerAdminModeEvent event = new PlayerAdminModeEvent(p, PlayerAdminModeEvent.AdminMode.PLAYER, GameMode.SURVIVAL);
 		BukkitMain.getPlugin().getServer().getPluginManager().callEvent(event);
 		if (event.isCancelled())
 			return;
@@ -54,7 +54,7 @@ public class AdminMode {
 			admin.remove(p.getUniqueId());
 		}
 		p.sendMessage("§%command-vanish-prefix%§ §%command-vanish-visible-all%§");
-		p.setGameMode(GameMode.SURVIVAL);
+		p.setGameMode(event.getGameMode());
 		VanishAPI.getInstance().showPlayer(p);
 	}
 

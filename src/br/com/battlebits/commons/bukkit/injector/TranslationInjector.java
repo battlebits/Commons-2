@@ -53,9 +53,11 @@ public class TranslationInjector implements Injector {
 							return;
 						if (event.getPacket() == null)
 							return;
+						if (event.isReadOnly())
+							return;
 						Language lang = BattlePlayer.getLanguage(event.getPlayer().getUniqueId());
-						PacketContainer packet = event.getPacket().deepClone();
 						if (event.getPacketType() == PacketType.Play.Server.CHAT) {
+							PacketContainer packet = event.getPacket().deepClone();
 							for (int i = 0; i < packet.getChatComponents().size(); i++) {
 								WrappedChatComponent chatComponent = packet.getChatComponents().read(i);
 								if (chatComponent != null) {
@@ -63,7 +65,9 @@ public class TranslationInjector implements Injector {
 											WrappedChatComponent.fromJson(translate(chatComponent.getJson(), lang)));
 								}
 							}
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
+							PacketContainer packet = event.getPacket().deepClone();
 							for (ItemStack item : packet.getItemArrayModifier().read(0)) {
 								if (item == null) {
 									continue;
@@ -72,21 +76,30 @@ public class TranslationInjector implements Injector {
 							}
 							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
+							PacketContainer packet = event.getPacket().deepClone();
 							ItemStack item = packet.getItemModifier().read(0);
 							packet.getItemModifier().write(0, translateItemStack(item, lang));
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_SCORE) {
+							PacketContainer packet = event.getPacket().deepClone();
 							String message = event.getPacket().getStrings().read(0);
 							packet.getStrings().write(0, translate(message, lang));
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW) {
+							PacketContainer packet = event.getPacket().deepClone();
 							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
 							String message = translate(
 									BattlebitsAPI.getParser().parse(component.getJson()).getAsString(), lang);
 							message = message.substring(0, message.length() > 32 ? 32 : message.length());
 							packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_OBJECTIVE) {
+							PacketContainer packet = event.getPacket().deepClone();
 							String message = event.getPacket().getStrings().read(1);
 							packet.getStrings().write(1, translate(message, lang));
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_TEAM) {
+							PacketContainer packet = event.getPacket().deepClone();
 							String pre = packet.getStrings().read(2);
 							String su = packet.getStrings().read(3);
 							boolean matched = false;
@@ -156,7 +169,9 @@ public class TranslationInjector implements Injector {
 							}
 							packet.getStrings().write(2, prefix);
 							packet.getStrings().write(3, suffix);
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER) {
+							PacketContainer packet = event.getPacket().deepClone();
 							WrappedChatComponent header = packet.getChatComponents().read(0);
 							WrappedChatComponent footer = packet.getChatComponents().read(1);
 							if (header != null)
@@ -165,7 +180,9 @@ public class TranslationInjector implements Injector {
 							if (footer != null)
 								packet.getChatComponents().write(1,
 										WrappedChatComponent.fromJson(translate(footer.getJson(), lang)));
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
+							PacketContainer packet = event.getPacket().deepClone();
 							List<WrappedWatchableObject> objects = packet.getWatchableCollectionModifier().read(0);
 							for (WrappedWatchableObject obj : objects) {
 								if (obj.getIndex() == 2) {
@@ -175,14 +192,17 @@ public class TranslationInjector implements Injector {
 									break;
 								}
 							}
+							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.SPAWN_ENTITY_LIVING) {
+							PacketContainer packet = event.getPacket();
 
 							int type = packet.getIntegers().read(1);
 
 							if (type != EntityType.ARMOR_STAND.getTypeId()) {
 								return;
 							}
-							List<WrappedWatchableObject> objects = packet.getDataWatcherModifier().read(0)
+							PacketContainer packetClone = event.getPacket().deepClone();
+							List<WrappedWatchableObject> objects = packetClone.getDataWatcherModifier().read(0)
 									.getWatchableObjects();
 							for (WrappedWatchableObject obj : objects) {
 								if (obj.getIndex() == 2) {
@@ -192,8 +212,8 @@ public class TranslationInjector implements Injector {
 									break;
 								}
 							}
+							event.setPacket(packetClone);
 						}
-						event.setPacket(packet);
 					}
 
 				});

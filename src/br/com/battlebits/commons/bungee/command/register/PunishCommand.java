@@ -209,7 +209,7 @@ public class PunishCommand implements CommandClass {
 	}
 
 	@Command(name = "unban", usage = "/<command> <player>", aliases = {
-			"desbanir" }, groupToUse = Group.MANAGER, noPermMessageId = "command-unban-no-access", runAsync = true)
+			"desbanir" }, groupToUse = Group.MANAGER, noPermMessageId = "command-unban-no-access")
 	public void unban(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = cmdArgs.getSender();
 		final String[] args = cmdArgs.getArgs();

@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent.UpdateType;
 import br.com.battlebits.commons.core.account.BattlePlayer;
@@ -25,6 +26,8 @@ public class AntiAFK implements Listener {
 
 	public void addTime(Player p) {
 		int time = 0;
+		if (!BukkitMain.getPlugin().isAntiAfkEnabled())
+			return;
 		if (afkMap.containsKey(p.getUniqueId()))
 			time = afkMap.get(p.getUniqueId());
 		afkMap.put(p.getUniqueId(), ++time);
@@ -41,6 +44,8 @@ public class AntiAFK implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerQuitListener(UpdateEvent event) {
 		if (event.getType() != UpdateType.SECOND)
+			return;
+		if (!BukkitMain.getPlugin().isAntiAfkEnabled())
 			return;
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			Location loc = locations.get(p.getUniqueId());
