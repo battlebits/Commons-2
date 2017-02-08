@@ -27,7 +27,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class StaffCommand implements CommandClass {
 
-	@Command(name = "finder", usage = "/<command> [player]", groupToUse = Group.MOD, noPermMessageId = "command-finder-no-access", runAsync = true)
+	@Command(name = "finder", aliases = {
+			"find" }, usage = "/<command> [player]", groupToUse = Group.MOD, permission = "bungeecord.command.find", noPermMessageId = "command-finder-no-access", runAsync = true)
 	public void finder(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = ((BungeeCommandSender) cmdArgs.getSender()).getSender();
 		final String[] args = cmdArgs.getArgs();
@@ -196,6 +197,22 @@ public class StaffCommand implements CommandClass {
 
 		cmdArgs.getPlayer().connect(server);
 		proxied.connect(server);
+	}
+
+	@Command(name = "silent", groupToUse = Group.STAFF, noPermMessageId = "command-silent-no-access")
+	public void silent(BungeeCommandArgs cmdArgs) {
+		if (!cmdArgs.isPlayer()) {
+			cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText("COMANDO APENAS PARA PLAYERS"));
+			return;
+		}
+		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId());
+		if (player.getConfiguration().isAlertsEnabled()) {
+			player.getConfiguration().setAlertsEnabled(false);
+			cmdArgs.getSender().sendMessage("§%command-silent-prefix%§ §%command-silent-disabled%§");
+		} else {
+			player.getConfiguration().setAlertsEnabled(true);
+			cmdArgs.getSender().sendMessage("§%command-silent-prefix%§ §%command-silent-enabled%§");
+		}
 	}
 
 }

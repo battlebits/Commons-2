@@ -21,6 +21,7 @@ import br.com.battlebits.commons.bukkit.listener.AntiAFK;
 import br.com.battlebits.commons.bukkit.listener.ChatListener;
 import br.com.battlebits.commons.bukkit.listener.PlayerListener;
 import br.com.battlebits.commons.bukkit.listener.ScoreboardListener;
+import br.com.battlebits.commons.bukkit.messesnger.BungeeCordMessenger;
 import br.com.battlebits.commons.bukkit.permission.PermissionManager;
 import br.com.battlebits.commons.bukkit.redis.BukkitPubSubHandler;
 import br.com.battlebits.commons.bukkit.scheduler.UpdateScheduler;
@@ -105,6 +106,7 @@ public class BukkitMain extends JavaPlugin {
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + BattlebitsAPI.getServerId());
 		DataServer.newServer(Bukkit.getMaxPlayers());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
+		this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeCordMessenger());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
 		}

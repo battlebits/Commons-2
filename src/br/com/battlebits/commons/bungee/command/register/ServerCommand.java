@@ -26,7 +26,8 @@ import twitter4j.TwitterException;
 
 public class ServerCommand implements CommandClass {
 
-	@Command(name = "connect", usage = "/<command> <server>", aliases = { "server", "con" })
+	@Command(name = "connect", usage = "/<command> <server>", permission = "bungeecord.command.server", aliases = {
+			"server", "con" })
 	public void connect(BungeeCommandArgs cmdArgs) {
 		if (cmdArgs.isPlayer()) {
 			ProxiedPlayer p = cmdArgs.getPlayer();

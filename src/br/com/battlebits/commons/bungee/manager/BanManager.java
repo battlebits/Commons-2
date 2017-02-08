@@ -51,7 +51,7 @@ public class BanManager {
 		player.getPunishHistoric().getBanHistory().add(ban);
 		for (ProxiedPlayer proxiedP : BungeeMain.getPlugin().getProxy().getPlayers()) {
 			BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedP.getUniqueId());
-			if (pl.hasGroupPermission(Group.TRIAL)) {
+			if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
 				String banSuccess = "";
 				if (ban.isPermanent()) {
 					banSuccess = T.t(pl.getLanguage(), "command-ban-prefix") + " "
@@ -102,7 +102,7 @@ public class BanManager {
 			ban.unban();
 		for (ProxiedPlayer proxiedP : BungeeMain.getPlugin().getProxy().getPlayers()) {
 			BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedP.getUniqueId());
-			if (pl.hasGroupPermission(Group.TRIAL)) {
+			if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
 				String unbanSuccess = Translate.getTranslation(pl.getLanguage(), "command-unban-prefix") + " "
 						+ Translate.getTranslation(pl.getLanguage(), "command-unban-success");
 				unbanSuccess = unbanSuccess.replace("%player%",
@@ -118,7 +118,7 @@ public class BanManager {
 		player.getPunishHistoric().getMuteHistory().add(mute);
 		for (ProxiedPlayer proxiedP : BungeeMain.getPlugin().getProxy().getPlayers()) {
 			BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedP.getUniqueId());
-			if (pl.hasGroupPermission(Group.HELPER)) {
+			if (pl.hasGroupPermission(Group.HELPER) && pl.getConfiguration().isAlertsEnabled()) {
 				String banSuccess = "";
 				if (mute.isPermanent()) {
 					banSuccess = Translate.getTranslation(pl.getLanguage(), "command-mute-prefix") + " "
@@ -156,7 +156,7 @@ public class BanManager {
 			mute.unmute();
 		for (ProxiedPlayer proxiedP : BungeeMain.getPlugin().getProxy().getPlayers()) {
 			BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedP.getUniqueId());
-			if (pl.hasGroupPermission(Group.HELPER)) {
+			if (pl.hasGroupPermission(Group.HELPER) && pl.getConfiguration().isAlertsEnabled()) {
 				String unbanSuccess = Translate.getTranslation(pl.getLanguage(), "command-unmute-prefix") + " "
 						+ Translate.getTranslation(pl.getLanguage(), "command-unmute-success");
 				unbanSuccess = unbanSuccess.replace("%player%",
