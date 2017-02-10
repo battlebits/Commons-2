@@ -55,6 +55,10 @@ public class MenuInventory {
 	public void setItem(int slot, ItemStack item) {
 		setItem(slot, new MenuItem(item));
 	}
+	
+	public void setItem(int slot, ItemStack item, MenuClickHandler handler) {
+		setItem(slot, new MenuItem(item, handler));
+	}
 
 	public void setItem(MenuItem item, int slot) {
 		setItem(slot, item);

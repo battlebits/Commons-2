@@ -23,11 +23,13 @@ public class AnvilInputGui {
 	private Inventory anvilInventory;
 	private InputHandler inputHandler;
 	private ItemStack searchItem;
+	private boolean wasHandled;
 
 	public AnvilInputGui(Player p, ItemStack item, InputHandler handler) {
 		this.inputHandler = handler;
 		this.playerUUID = p.getUniqueId();
 		this.searchItem = item;
+		this.wasHandled = false;
 		open();
 	}
 
@@ -80,5 +82,13 @@ public class AnvilInputGui {
 
 	public InputHandler getInputHandler() {
 		return inputHandler;
+	}
+
+	public void setHandled(boolean b) {
+		this.wasHandled = b;
+	}
+
+	public boolean wasHandled() {
+		return wasHandled;
 	}
 }

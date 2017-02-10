@@ -96,12 +96,45 @@ public class DataClan extends Data {
 		if (!jsonObject.has(fieldName))
 			return;
 		JsonElement element = jsonObject.get(fieldName);
-
+		Object value = null;
+		if (!element.isJsonPrimitive()) {
+			value = Document.parse(element.toString());
+		} else {
+			if (element.getAsJsonPrimitive().isBoolean()) {
+				value = element.getAsBoolean();
+			} else if (element.getAsJsonPrimitive().isNumber()) {
+				try {
+					value = Long.parseLong(element.getAsString());
+				} catch (Exception e2) {
+					try {
+						value = Byte.parseByte(element.getAsString());
+					} catch (Exception e3) {
+						try {
+							value = Short.parseShort(element.getAsString());
+						} catch (Exception e4) {
+							try {
+								value = Integer.parseInt(element.getAsString());
+							} catch (Exception e5) {
+								try {
+									value = Double.parseDouble(element.getAsString());
+								} catch (Exception e) {
+									try {
+										value = Float.parseFloat(element.getAsString());
+									} catch (Exception e1) {
+									}
+								}
+							}
+						}
+					}
+				}
+			} else {
+				value = element.getAsString();
+			}
+		}
 		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		collection.updateOne(Filters.eq("uniqueId", clan.getUniqueId().toString()),
-				new Document("$set", new Document(fieldName, (element.isJsonObject()
-						? Document.parse(element.getAsJsonObject().toString()) : element.getAsString()))));
+				new Document("$set", new Document(fieldName, value)));
 	}
 
 	public static void saveRedisClanField(Clan clan, String fieldName) {
@@ -109,7 +142,12 @@ public class DataClan extends Data {
 		if (!jsonObject.has(fieldName))
 			return;
 		JsonElement element = jsonObject.get(fieldName);
-		String value = element.isJsonObject() ? element.toString() : element.getAsString();
+		String value;
+		if (!element.isJsonPrimitive()) {
+			value = element.toString();
+		} else {
+			value = element.getAsString();
+		}
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			jedis.hset("clan:" + clan.getUniqueId().toString(), fieldName, value);
@@ -128,10 +166,12 @@ public class DataClan extends Data {
 	public static void saveMongoClan(Clan clan) {
 		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
-		Document found = collection.findOneAndUpdate(Filters.eq("uniqueId", clan.getUniqueId()),
-				Document.parse(BattlebitsAPI.getGson().toJson(clan)));
+		Document found = collection.find(Filters.eq("uniqueId", clan.getUniqueId())).first();
 		if (found == null) {
 			collection.insertOne(Document.parse(BattlebitsAPI.getGson().toJson(clan)));
+		} else {
+			collection.findOneAndUpdate(Filters.eq("uniqueId", clan.getUniqueId()),
+					Document.parse(BattlebitsAPI.getGson().toJson(clan)));
 		}
 	}
 
@@ -140,8 +180,12 @@ public class DataClan extends Data {
 		Map<String, String> playerElements = new HashMap<>();
 		for (Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 			String key = entry.getKey();
-			String value = entry.getValue().isJsonObject() ? entry.getValue().toString()
-					: entry.getValue().getAsString();
+			String value;
+			if (!entry.getValue().isJsonPrimitive()) {
+				value = entry.getValue().toString();
+			} else {
+				value = entry.getValue().getAsString();
+			}
 			playerElements.put(key, value);
 		}
 

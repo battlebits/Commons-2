@@ -14,7 +14,6 @@ import br.com.battlebits.commons.core.friend.Friend;
 import br.com.battlebits.commons.core.friend.Request;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.punish.PunishHistoric;
-import br.com.battlebits.commons.core.report.Report;
 import br.com.battlebits.commons.core.server.ServerStaff;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
@@ -102,8 +101,6 @@ public class BattlePlayer {
 	private String serverConnected = "";
 	private ServerType serverConnectedType = ServerType.NONE;
 
-	private Report report;
-
 	@Getter(AccessLevel.NONE)
 	private transient boolean screensharing = false;
 	private transient String lastServer = "";
@@ -122,17 +119,6 @@ public class BattlePlayer {
 
 		this.countryCode = countryCode;
 		this.timeZone = TimeZone.fromString(timeZoneCode);
-	}
-
-	public Report newReport() {
-		report = new Report(getUniqueId(), getName());
-		DataPlayer.saveBattlePlayer(this, "report");
-		return report;
-	}
-
-	public void clearReport() {
-		report = null;
-		DataPlayer.saveBattlePlayer(this, "report");
 	}
 
 	public boolean hasGroupPermission(Group group) {
@@ -352,11 +338,8 @@ public class BattlePlayer {
 	}
 
 	public void setJoinData(String userName, String ipAdrress, String countryCode, String timeZoneCode) {
-		System.out.println("CHECK RANKS");
 		checkRanks();
-		System.out.println("SET NAME");
 		setName(userName);
-		System.out.println("CONFIG");
 		configuration.setPlayer(this);
 		this.ipAddress = ipAdrress;
 		setTimeZone(timeZoneCode);
@@ -364,18 +347,15 @@ public class BattlePlayer {
 		setCountryCode(countryCode);
 		this.online = true;
 		setServerConnectedType(ServerType.NONE);
-		System.out.println("SAVE REDIS");
 		DataPlayer.saveBattlePlayer(this, "joinTime");
 		DataPlayer.saveBattlePlayer(this, "online");
 	}
 
 	private void setName(String name) {
 		if (!this.name.equals(name)) {
-			System.out.println("CHANGE");
 			this.name = name;
 			DataPlayer.saveBattlePlayer(this, "name");
 		}
-		System.out.println("NO SAVE");
 	}
 
 	public boolean setTag(Tag tag) {

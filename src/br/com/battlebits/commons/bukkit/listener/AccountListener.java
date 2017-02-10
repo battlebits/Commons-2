@@ -11,17 +11,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeGroupEvent;
-import br.com.battlebits.commons.bukkit.event.account.PlayerUpdateFieldEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdatedFieldEvent;
+import br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataClan;
@@ -91,7 +91,7 @@ public class AccountListener implements Listener {
 					if (clan != null) {
 						if (!clan.isParticipant(player))
 							player.setClanUniqueId(null);
-						if (clan != null) {
+						if (player.getClanUniqueId() != null) {
 							clan.updatePlayer(player);
 						}
 					}
@@ -120,6 +120,8 @@ public class AccountListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onLogin(PlayerLoginEvent event) {
+		if (event.getResult() != org.bukkit.event.player.PlayerLoginEvent.Result.ALLOWED)
+			return;
 		new BukkitRunnable() {
 
 			@Override
@@ -129,56 +131,59 @@ public class AccountListener implements Listener {
 		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
 
+//	@EventHandler
+//	public void onAdminMode(PlayerAdminModeEvent event) {
+//		new BukkitRunnable() {
+//			@Override
+//			public void run() {
+//				if (event
+//						.getAdminMode() == br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent.AdminMode.ADMIN) {
+//					DataServer.leavePlayer(event.getPlayer().getUniqueId());
+//				} else {
+//					DataServer.joinPlayer(event.getPlayer().getUniqueId());
+//				}
+//			}
+//		}.runTaskAsynchronously(BukkitMain.getInstance());
+//	}
+
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onLeave(PlayerQuitEvent event) {
-		BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
-		if (player.getClan() != null) {
-			Clan clan = player.getClan();
-			boolean removeClan = true;
-			for (UUID uuid : clan.getParticipants().keySet()) {
-				if (uuid == player.getUniqueId())
-					continue;
-				Player p = Bukkit.getPlayer(uuid);
-				if (p != null && p.isOnline()) {
-					removeClan = false;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
+				if (player.getClan() != null) {
+					Clan clan = player.getClan();
+					boolean removeClan = true;
+					for (UUID uuid : clan.getParticipants().keySet()) {
+						if (uuid == player.getUniqueId())
+							continue;
+						Player p = Bukkit.getPlayer(uuid);
+						if (p != null && p.isOnline()) {
+							removeClan = false;
+						}
+					}
+					if (removeClan) {
+						if (clan.isCacheOnQuit())
+							DataClan.cacheRedisClan(clan.getUniqueId(), clan.getName());
+						BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
+					}
 				}
+				if (player.isCacheOnQuit())
+					DataPlayer.cacheRedisPlayer(event.getPlayer().getUniqueId());
+				DataServer.leavePlayer(player.getUniqueId());
+				BattlebitsAPI.getAccountCommon().unloadBattlePlayer(event.getPlayer().getUniqueId());
 			}
-			if (removeClan) {
-				if (clan.isCacheOnQuit())
-					DataClan.cacheRedisClan(clan.getUniqueId(), clan.getName());
-				BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
-			}
-		}
-		if (player.isCacheOnQuit())
-			DataPlayer.cacheRedisPlayer(event.getPlayer().getUniqueId());
-		DataServer.leavePlayer(player.getUniqueId());
-		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(event.getPlayer().getUniqueId());
+		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
 
 	@EventHandler
 	public void onUpdate(PlayerUpdatedFieldEvent event) {
 		BukkitPlayer player = event.getBukkitPlayer();
 		switch (event.getField()) {
-		case "groups":
-		case "ranks":
-			player.loadTags();
-			player.setTag(player.getDefaultTag());
-			VanishAPI.getInstance().updateVanishToPlayer(event.getPlayer());
-			Bukkit.getPluginManager()
-					.callEvent(new PlayerChangeGroupEvent(event.getPlayer(), player, player.getServerGroup()));
-			break;
-		default:
-			break;
-		}
-	}
-
-	@EventHandler
-	public void onUpdate(PlayerUpdateFieldEvent event) {
-		BukkitPlayer player = event.getBukkitPlayer();
-		switch (event.getField()) {
 		case "clanUniqueId":
 			if (event.getObject() != null)
-				BattlebitsAPI.getClanCommon().loadClan(DataClan.getClan(player.getUniqueId()));
+				BattlebitsAPI.getClanCommon().loadClan(DataClan.getClan(player.getClanUniqueId()));
 			else if (player.getClanUniqueId() != null && player.getClan() != null) {
 				Clan clan = player.getClan();
 				boolean removeClan = true;
@@ -196,6 +201,14 @@ public class AccountListener implements Listener {
 					BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
 				}
 			}
+			break;
+		case "groups":
+		case "ranks":
+			player.loadTags();
+			player.setTag(player.getDefaultTag());
+			VanishAPI.getInstance().updateVanishToPlayer(event.getPlayer());
+			Bukkit.getPluginManager()
+					.callEvent(new PlayerChangeGroupEvent(event.getPlayer(), player, player.getServerGroup()));
 			break;
 		default:
 			break;

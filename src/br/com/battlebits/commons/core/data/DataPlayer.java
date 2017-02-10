@@ -147,8 +147,12 @@ public class DataPlayer extends Data {
 		Map<String, String> playerElements = new HashMap<>();
 		for (Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 			String key = entry.getKey();
-			String value = entry.getValue().isJsonObject() ? entry.getValue().toString()
-					: entry.getValue().getAsString();
+			String value;
+			if (!entry.getValue().isJsonPrimitive()) {
+				value = entry.getValue().toString();
+			} else {
+				value = entry.getValue().getAsString();
+			}
 			playerElements.put(key, value);
 		}
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
@@ -169,7 +173,7 @@ public class DataPlayer extends Data {
 		if (!jsonObject.has(fieldName))
 			return;
 		JsonElement element = jsonObject.get(fieldName);
-		String value = element.isJsonObject() ? element.toString() : element.getAsString();
+		String value = !element.isJsonPrimitive() ? element.toString() : element.getAsString();
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			jedis.hset("account:" + player.getUniqueId().toString(), fieldName, value);
@@ -194,11 +198,50 @@ public class DataPlayer extends Data {
 			return;
 		JsonElement element = jsonObject.get(fieldName);
 
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
-		MongoCollection<Document> collection = database.getCollection("account");
-		collection.updateOne(Filters.eq("uniqueId", player.getUniqueId().toString()),
-				new Document("$set", new Document(fieldName, (element.isJsonObject()
-						? Document.parse(element.getAsJsonObject().toString()) : element.getAsString()))));
+		Object value = null;
+		if (!element.isJsonPrimitive()) {
+			value = Document.parse(element.toString());
+		} else {
+			if (element.getAsJsonPrimitive().isBoolean()) {
+				value = element.getAsBoolean();
+			} else if (element.getAsJsonPrimitive().isNumber()) {
+				try {
+					value = Long.parseLong(element.getAsString());
+				} catch (Exception e2) {
+					try {
+						value = Byte.parseByte(element.getAsString());
+					} catch (Exception e3) {
+						try {
+							value = Short.parseShort(element.getAsString());
+						} catch (Exception e4) {
+							try {
+								value = Integer.parseInt(element.getAsString());
+							} catch (Exception e5) {
+								try {
+									value = Double.parseDouble(element.getAsString());
+								} catch (Exception e) {
+									try {
+										value = Float.parseFloat(element.getAsString());
+									} catch (Exception e1) {
+									}
+								}
+							}
+						}
+					}
+				}
+			} else {
+				value = element.getAsString();
+			}
+		}
+		BattlebitsAPI.debug("SAVING MONGO FIELD");
+		try {
+			MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+			MongoCollection<Document> collection = database.getCollection("account");
+			collection.updateOne(Filters.eq("uniqueId", player.getUniqueId().toString()),
+					new Document("$set", new Document(fieldName, value)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void saveConfigField(BattlePlayer player, String fieldName) {
@@ -214,10 +257,24 @@ public class DataPlayer extends Data {
 		JsonObject configuration = jsonObject.getAsJsonObject("configuration");
 		if (!configuration.has(fieldName))
 			return;
+		JsonElement element = jsonObject.get(fieldName);
+		Object value = null;
+		if (!element.isJsonPrimitive()) {
+			value = Document.parse(element.getAsJsonObject().toString());
+		} else {
+			if (element.getAsJsonPrimitive().isBoolean()) {
+				value = element.getAsBoolean();
+			} else if (element.getAsJsonPrimitive().isNumber()) {
+				value = element.getAsNumber();
+			} else if (element.getAsJsonPrimitive().isString()) {
+				value = element.getAsString();
+			}
+		}
+
 		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("account");
 		collection.updateOne(Filters.eq("uniqueId", player.getUniqueId().toString()),
-				new Document("$set", new Document("configuration." + fieldName, configuration.getAsString())));
+				new Document("$set", new Document("configuration." + fieldName, value)));
 	}
 
 	public static void saveCompleteBattlePlayer(BattlePlayer player) {

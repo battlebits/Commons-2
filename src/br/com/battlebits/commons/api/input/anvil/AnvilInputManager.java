@@ -49,14 +49,20 @@ public class AnvilInputManager {
 
 	public void handleClick(Player p, String name) {
 		if (hasAnvilSearch(p.getUniqueId())) {
-			getAnvilSearch(p.getUniqueId()).getInputHandler().onDone(p, name);
+			if (!getAnvilSearch(p.getUniqueId()).wasHandled()) {
+				getAnvilSearch(p.getUniqueId()).setHandled(true);
+				getAnvilSearch(p.getUniqueId()).getInputHandler().onDone(p, name);
+			}
 		}
 	}
 
 	public void handleClose(Player p) {
 		if (hasAnvilSearch(p.getUniqueId())) {
-			if (p != null && Bukkit.getPlayer(p.getUniqueId()) != null && p.isOnline()) {
-				getAnvilSearch(p.getUniqueId()).getInputHandler().onClose(p);
+			if (!getAnvilSearch(p.getUniqueId()).wasHandled()) {
+				getAnvilSearch(p.getUniqueId()).setHandled(true);
+				if (p != null && Bukkit.getPlayer(p.getUniqueId()) != null && p.isOnline()) {
+					getAnvilSearch(p.getUniqueId()).getInputHandler().onClose(p);
+				}
 			}
 		}
 		destroyInventory(p.getUniqueId());

@@ -43,7 +43,8 @@ public class TranslationInjector implements Injector {
 						PacketType.Play.Server.SCOREBOARD_SCORE, //
 						PacketType.Play.Server.PLAYER_LIST_HEADER_FOOTER, //
 						PacketType.Play.Server.SPAWN_ENTITY_LIVING, //
-						PacketType.Play.Server.ENTITY_METADATA) {
+						PacketType.Play.Server.ENTITY_METADATA, //
+						PacketType.Play.Server.TITLE) {
 					@SuppressWarnings("deprecation")
 					@Override
 					public void onPacketSending(PacketEvent event) {
@@ -80,6 +81,14 @@ public class TranslationInjector implements Injector {
 							ItemStack item = packet.getItemModifier().read(0);
 							packet.getItemModifier().write(0, translateItemStack(item, lang));
 							event.setPacket(packet);
+						} else if (event.getPacketType() == PacketType.Play.Server.TITLE) {
+							PacketContainer packet = event.getPacket().deepClone();
+							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
+							String message = translate(
+									BattlebitsAPI.getParser().parse(component.getJson()).getAsString(), lang);
+							packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
+							event.setPacket(packet);
+							return;
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_SCORE) {
 							PacketContainer packet = event.getPacket().deepClone();
 							String message = event.getPacket().getStrings().read(0);

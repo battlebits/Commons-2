@@ -148,6 +148,8 @@ public class AccountListener implements Listener {
 			@Override
 			public void run() {
 				BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId());
+				if(player == null)
+					return;
 				player.setLeaveData();
 				if (player.getClan() != null) {
 					Clan clan = player.getClan();

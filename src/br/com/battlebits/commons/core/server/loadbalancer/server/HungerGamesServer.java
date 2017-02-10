@@ -15,7 +15,7 @@ public class HungerGamesServer extends MinigameServer {
 
 	@Override
 	public boolean isInProgress() {
-		return getState() == MinigameState.GAMETIME || getState() == MinigameState.INVENCIBILITY;
+		return getState() == MinigameState.GAMETIME || getState() == MinigameState.INVINCIBILITY;
 	}
 
 }

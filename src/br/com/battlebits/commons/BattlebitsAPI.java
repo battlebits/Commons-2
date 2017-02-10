@@ -48,9 +48,9 @@ public class BattlebitsAPI {
 
 	public final static long MULTIPLIER_DURATION = 60000 * 60;
 	public final static String TRANSLATION_ID = "";
-	public final static String FORUM_WEBSITE = "http://forum.battlebits.com.br";
-	public final static String WEBSITE = "http://battlebits.com.br";
-	public final static String STORE = "http://loja.battlebits.com.br";
+	public final static String FORUM_WEBSITE = "http://forum.battlebits.net";
+	public final static String WEBSITE = "http://battlebits.net";
+	public final static String STORE = "http://loja.battlebits.net";
 	public final static String ADMIN_EMAIL = "admin@battlebits.com.br";
 	public final static String TWITTER = "@BattlebitsMC";
 	public static TimeZone DEFAULT_TIME_ZONE = TimeZone.GMT0;

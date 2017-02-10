@@ -92,7 +92,7 @@ public class TagListener implements Listener {
 				BukkitPlayer bp = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(o.getUniqueId());
 				if (bp == null)
 					continue;
-				String tag = e.getNewTag().getPrefix();
+				String tag = e.getNewTag().getPrefix(bp.getLanguage());
 				String league = " §7(" + player.getLeague().getSymbol() + "§7)";
 				if (manager.getPlugin().isOldTag()) {
 					tag = tag.substring(tag.length() - 2, tag.length());

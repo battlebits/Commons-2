@@ -22,7 +22,6 @@ import br.com.battlebits.commons.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeLeagueEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerLanguageEvent;
-import br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent;
 import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.permission.Group;
@@ -105,19 +104,10 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(priority=EventPriority.MONITOR)
 	public void onQuit(PlayerQuitEvent event) {
 		AdminMode.getInstance().removeAdmin(event.getPlayer());
 		VanishAPI.getInstance().removeVanish(event.getPlayer());
-	}
-
-	@EventHandler
-	public void onAdminMode(PlayerAdminModeEvent event) {
-		if(event.getAdminMode() == br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent.AdminMode.ADMIN) {
-			DataServer.leavePlayer(event.getPlayer().getUniqueId());
-		} else {
-			DataServer.joinPlayer(event.getPlayer().getUniqueId());
-		}
 	}
 
 	@EventHandler

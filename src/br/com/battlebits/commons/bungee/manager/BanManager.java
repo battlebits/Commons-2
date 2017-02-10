@@ -21,7 +21,6 @@ import br.com.battlebits.commons.core.data.DataPlayer;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.punish.Mute;
-import br.com.battlebits.commons.core.report.ReportManager;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
@@ -70,7 +69,7 @@ public class BanManager {
 			}
 		}
 		if (ban.isPermanent()) {
-			ReportManager.banPlayer(player);
+			// TODO BanPlayer in Reports
 			try {
 				Twitter.tweet(TwitterAccount.BATTLEBANS,
 						"Jogador banido: " + player.getName() + "\nBanido por: " + ban.getBannedBy() + "\nMotivo: "
@@ -137,7 +136,7 @@ public class BanManager {
 			}
 		}
 		if (mute.isPermanent())
-			ReportManager.mutePlayer(player);
+			// TODO Mute Player in Reports
 		DataPlayer.saveBattlePlayer(player, "punishHistoric");
 		ProxiedPlayer pPlayer = BungeeMain.getPlugin().getProxy().getPlayer(player.getUniqueId());
 		if (pPlayer != null) {

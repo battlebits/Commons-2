@@ -118,7 +118,7 @@ public class ChatListener implements Listener {
 						clan = new TextComponent(ChatColor.GRAY + "[" + ChatColor.DARK_GRAY
 								+ player.getClan().getAbbreviation() + ChatColor.GRAY + "] ");
 						clan.setClickEvent(
-								new ClickEvent(Action.SUGGEST_COMMAND, "/clan info " + player.getClan().getName()));
+								new ClickEvent(Action.RUN_COMMAND, "/clan info " + player.getClan().getName()));
 						TextComponent[] clanMessage = new TextComponent[] { //
 								new TextComponent(Translate.getTranslation(receiver.getLanguage(), "clan-hover-info")//
 										.replace("%clanName%", player.getClan().getName())//

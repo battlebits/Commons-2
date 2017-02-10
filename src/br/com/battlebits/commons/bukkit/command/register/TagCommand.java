@@ -38,7 +38,7 @@ public class TagCommand implements CommandClass {
 						message[i] = new TextComponent("§f, ");
 						i -= 1;
 					}
-					TextComponent component = new TextComponent((t == Tag.NORMAL) ? "§7§lNORMAL" : t.getPrefix());
+					TextComponent component = new TextComponent((t == Tag.NORMAL) ? "§7§lNORMAL" : t.getPrefix(player.getLanguage()));
 					component.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent[] { new TextComponent(
 							Translate.getTranslation(player.getLanguage(), "command-tag-click-select")) }));
 					component.setClickEvent(
@@ -63,7 +63,7 @@ public class TagCommand implements CommandClass {
 							if (player.setTag(tag)) {
 								p.sendMessage(prefix + Translate
 										.getTranslation(player.getLanguage(), "command-tag-selected")
-										.replace("%tag%", ((tag == Tag.NORMAL) ? "§7§lNORMAL" : tag.getPrefix())));
+										.replace("%tag%", ((tag == Tag.NORMAL) ? "§7§lNORMAL" : tag.getPrefix(player.getLanguage()))));
 							}
 						} else {
 							p.sendMessage(

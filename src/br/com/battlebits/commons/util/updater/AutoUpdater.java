@@ -71,8 +71,8 @@ public class AutoUpdater {
 		FileInputStream fileInput = null;
 		BufferedInputStream bufferedInput = null;
 		try {
-			socket = new Socket("update.battlebits.com.br", 63973);
-
+			socket = new Socket("update.battlebits.net", 63973);
+			socket.setSoTimeout(1000);
 			output = socket.getOutputStream();
 			input = socket.getInputStream();
 
