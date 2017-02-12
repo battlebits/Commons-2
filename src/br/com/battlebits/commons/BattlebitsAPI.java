@@ -48,9 +48,9 @@ public class BattlebitsAPI {
 
 	public final static long MULTIPLIER_DURATION = 60000 * 60;
 	public final static String TRANSLATION_ID = "";
-	public final static String FORUM_WEBSITE = "http://forum.battlebits.net";
-	public final static String WEBSITE = "http://battlebits.net";
-	public final static String STORE = "http://loja.battlebits.net";
+	public final static String FORUM_WEBSITE = "forum.battlebits.net";
+	public final static String WEBSITE = "www.battlebits.net";
+	public final static String STORE = "loja.battlebits.net";
 	public final static String ADMIN_EMAIL = "admin@battlebits.com.br";
 	public final static String TWITTER = "@BattlebitsMC";
 	public static TimeZone DEFAULT_TIME_ZONE = TimeZone.GMT0;
@@ -71,7 +71,7 @@ public class BattlebitsAPI {
 	@Setter
 	private static String serverAddress;
 
-	private static boolean debugMode = true;
+	private static boolean debugMode = false;
 	private static final Calendar CALENDAR = Calendar.getInstance();
 	@Getter
 	private static final Gson gson = new Gson();

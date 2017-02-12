@@ -11,7 +11,8 @@ public class ServerListener implements Listener {
 	@EventHandler(priority = (byte) -128)
 	public void onConnect(ServerConnectedEvent event) {
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId());
-		player.connect(event.getServer().getInfo().getName());
+		if (player != null)
+			player.connect(event.getServer().getInfo().getName());
 	}
 
 }

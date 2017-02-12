@@ -27,12 +27,16 @@ public class ChatListener implements Listener {
 		BattlePlayer player = BattlebitsAPI.getAccountCommon()
 				.getBattlePlayer(((ProxiedPlayer) event.getSender()).getUniqueId());
 		if (player.getConfiguration().isStaffChatEnabled()) {
+			if (!player.hasGroupPermission(Group.STAFF)) {
+				player.getConfiguration().setStaffChatEnabled(false);
+				return;
+			}
 			sendStaffMessage(player, event.getMessage());
 			event.setCancelled(true);
 		} else if (player.getConfiguration().isClanChatEnabled() && player.getClan() != null) {
 			sendClanMessage(player, event.getMessage());
 			event.setCancelled(true);
-		}		
+		}
 	}
 
 	public static void sendStaffMessage(BattlePlayer bP, String message) {

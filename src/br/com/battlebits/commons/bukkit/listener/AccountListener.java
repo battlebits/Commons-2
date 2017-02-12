@@ -21,7 +21,6 @@ import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeGroupEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerUpdatedFieldEvent;
-import br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataClan;
@@ -122,6 +121,11 @@ public class AccountListener implements Listener {
 	public void onLogin(PlayerLoginEvent event) {
 		if (event.getResult() != org.bukkit.event.player.PlayerLoginEvent.Result.ALLOWED)
 			return;
+		if (BattlePlayer.getPlayer(event.getPlayer().getUniqueId()) == null) {
+			event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER,
+					Translate.getTranslation(BattlebitsAPI.getDefaultLanguage(), "account-not-load"));
+			return;
+		}
 		new BukkitRunnable() {
 
 			@Override
@@ -131,20 +135,22 @@ public class AccountListener implements Listener {
 		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
 
-//	@EventHandler
-//	public void onAdminMode(PlayerAdminModeEvent event) {
-//		new BukkitRunnable() {
-//			@Override
-//			public void run() {
-//				if (event
-//						.getAdminMode() == br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent.AdminMode.ADMIN) {
-//					DataServer.leavePlayer(event.getPlayer().getUniqueId());
-//				} else {
-//					DataServer.joinPlayer(event.getPlayer().getUniqueId());
-//				}
-//			}
-//		}.runTaskAsynchronously(BukkitMain.getInstance());
-//	}
+	// @EventHandler
+	// public void onAdminMode(PlayerAdminModeEvent event) {
+	// new BukkitRunnable() {
+	// @Override
+	// public void run() {
+	// if (event
+	// .getAdminMode() ==
+	// br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent.AdminMode.ADMIN)
+	// {
+	// DataServer.leavePlayer(event.getPlayer().getUniqueId());
+	// } else {
+	// DataServer.joinPlayer(event.getPlayer().getUniqueId());
+	// }
+	// }
+	// }.runTaskAsynchronously(BukkitMain.getInstance());
+	// }
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onLeave(PlayerQuitEvent event) {
@@ -152,6 +158,8 @@ public class AccountListener implements Listener {
 			@Override
 			public void run() {
 				BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
+				if (player == null)
+					return;
 				if (player.getClan() != null) {
 					Clan clan = player.getClan();
 					boolean removeClan = true;

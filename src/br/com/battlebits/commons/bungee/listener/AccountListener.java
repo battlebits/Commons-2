@@ -18,6 +18,7 @@ import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.util.GeoIpUtils;
 import br.com.battlebits.commons.util.GeoIpUtils.IpCityResponse;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -131,24 +132,35 @@ public class AccountListener implements Listener {
 		});
 	}
 
+	@EventHandler(priority = -127)
+	public void onPostLoginCheck(PostLoginEvent event) {
+		if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId()) == null) {
+			event.getPlayer().disconnect(new TextComponent(T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed")));
+		}
+	}
+
 	@EventHandler
 	public void onPostLogin(PostLoginEvent event) {
 		BungeeMain.getPlugin().getProxy().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
-				DataServer.joinPlayer(event.getPlayer().getUniqueId());
+				if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId()) != null)
+					DataServer.joinPlayer(event.getPlayer().getUniqueId());
 			}
 		});
 	}
 
 	@EventHandler
 	public void onQuit(PlayerDisconnectEvent event) {
-		BungeeMain.getPlugin().getProxy().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
+		removePlayer(event.getPlayer().getUniqueId());
+	}
 
+	private void removePlayer(UUID uuid) {
+		BungeeMain.getPlugin().getProxy().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
-				BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId());
-				if(player == null)
+				BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
+				if (player == null)
 					return;
 				player.setLeaveData();
 				if (player.getClan() != null) {

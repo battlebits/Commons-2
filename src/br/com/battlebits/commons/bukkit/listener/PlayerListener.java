@@ -66,7 +66,7 @@ public class PlayerListener implements Listener {
 			}.runTaskLater(BukkitMain.getInstance(), 2);
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onJoinMonitor(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		VanishAPI.getInstance().updateVanishToPlayer(player);

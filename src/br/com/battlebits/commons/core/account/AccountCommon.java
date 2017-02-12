@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import org.bukkit.entity.Player;
-
 import br.com.battlebits.commons.BattlebitsAPI;
 
 public class AccountCommon {
@@ -27,10 +25,6 @@ public class AccountCommon {
 		players.put(uuid, player);
 	}
 
-	public BattlePlayer getBattlePlayer(Player player) {
-		return getBattlePlayer(player.getUniqueId());
-	}
-	
 	public BattlePlayer getBattlePlayer(UUID uuid) {
 		if (!players.containsKey(uuid)) {
 			return null;

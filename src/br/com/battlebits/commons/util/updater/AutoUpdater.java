@@ -72,7 +72,7 @@ public class AutoUpdater {
 		BufferedInputStream bufferedInput = null;
 		try {
 			socket = new Socket("update.battlebits.net", 63973);
-			socket.setSoTimeout(1000);
+			socket.setSoTimeout(10000);
 			output = socket.getOutputStream();
 			input = socket.getInputStream();
 

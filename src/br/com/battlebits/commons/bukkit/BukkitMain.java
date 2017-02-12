@@ -161,7 +161,7 @@ public class BukkitMain extends JavaPlugin {
 
 	public static void broadcastMessage(String id, String[]... replace) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player);
+			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId());
 			if (bp != null) {
 				Language lang = bp.getLanguage();
 				player.sendMessage(T.t(lang, id, replace));
@@ -171,7 +171,7 @@ public class BukkitMain extends JavaPlugin {
 
 	public static void broadcastMessage(String id, String[] target, String[] replace) {
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player);
+			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId());
 			if (bp != null) {
 				Language lang = bp.getLanguage();
 				player.sendMessage(T.t(lang, id, target, replace));

@@ -7,6 +7,7 @@ import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.permission.Group;
+import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.server.ServerManager;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
@@ -156,21 +157,20 @@ public class MessageListener implements Listener {
 		switch (subChannel) {
 		case "AnticheatAlert": {
 			event.setCancelled(true);
+			int count = in.readInt();
+			int total = in.readInt();
+			int ping = in.readInt();
+			String hackType = in.readUTF();
 			for (ProxiedPlayer online : BungeeMain.getPlugin().getProxy().getPlayers()) {
 				BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(online.getUniqueId());
 				if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
-					int count = in.readInt();
-					int total = in.readInt();
-					int ping = in.readInt();
-					String hackType = in.readUTF();
-					TextComponent message = new TextComponent(
-							"§%anticheat-alert-prefix%§ " + T.t(pl.getLanguage(), "anticheat-alert-player",
+					TextComponent message = new TextComponent(T.t(pl.getLanguage(), "anticheat-alert-prefix") + " "
+							+ T.t(pl.getLanguage(), "anticheat-alert-player",
 									new String[] { "%player%", "%count%", "%total%", "%ping%", "%hacktype%" },
 									new String[] { player.getName(), "" + count, "" + total, "" + ping, hackType }));
-					message.setClickEvent(
-							new ClickEvent(Action.RUN_COMMAND, "/serverteleport" + pl.getName()));
+					message.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/teleport " + player.getName()));
 					message.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-							new TextComponent[] { new TextComponent("§%click-to-teleport%§") }));
+							new TextComponent[] { new TextComponent(T.t(pl.getLanguage(), "click-to-teleport")) }));
 					online.sendMessage(message);
 				}
 			}
@@ -178,17 +178,37 @@ public class MessageListener implements Listener {
 		}
 		case "AnticheatBanAlert": {
 			event.setCancelled(true);
+			int ping = in.readInt();
+			String hackType = in.readUTF();
 			for (ProxiedPlayer online : BungeeMain.getPlugin().getProxy().getPlayers()) {
 				BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(online.getUniqueId());
 				if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
-					int ping = in.readInt();
-					String hackType = in.readUTF();
-					online.sendMessage(
-							TextComponent.fromLegacyText("§%anticheat-alert-prefix%§ " + T.t(pl.getLanguage(),
-									"anticheat-alert-ban", new String[] { "%player%", "%ping%", "%hacktype%" },
-									new String[] { player.getName(), "" + ping, hackType })));
+					TextComponent message = new TextComponent(T.t(pl.getLanguage(), "anticheat-alert-prefix") + " "
+							+ T.t(pl.getLanguage(), "anticheat-alert-ban",
+									new String[] { "%player%", "%ping%", "%hacktype%" },
+									new String[] { player.getName(), "" + ping, hackType }));
+					message.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/teleport " + player.getName()));
+					message.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
+							new TextComponent[] { new TextComponent(T.t(pl.getLanguage(), "click-to-teleport")) }));
+					online.sendMessage(message);
 				}
 			}
+			break;
+		}
+		case "AnticheatBan": {
+			event.setCancelled(true);
+			String banReason = in.readUTF();
+			int time = 30;
+			for (Ban ban : player.getPunishHistoric().getBanHistory()) {
+				if (ban.isPermanent())
+					continue;
+				if (!ban.getBannedBy().equals("CONSOLE"))
+					continue;
+				if (System.currentTimeMillis() - ban.getBanTime() > 604800000)
+					continue;
+				time *= 2;
+			}
+			BungeeMain.getPlugin().getProxy().getPluginManager().dispatchCommand(BungeeMain.getPlugin().getProxy().getConsole(), "tempban " + player.getUniqueId().toString() + " " + time + "m " + banReason);
 			break;
 		}
 		default:

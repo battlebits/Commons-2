@@ -187,6 +187,11 @@ public class BattlePlayer {
 	public boolean isScreensharing() {
 		return screensharing;
 	}
+	
+	public AccountConfiguration getConfiguration() {
+		configuration.setPlayer(this);
+		return configuration;
+	}
 
 	public void setFakeName(String fakeName) {
 		if (!fakeName.equals(this.fakeName)) {
@@ -328,6 +333,7 @@ public class BattlePlayer {
 	public void saveRanks() {
 		DataPlayer.saveBattlePlayer(this, "ranks");
 	}
+	
 
 	public void connect(String serverIp) {
 		checkRanks();

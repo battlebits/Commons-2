@@ -250,23 +250,43 @@ public class DataPlayer extends Data {
 	}
 
 	private static void saveConfigFieldMongo(BattlePlayer player, String fieldName) {
-		JsonObject jsonObject = BattlebitsAPI.getParser().parse(BattlebitsAPI.getGson().toJson(player))
+		JsonObject jsonObject = BattlebitsAPI.getParser().parse(BattlebitsAPI.getGson().toJson(player.getConfiguration()))
 				.getAsJsonObject();
-		if (!jsonObject.has("configuration"))
-			return;
-		JsonObject configuration = jsonObject.getAsJsonObject("configuration");
-		if (!configuration.has(fieldName))
+		if (!jsonObject.has(fieldName))
 			return;
 		JsonElement element = jsonObject.get(fieldName);
 		Object value = null;
 		if (!element.isJsonPrimitive()) {
-			value = Document.parse(element.getAsJsonObject().toString());
+			value = Document.parse(element.toString());
 		} else {
 			if (element.getAsJsonPrimitive().isBoolean()) {
 				value = element.getAsBoolean();
 			} else if (element.getAsJsonPrimitive().isNumber()) {
-				value = element.getAsNumber();
-			} else if (element.getAsJsonPrimitive().isString()) {
+				try {
+					value = Long.parseLong(element.getAsString());
+				} catch (Exception e2) {
+					try {
+						value = Byte.parseByte(element.getAsString());
+					} catch (Exception e3) {
+						try {
+							value = Short.parseShort(element.getAsString());
+						} catch (Exception e4) {
+							try {
+								value = Integer.parseInt(element.getAsString());
+							} catch (Exception e5) {
+								try {
+									value = Double.parseDouble(element.getAsString());
+								} catch (Exception e) {
+									try {
+										value = Float.parseFloat(element.getAsString());
+									} catch (Exception e1) {
+									}
+								}
+							}
+						}
+					}
+				}
+			} else {
 				value = element.getAsString();
 			}
 		}

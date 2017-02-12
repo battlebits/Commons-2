@@ -135,8 +135,9 @@ public class BanManager {
 				proxiedP.sendMessage(TextComponent.fromLegacyText(banSuccess));
 			}
 		}
-		if (mute.isPermanent())
+		if (mute.isPermanent()){
 			// TODO Mute Player in Reports
+		}
 		DataPlayer.saveBattlePlayer(player, "punishHistoric");
 		ProxiedPlayer pPlayer = BungeeMain.getPlugin().getProxy().getPlayer(player.getUniqueId());
 		if (pPlayer != null) {
