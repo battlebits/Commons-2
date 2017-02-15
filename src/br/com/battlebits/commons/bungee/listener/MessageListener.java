@@ -52,9 +52,8 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
+					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		case "CustomHungergames": {
@@ -66,9 +65,8 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
+					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		case "DoubleKitHungergames": {
@@ -80,16 +78,14 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
+					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		case "Fairplayhg": {
 			event.setCancelled(true);
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
+					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 
@@ -102,9 +98,8 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
+					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 
@@ -117,9 +112,8 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
+					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 
@@ -132,9 +126,8 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
+					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		default:
@@ -152,6 +145,8 @@ public class MessageListener implements Listener {
 			return;
 		ProxiedPlayer proxiedPlayer = (ProxiedPlayer) event.getReceiver();
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId());
+		if(player == null)
+			return;
 		ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
 		String subChannel = in.readUTF();
 		switch (subChannel) {
@@ -208,7 +203,9 @@ public class MessageListener implements Listener {
 					continue;
 				time *= 2;
 			}
-			BungeeMain.getPlugin().getProxy().getPluginManager().dispatchCommand(BungeeMain.getPlugin().getProxy().getConsole(), "tempban " + player.getUniqueId().toString() + " " + time + "m " + banReason);
+			BungeeMain.getPlugin().getProxy().getPluginManager().dispatchCommand(
+					BungeeMain.getPlugin().getProxy().getConsole(),
+					"tempban " + player.getUniqueId().toString() + " " + time + "m " + banReason);
 			break;
 		}
 		default:

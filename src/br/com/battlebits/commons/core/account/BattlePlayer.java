@@ -137,9 +137,11 @@ public class BattlePlayer {
 				group = getGroups().get(serverConnectedType.getStaffType());
 			}
 		}
-		if (group == Group.NORMAL)
-			if (isStaff())
+		if (group == Group.NORMAL) {
+			if (isStaff()) {
 				group = Group.STAFF;
+			}
+		}
 		if (group == Group.NORMAL) {
 			if (!getRanks().isEmpty()) {
 				RankType expire = null;
@@ -187,7 +189,7 @@ public class BattlePlayer {
 	public boolean isScreensharing() {
 		return screensharing;
 	}
-	
+
 	public AccountConfiguration getConfiguration() {
 		configuration.setPlayer(this);
 		return configuration;
@@ -333,7 +335,6 @@ public class BattlePlayer {
 	public void saveRanks() {
 		DataPlayer.saveBattlePlayer(this, "ranks");
 	}
-	
 
 	public void connect(String serverIp) {
 		checkRanks();
@@ -352,13 +353,12 @@ public class BattlePlayer {
 		joinTime = System.currentTimeMillis();
 		setCountryCode(countryCode);
 		this.online = true;
-		setServerConnectedType(ServerType.NONE);
 		DataPlayer.saveBattlePlayer(this, "joinTime");
 		DataPlayer.saveBattlePlayer(this, "online");
 	}
 
 	private void setName(String name) {
-		if (!this.name.equals(name)) {
+		if (this.name == null || !this.name.equals(name)) {
 			this.name = name;
 			DataPlayer.saveBattlePlayer(this, "name");
 		}
@@ -393,7 +393,7 @@ public class BattlePlayer {
 		}
 	}
 
-	private void setServerConnectedType(ServerType serverConnectedType) {
+	public void setServerConnectedType(ServerType serverConnectedType) {
 		if (serverConnectedType != this.serverConnectedType) {
 			this.serverConnectedType = serverConnectedType;
 			DataPlayer.saveBattlePlayer(this, "serverConnectedType");
@@ -440,7 +440,7 @@ public class BattlePlayer {
 	}
 
 	public void checkRanks() {
-		if (!getRanks().isEmpty()) {
+		if (getRanks() != null && !getRanks().isEmpty()) {
 			Iterator<Entry<RankType, Long>> it = getRanks().entrySet().iterator();
 			boolean save = false;
 			while (it.hasNext()) {

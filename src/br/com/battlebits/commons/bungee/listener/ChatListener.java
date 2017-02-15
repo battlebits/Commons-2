@@ -26,6 +26,8 @@ public class ChatListener implements Listener {
 			return;
 		BattlePlayer player = BattlebitsAPI.getAccountCommon()
 				.getBattlePlayer(((ProxiedPlayer) event.getSender()).getUniqueId());
+		if(player == null)
+			return;
 		if (player.getConfiguration().isStaffChatEnabled()) {
 			if (!player.hasGroupPermission(Group.STAFF)) {
 				player.getConfiguration().setStaffChatEnabled(false);

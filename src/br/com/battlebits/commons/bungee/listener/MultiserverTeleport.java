@@ -20,7 +20,7 @@ public class MultiserverTeleport implements Listener {
 			return;
 		String[] message = event.getMessage().trim().split(" ");
 		String command = message[0].toLowerCase();
-		if (!command.startsWith("tp") && !command.startsWith("teleport") && !command.startsWith("teleportar"))
+		if (!command.startsWith("/tp") && !command.startsWith("/teleport") && !command.startsWith("/teleportar"))
 			return;
 		BattlePlayer player = BattlePlayer.getPlayer(((ProxiedPlayer) event.getSender()).getUniqueId());
 		if (!player.hasGroupPermission(Group.STAFF))

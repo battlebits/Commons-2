@@ -14,6 +14,7 @@ import br.com.battlebits.commons.core.data.DataClan;
 import br.com.battlebits.commons.core.data.DataPlayer;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.punish.Ban;
+import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.util.GeoIpUtils;
 import br.com.battlebits.commons.util.GeoIpUtils.IpCityResponse;
@@ -33,8 +34,18 @@ public class AccountListener implements Listener {
 		BattlebitsAPI.debug("ACCOUNT > STARTING");
 		event.registerIntent(BungeeMain.getPlugin());
 		final String userName = event.getConnection().getName();
+		if(userName == null) {
+			String accountLoadFailed = T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
+			event.setCancelReason(accountLoadFailed);
+			return;
+		}
 		final InetSocketAddress ipAdress = event.getConnection().getAddress();
 		final UUID uuid = event.getConnection().getUniqueId();
+		if(uuid == null) {
+			String accountLoadFailed = T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
+			event.setCancelReason(accountLoadFailed);
+			return;
+		}
 		ProxyServer.getInstance().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
@@ -58,11 +69,12 @@ public class AccountListener implements Listener {
 						DataPlayer.saveRedisPlayer(player);
 						BattlebitsAPI.debug("CONNECTION > MONGO SUCCESS");
 					} else {
-						DataPlayer.checkCache(uuid);
 						BattlebitsAPI.debug("CONNECTION > REDIS FOUND");
 					}
+					DataPlayer.checkCache(uuid);
 					BattlebitsAPI.debug("CONNECTION > JOIN DATA");
 					player.setJoinData(userName, ipAdress.getHostString(), countryCode, timeZoneCode);
+					player.setServerConnectedType(ServerType.NONE);
 					BattlebitsAPI.debug("CONNECTION > JOINED");
 					BattlebitsAPI.getAccountCommon().loadBattlePlayer(uuid, player);
 					if (player.getClanUniqueId() != null) {
@@ -98,7 +110,8 @@ public class AccountListener implements Listener {
 					event.setCancelled(true);
 					String accountLoadFailed = T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
 					event.setCancelReason(accountLoadFailed);
-					// e.printStackTrace();
+					e.printStackTrace();
+					event.completeIntent(BungeeMain.getPlugin());
 					return;
 				}
 				BattlebitsAPI.debug("BANNING > STARTING");
@@ -126,8 +139,6 @@ public class AccountListener implements Listener {
 				BattlebitsAPI.debug("BANNING > FINISHED");
 				player.checkForMultipliers();
 				event.completeIntent(BungeeMain.getPlugin());
-				player = null;
-				ban = null;
 			}
 		});
 	}

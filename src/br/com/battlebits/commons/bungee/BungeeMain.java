@@ -15,7 +15,6 @@ import br.com.battlebits.commons.bungee.listener.LoadBalancerListener;
 import br.com.battlebits.commons.bungee.listener.MessageListener;
 import br.com.battlebits.commons.bungee.listener.MultiserverTeleport;
 import br.com.battlebits.commons.bungee.listener.ScreenshareListener;
-import br.com.battlebits.commons.bungee.listener.ServerListener;
 import br.com.battlebits.commons.bungee.manager.BanManager;
 import br.com.battlebits.commons.bungee.manager.BungeeServerManager;
 import br.com.battlebits.commons.bungee.redis.BungeePubSubHandler;
@@ -145,7 +144,6 @@ public class BungeeMain extends Plugin {
 		getProxy().getPluginManager().registerListener(this, new MessageListener(serverManager));
 		getProxy().getPluginManager().registerListener(this, new MultiserverTeleport());
 		getProxy().getPluginManager().registerListener(this, new ScreenshareListener());
-		getProxy().getPluginManager().registerListener(this, new ServerListener());
 	}
 
 	private void loadConfiguration() {

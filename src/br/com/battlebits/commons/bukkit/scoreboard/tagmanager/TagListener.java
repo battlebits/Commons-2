@@ -76,7 +76,6 @@ public class TagListener implements Listener {
 		if (!manager.getPlugin().isTagControl())
 			return;
 		if (p == null) {
-			System.out.println("NULL TagListener.java linha 75");
 			return;
 		}
 		BukkitPlayer player = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());

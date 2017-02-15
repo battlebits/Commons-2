@@ -45,21 +45,26 @@ public class DataPlayer extends Data {
 
 	public static BattlePlayer createIfNotExistMongo(UUID uuid, String name, String address, String countryCode,
 			String timeZone) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
-		MongoCollection<Document> collection = database.getCollection("account");
+		try {
+			MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+			MongoCollection<Document> collection = database.getCollection("account");
 
-		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
-		BattlePlayer player = null;
-		if (found == null) {
-			player = new BattlePlayer(name, uuid, address, countryCode, timeZone);
-			found = Document.parse(BattlebitsAPI.getGson().toJson(player));
-			collection.insertOne(found);
-			BattlebitsAPI.debug("MONGO > INSERTED");
-		} else {
-			player = BattlebitsAPI.getGson().fromJson(BattlebitsAPI.getGson().toJson(found), BattlePlayer.class);
-			BattlebitsAPI.debug("MONGO > LOADED");
+			Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
+			BattlePlayer player = null;
+			if (found == null) {
+				player = new BattlePlayer(name, uuid, address, countryCode, timeZone);
+				found = Document.parse(BattlebitsAPI.getGson().toJson(player));
+				collection.insertOne(found);
+				BattlebitsAPI.debug("MONGO > INSERTED");
+			} else {
+				player = BattlebitsAPI.getGson().fromJson(BattlebitsAPI.getGson().toJson(found), BattlePlayer.class);
+				BattlebitsAPI.debug("MONGO > LOADED");
+			}
+			return player;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		return player;
 	}
 
 	public static BattlePlayer getRedisPlayer(UUID uuid) {
@@ -72,7 +77,8 @@ public class DataPlayer extends Data {
 			for (Entry<String, String> entry : fields.entrySet()) {
 				obj.add(entry.getKey(), BattlebitsAPI.getParser().parse(entry.getValue()));
 			}
-			player = BattlebitsAPI.getGson().fromJson(obj.toString(), BattlePlayer.class);
+			System.out.println(obj.toString());
+			player = gson.fromJson(obj.toString(), BattlePlayer.class);
 		}
 		return player;
 	}
@@ -250,8 +256,8 @@ public class DataPlayer extends Data {
 	}
 
 	private static void saveConfigFieldMongo(BattlePlayer player, String fieldName) {
-		JsonObject jsonObject = BattlebitsAPI.getParser().parse(BattlebitsAPI.getGson().toJson(player.getConfiguration()))
-				.getAsJsonObject();
+		JsonObject jsonObject = BattlebitsAPI.getParser()
+				.parse(BattlebitsAPI.getGson().toJson(player.getConfiguration())).getAsJsonObject();
 		if (!jsonObject.has(fieldName))
 			return;
 		JsonElement element = jsonObject.get(fieldName);
