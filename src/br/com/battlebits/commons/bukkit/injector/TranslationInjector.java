@@ -84,9 +84,8 @@ public class TranslationInjector implements Injector {
 						} else if (event.getPacketType() == PacketType.Play.Server.TITLE) {
 							PacketContainer packet = event.getPacket().deepClone();
 							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
-							String message = translate(
-									BattlebitsAPI.getParser().parse(component.getJson()).getAsString(), lang);
-							packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
+							packet.getChatComponents().write(0,
+									WrappedChatComponent.fromJson(translate(component.getJson(), lang)));
 							event.setPacket(packet);
 							return;
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_SCORE) {
