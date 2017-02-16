@@ -77,7 +77,7 @@ public class DataClan extends Data {
 			if (!jedis.exists("account:" + "clan:" + uniqueId.toString()))
 				return null;
 			Map<String, String> fields = jedis.hgetAll("clan:" + uniqueId.toString());
-			if (fields == null || fields.isEmpty())
+			if (fields == null || fields.isEmpty() || fields.size() < 10)
 				return null;
 			JsonObject obj = new JsonObject();
 			for (Entry<String, String> entry : fields.entrySet()) {

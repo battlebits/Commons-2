@@ -84,6 +84,8 @@ public class TranslationInjector implements Injector {
 						} else if (event.getPacketType() == PacketType.Play.Server.TITLE) {
 							PacketContainer packet = event.getPacket().deepClone();
 							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
+							if (component == null)
+								return;
 							packet.getChatComponents().write(0,
 									WrappedChatComponent.fromJson(translate(component.getJson(), lang)));
 							event.setPacket(packet);

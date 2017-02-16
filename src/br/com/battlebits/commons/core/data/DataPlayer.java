@@ -73,7 +73,7 @@ public class DataPlayer extends Data {
 			if (!jedis.exists("account:" + uuid.toString()))
 				return null;
 			Map<String, String> fields = jedis.hgetAll("account:" + uuid.toString());
-			if (fields == null || fields.isEmpty())
+			if (fields == null || fields.isEmpty() || fields.size() < 40)
 				return null;
 			JsonObject obj = new JsonObject();
 			for (Entry<String, String> entry : fields.entrySet()) {
