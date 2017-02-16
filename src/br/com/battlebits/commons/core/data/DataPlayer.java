@@ -70,6 +70,8 @@ public class DataPlayer extends Data {
 	public static BattlePlayer getRedisPlayer(UUID uuid) {
 		BattlePlayer player = null;
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			if (!jedis.exists("account:" + uuid.toString()))
+				return null;
 			Map<String, String> fields = jedis.hgetAll("account:" + uuid.toString());
 			if (fields == null || fields.isEmpty())
 				return null;
@@ -105,7 +107,9 @@ public class DataPlayer extends Data {
 		boolean bol = false;
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			String key = "account:" + uuid.toString();
-			bol = jedis.persist(key) == 1;
+			if (jedis.ttl(key) >= 0) {
+				bol = jedis.persist(key) == 1;
+			}
 		}
 		if (bol)
 			BattlebitsAPI.debug("REDIS > SHOULD REMOVE");

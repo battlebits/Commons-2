@@ -74,6 +74,8 @@ public class DataClan extends Data {
 	public static Clan getRedisClan(UUID uniqueId) {
 		Clan clan = null;
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			if (!jedis.exists("account:" + "clan:" + uniqueId.toString()))
+				return null;
 			Map<String, String> fields = jedis.hgetAll("clan:" + uniqueId.toString());
 			if (fields == null || fields.isEmpty())
 				return null;

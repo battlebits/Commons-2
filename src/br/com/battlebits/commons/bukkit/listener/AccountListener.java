@@ -114,7 +114,7 @@ public class AccountListener implements Listener {
 			event.setKickMessage(Translate.getTranslation(BattlebitsAPI.getDefaultLanguage(), "account-not-load"));
 		}
 		if (event.getLoginResult() != Result.ALLOWED) {
-			BattlebitsAPI.getAccountCommon().unloadBattlePlayer(event.getUniqueId());
+			removePlayer(event.getUniqueId());
 		}
 	}
 
@@ -158,33 +158,38 @@ public class AccountListener implements Listener {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
-				if (player == null)
-					return;
-				if (player.getClan() != null) {
-					Clan clan = player.getClan();
-					boolean removeClan = true;
-					for (UUID uuid : clan.getParticipants().keySet()) {
-						if (uuid == player.getUniqueId())
-							continue;
-						Player p = Bukkit.getPlayer(uuid);
-						if (p != null && p.isOnline()) {
-							removeClan = false;
-						}
-					}
-					if (removeClan) {
-						if (clan.isCacheOnQuit())
-							DataClan.cacheRedisClan(clan.getUniqueId(), clan.getName());
-						BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
-					}
-				}
-				if (player.isCacheOnQuit())
-					DataPlayer.cacheRedisPlayer(event.getPlayer().getUniqueId());
-				DataServer.leavePlayer(player.getUniqueId());
-				BattlebitsAPI.getAccountCommon().unloadBattlePlayer(event.getPlayer().getUniqueId());
+				removePlayer(event.getPlayer().getUniqueId());
 			}
 		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
+	
+	private void removePlayer(UUID uniqueId) {
+		BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(uniqueId);
+		if (player == null)
+			return;
+		if (player.getClan() != null) {
+			Clan clan = player.getClan();
+			boolean removeClan = true;
+			for (UUID uuid : clan.getParticipants().keySet()) {
+				if (uuid == player.getUniqueId())
+					continue;
+				Player p = Bukkit.getPlayer(uuid);
+				if (p != null && p.isOnline()) {
+					removeClan = false;
+				}
+			}
+			if (removeClan) {
+				if (clan.isCacheOnQuit())
+					DataClan.cacheRedisClan(clan.getUniqueId(), clan.getName());
+				BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
+			}
+		}
+		if (player.isCacheOnQuit())
+			DataPlayer.cacheRedisPlayer(uniqueId);
+		DataServer.leavePlayer(player.getUniqueId());
+		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(uniqueId);
+	}
+	
 
 	@EventHandler
 	public void onUpdate(PlayerUpdatedFieldEvent event) {
