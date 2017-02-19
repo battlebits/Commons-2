@@ -1,5 +1,8 @@
 package br.com.battlebits.commons.core.server.loadbalancer.server;
 
+import java.util.Set;
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +15,7 @@ public abstract class MinigameServer extends BattleServer {
 	private int time;
 	private MinigameState state;
 
-	public MinigameServer(String serverId, int onlinePlayers, int maxPlayers, boolean joinEnabled) {
+	public MinigameServer(String serverId, Set<UUID> onlinePlayers, int maxPlayers, boolean joinEnabled) {
 		super(serverId, onlinePlayers, 100, joinEnabled);
 		this.state = MinigameState.WAITING;
 	}

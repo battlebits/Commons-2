@@ -1,6 +1,7 @@
 package br.com.battlebits.commons.core.data;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -71,6 +72,19 @@ public class DataServer extends Data {
 		}
 		return ipAddress;
 	}
+	
+	public static Set<UUID> getPlayers(String serverId) {
+		Set<UUID> players = new HashSet<>();
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			for(String uuid : jedis.hgetAll("server:" + serverId + ":players").values()) {
+				UUID uniqueId = UUID.fromString(uuid);
+				players.add(uniqueId);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return players;
+	}
 
 	public static Map<String, Map<String, String>> getAllServers() {
 		Map<String, Map<String, String>> map = new HashMap<>();
@@ -103,7 +117,7 @@ public class DataServer extends Data {
 			map.put("address", BattlebitsAPI.getServerAddress());
 			pipe.hmset("server:" + BattlebitsAPI.getServerId(), map);
 			pipe.del("server:" + BattlebitsAPI.getServerId() + ":players");
-			BattleServer server = new BattleServer(BattlebitsAPI.getServerId(), 0, maxPlayers, true);
+			BattleServer server = new BattleServer(BattlebitsAPI.getServerId(), new HashSet<>(), maxPlayers, true);
 			pipe.publish("server-info",
 					BattlebitsAPI.getGson().toJson(new DataServerMessage<StartPayload>(BattlebitsAPI.getServerId(),
 							Action.START, new StartPayload(BattlebitsAPI.getServerAddress(), server))));

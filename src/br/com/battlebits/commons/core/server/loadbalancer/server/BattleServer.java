@@ -1,5 +1,8 @@
 package br.com.battlebits.commons.core.server.loadbalancer.server;
 
+import java.util.Set;
+import java.util.UUID;
+
 import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.element.LoadBalancerObject;
@@ -10,20 +13,28 @@ public class BattleServer implements LoadBalancerObject, NumberConnection {
 
 	private String serverId;
 
-	private int onlinePlayers;
+	private Set<UUID> players;
 	private int maxPlayers;
 
 	private boolean joinEnabled;
 
-	public BattleServer(String serverId, int onlinePlayers, int maxPlayers, boolean joinEnabled) {
+	public BattleServer(String serverId, Set<UUID> onlinePlayers, int maxPlayers, boolean joinEnabled) {
 		this.serverId = serverId;
-		this.onlinePlayers = onlinePlayers;
+		this.players = onlinePlayers;
 		this.maxPlayers = maxPlayers;
 		this.joinEnabled = joinEnabled;
 	}
 
-	public void setOnlinePlayers(int onlinePlayers) {
-		this.onlinePlayers = onlinePlayers;
+	public void setOnlinePlayers(Set<UUID> onlinePlayers) {
+		this.players = onlinePlayers;
+	}
+
+	public void joinPlayer(UUID uuid) {
+		players.add(uuid);
+	}
+
+	public void leavePlayer(UUID uuid) {
+		players.remove(uuid);
 	}
 
 	public String getServerId() {
@@ -31,7 +42,7 @@ public class BattleServer implements LoadBalancerObject, NumberConnection {
 	}
 
 	public int getOnlinePlayers() {
-		return onlinePlayers;
+		return players.size();
 	}
 
 	public int getMaxPlayers() {
@@ -39,7 +50,7 @@ public class BattleServer implements LoadBalancerObject, NumberConnection {
 	}
 
 	public boolean isFull() {
-		return onlinePlayers >= maxPlayers;
+		return players.size() >= maxPlayers;
 	}
 
 	public void setJoinEnabled(boolean joinEnabled) {

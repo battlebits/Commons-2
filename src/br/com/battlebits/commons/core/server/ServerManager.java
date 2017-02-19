@@ -1,7 +1,10 @@
 package br.com.battlebits.commons.core.server;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.core.server.loadbalancer.BaseBalancer;
@@ -42,14 +45,14 @@ public class ServerManager {
 
 	public void addActiveServer(String serverAddress, String serverIp, int maxPlayers) {
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + serverIp);
-		updateActiveServer(serverIp, 0, maxPlayers, true);
+		updateActiveServer(serverIp, new HashSet<>(), maxPlayers, true);
 	}
 
-	public void updateActiveServer(String serverId, int onlinePlayers, int maxPlayers, boolean canJoin) {
+	public void updateActiveServer(String serverId, Set<UUID> onlinePlayers, int maxPlayers, boolean canJoin) {
 		updateActiveServer(serverId, onlinePlayers, maxPlayers, canJoin, 0, null);
 	}
 
-	public void updateActiveServer(String serverId, int onlinePlayers, int maxPlayers, boolean canJoin, int tempo,
+	public void updateActiveServer(String serverId, Set<UUID> onlinePlayers, int maxPlayers, boolean canJoin, int tempo,
 			MinigameState state) {
 		serverId = serverId.toLowerCase();
 		BattleServer server = activeServers.get(serverId);

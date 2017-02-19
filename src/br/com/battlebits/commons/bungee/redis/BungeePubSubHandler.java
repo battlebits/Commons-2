@@ -13,6 +13,8 @@ import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.Action;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.JoinEnablePayload;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.JoinPayload;
+import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.LeavePayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StartPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StopPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.UpdatePayload;
@@ -74,19 +76,25 @@ public class BungeePubSubHandler extends JedisPubSub {
 			Action action = Action.valueOf(jsonObject.get("action").getAsString());
 			switch (action) {
 			case JOIN: {
+				DataServerMessage<JoinPayload> payload = BattlebitsAPI.getGson().fromJson(jsonObject,
+						new TypeToken<DataServerMessage<JoinPayload>>() {
+						}.getType());
 				if (sourceType == ServerType.NETWORK) {
 					break;
 				}
 				BattleServer server = BungeeMain.getPlugin().getServerManager().getServer(source);
-				server.setOnlinePlayers(server.getOnlinePlayers() + 1);
+				server.joinPlayer(payload.getPayload().getUniqueId());
 				break;
 			}
 			case LEAVE: {
+				DataServerMessage<LeavePayload> payload = BattlebitsAPI.getGson().fromJson(jsonObject,
+						new TypeToken<DataServerMessage<LeavePayload>>() {
+						}.getType());
 				if (sourceType == ServerType.NETWORK) {
 					break;
 				}
 				BattleServer server = BungeeMain.getPlugin().getServerManager().getServer(source);
-				server.setOnlinePlayers(server.getOnlinePlayers() - 1);
+				server.leavePlayer(payload.getPayload().getUniqueId());
 				break;
 			}
 			case JOIN_ENABLE: {
