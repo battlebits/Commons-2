@@ -55,6 +55,8 @@ public class BukkitMain extends JavaPlugin {
 	@Setter
 	private boolean antiAfkEnabled = true;
 
+	private boolean removePlayerDat = true;
+	
 	private String mongoHostname;
 	private String mongoDatabase;
 	private String mongoUsername;
@@ -136,6 +138,8 @@ public class BukkitMain extends JavaPlugin {
 	}
 
 	private void loadConfiguration() {
+		removePlayerDat = getConfig().getBoolean("remove-player-dat");
+		
 		mongoHostname = getConfig().getString("mongo.hostname");
 		mongoPort = getConfig().getInt("mongo.port");
 		mongoDatabase = getConfig().getString("mongo.database");

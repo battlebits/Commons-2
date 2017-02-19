@@ -1,6 +1,5 @@
 package br.com.battlebits.commons.bukkit.listener;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.UUID;
 
@@ -43,22 +42,12 @@ public class AccountListener implements Listener {
 		String userName = event.getName();
 		InetAddress ipAdress = event.getAddress();
 		UUID uuid = event.getUniqueId();
-		String countryCode = "-";
-		String timeZoneCode = "0";
 		BattlebitsAPI.debug("CONNECTION > STARTING");
 		try {
+			IpCityResponse response = GeoIpUtils.getIpStatus(ipAdress.getHostAddress());
 			BukkitPlayer player = DataPlayer.getRedisBukkitPlayer(uuid);
 			if (player == null) {
-				try {
-					IpCityResponse responde = GeoIpUtils.getIpStatus(ipAdress.getHostAddress());
-					if (responde != null)
-						countryCode = responde.getCountryCode();
-					timeZoneCode = responde.getTimeZone();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				player = DataPlayer.createIfNotExistMongoBukkit(uuid, userName, ipAdress.getHostAddress(), countryCode,
-						timeZoneCode);
+				player = DataPlayer.createIfNotExistMongoBukkit(uuid, userName, ipAdress.getHostAddress(), response);
 				DataPlayer.saveRedisPlayer(player);
 				player.setCacheOnQuit(true);
 				BattlebitsAPI.debug("CONNECTION > TRYING MONGO");
@@ -68,7 +57,7 @@ public class AccountListener implements Listener {
 				BattlebitsAPI.debug("CONNECTION > REDIS FOUND");
 			}
 			player.connect(BattlebitsAPI.getServerId());
-			player.setJoinData(userName, ipAdress.getHostAddress(), countryCode, timeZoneCode);
+			player.setJoinData(userName, ipAdress.getHostAddress(), response);
 			BattlebitsAPI.getAccountCommon().loadBattlePlayer(uuid, player);
 			if (player.getClanUniqueId() != null) {
 				try {
@@ -162,7 +151,7 @@ public class AccountListener implements Listener {
 			}
 		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
-	
+
 	private void removePlayer(UUID uniqueId) {
 		BukkitPlayer player = (BukkitPlayer) BattlePlayer.getPlayer(uniqueId);
 		if (player == null)
@@ -189,7 +178,6 @@ public class AccountListener implements Listener {
 		DataServer.leavePlayer(player.getUniqueId());
 		BattlebitsAPI.getAccountCommon().unloadBattlePlayer(uniqueId);
 	}
-	
 
 	@EventHandler
 	public void onUpdate(PlayerUpdatedFieldEvent event) {

@@ -17,7 +17,7 @@ public class JsonTest {
 	public static void main(String[] args) {
 		Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.STATIC).create();
 		BattlePlayer player = new BattlePlayer("GustavoInacio", UUID.fromString("e24695ad-6618-471e-826a-2438f043a293"),
-				null, "BR", "0");
+				null, null);
 		JsonObject jsonObject = BattlebitsAPI.getParser().parse(gson.toJson(player)).getAsJsonObject();
 		if (!jsonObject.has("money"))
 			return;

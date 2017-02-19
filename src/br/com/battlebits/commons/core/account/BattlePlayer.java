@@ -17,6 +17,7 @@ import br.com.battlebits.commons.core.punish.PunishHistoric;
 import br.com.battlebits.commons.core.server.ServerStaff;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
+import br.com.battlebits.commons.util.GeoIpUtils.IpCityResponse;
 import br.com.battlebits.commons.util.timezone.TimeZone;
 import br.com.battlebits.commons.util.timezone.TimeZoneConversor;
 import lombok.AccessLevel;
@@ -85,6 +86,12 @@ public class BattlePlayer {
 	private String youtubeChannel = "";
 	private String steam = "";
 
+	// DADOS DE LOCALIZAÇÃO
+	
+	private String country;
+	private String region;
+	private String city;
+	
 	// CONFIGURACOES
 	private AccountConfiguration configuration = new AccountConfiguration(this);
 
@@ -105,7 +112,7 @@ public class BattlePlayer {
 	private transient boolean screensharing = false;
 	private transient String lastServer = "";
 
-	public BattlePlayer(String name, UUID uniqueId, String ipAddress, String countryCode, String timeZoneCode) {
+	public BattlePlayer(String name, UUID uniqueId, String ipAddress, IpCityResponse response) {
 		this.name = name;
 		this.uniqueId = uniqueId;
 		this.fakeName = name;
@@ -117,8 +124,12 @@ public class BattlePlayer {
 		this.lastLoggedIn = TimeZoneConversor.getCurrentMillsTimeIn(TimeZone.GMT0);
 		this.firstTimePlaying = TimeZoneConversor.getCurrentMillsTimeIn(TimeZone.GMT0);
 
-		this.countryCode = countryCode;
-		this.timeZone = TimeZone.fromString(timeZoneCode);
+		this.country = response.getCountryName();
+		this.region = response.getRegionName();
+		this.city = response.getCityName();
+		
+		this.countryCode = response.getCountryCode();
+		this.timeZone = TimeZone.fromString(response.getTimeZone());
 	}
 
 	public boolean hasGroupPermission(Group group) {
@@ -344,15 +355,22 @@ public class BattlePlayer {
 		DataPlayer.saveBattlePlayer(this, "serverConnectedType");
 	}
 
-	public void setJoinData(String userName, String ipAdrress, String countryCode, String timeZoneCode) {
+	public void setJoinData(String userName, String ipAdrress, IpCityResponse ipResponse) {
 		checkRanks();
 		setName(userName);
 		configuration.setPlayer(this);
 		this.ipAddress = ipAdrress;
-		setTimeZone(timeZoneCode);
+		setTimeZone(ipResponse.getTimeZone());
+		this.country = ipResponse.getCountryName();
+		this.region = ipResponse.getRegionName();
+		this.city = ipResponse.getCityName();
+		
 		joinTime = System.currentTimeMillis();
-		setCountryCode(countryCode);
+		setCountryCode(ipResponse.getCountryCode());
 		this.online = true;
+		DataPlayer.saveBattlePlayer(this, "country");
+		DataPlayer.saveBattlePlayer(this, "city");
+		DataPlayer.saveBattlePlayer(this, "region");
 		DataPlayer.saveBattlePlayer(this, "joinTime");
 		DataPlayer.saveBattlePlayer(this, "online");
 	}

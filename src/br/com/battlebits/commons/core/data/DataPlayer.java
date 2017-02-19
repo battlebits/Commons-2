@@ -17,6 +17,7 @@ import com.mongodb.client.model.Filters;
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bukkit.account.BukkitPlayer;
 import br.com.battlebits.commons.core.account.BattlePlayer;
+import br.com.battlebits.commons.util.GeoIpUtils.IpCityResponse;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
@@ -43,8 +44,7 @@ public class DataPlayer extends Data {
 		return BattlebitsAPI.getGson().fromJson(BattlebitsAPI.getGson().toJson(found), BattlePlayer.class);
 	}
 
-	public static BattlePlayer createIfNotExistMongo(UUID uuid, String name, String address, String countryCode,
-			String timeZone) {
+	public static BattlePlayer createIfNotExistMongo(UUID uuid, String name, String address, IpCityResponse ipResponse) {
 		try {
 			MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
 			MongoCollection<Document> collection = database.getCollection("account");
@@ -52,7 +52,7 @@ public class DataPlayer extends Data {
 			Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
 			BattlePlayer player = null;
 			if (found == null) {
-				player = new BattlePlayer(name, uuid, address, countryCode, timeZone);
+				player = new BattlePlayer(name, uuid, address, ipResponse);
 				found = Document.parse(BattlebitsAPI.getGson().toJson(player));
 				collection.insertOne(found);
 				BattlebitsAPI.debug("MONGO > INSERTED");
@@ -118,15 +118,14 @@ public class DataPlayer extends Data {
 		return bol;
 	}
 
-	public static BukkitPlayer createIfNotExistMongoBukkit(UUID uuid, String name, String address, String countryCode,
-			String timeZone) {
+	public static BukkitPlayer createIfNotExistMongoBukkit(UUID uuid, String name, String address, IpCityResponse response) {
 		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("account");
 
 		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
 		BukkitPlayer player = null;
 		if (found == null) {
-			player = new BukkitPlayer(name, uuid, address, countryCode, timeZone);
+			player = new BukkitPlayer(name, uuid, address, response);
 			found = Document.parse(BattlebitsAPI.getGson().toJson(player));
 			collection.insertOne(found);
 			BattlebitsAPI.debug("MONGO > INSERTED");

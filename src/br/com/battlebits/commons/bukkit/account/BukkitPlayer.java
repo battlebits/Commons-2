@@ -16,6 +16,7 @@ import br.com.battlebits.commons.core.account.League;
 import br.com.battlebits.commons.core.account.Tag;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.translate.Language;
+import br.com.battlebits.commons.util.GeoIpUtils.IpCityResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,8 +27,8 @@ public class BukkitPlayer extends BattlePlayer {
 	@Setter
 	protected transient boolean cacheOnQuit;
 
-	public BukkitPlayer(String name, UUID uniqueId, String hostName, String countryCode, String timeZone) {
-		super(name, uniqueId, hostName, countryCode, timeZone);
+	public BukkitPlayer(String name, UUID uniqueId, String hostName, IpCityResponse response) {
+		super(name, uniqueId, hostName, response);
 	}
 
 	@Override
@@ -92,8 +93,8 @@ public class BukkitPlayer extends BattlePlayer {
 	}
 
 	@Override
-	public void setJoinData(String userName, String ipAdrress, String countryCode, String timeZoneCode) {
-		super.setJoinData(userName, ipAdrress, countryCode, timeZoneCode);
+	public void setJoinData(String userName, String ipAdrress, IpCityResponse response) {
+		super.setJoinData(userName, ipAdrress, response);
 		loadTags();
 		if (getTag() == Tag.STAFF || !hasGroupPermission(Group.YOUTUBER))
 			setTag(getDefaultTag());

@@ -51,7 +51,7 @@ public class BattlebitsAPI {
 	public final static String FORUM_WEBSITE = "forum.battlebits.net";
 	public final static String WEBSITE = "www.battlebits.net";
 	public final static String STORE = "loja.battlebits.net";
-	public final static String ADMIN_EMAIL = "admin@battlebits.com.br";
+	public final static String ADMIN_EMAIL = "admin@battlebits.net";
 	public final static String TWITTER = "@BattlebitsMC";
 	public static TimeZone DEFAULT_TIME_ZONE = TimeZone.GMT0;
 	@Getter

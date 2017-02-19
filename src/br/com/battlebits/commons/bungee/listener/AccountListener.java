@@ -1,6 +1,5 @@
 package br.com.battlebits.commons.bungee.listener;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -49,23 +48,13 @@ public class AccountListener implements Listener {
 		ProxyServer.getInstance().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
-				String countryCode = "-";
-				String timeZoneCode = "0";
-				try {
-					IpCityResponse responde = GeoIpUtils.getIpStatus(ipAdress.getHostString());
-					if (responde != null)
-						countryCode = responde.getCountryCode();
-					timeZoneCode = responde.getTimeZone();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
 				BattlebitsAPI.debug("CONNECTION > STARTING");
 				try {
+					IpCityResponse response = GeoIpUtils.getIpStatus(ipAdress.getHostString());
 					BattlePlayer player = DataPlayer.getRedisPlayer(uuid);
 					if (player == null) {
 						BattlebitsAPI.debug("CONNECTION > TRYING MONGO");
-						player = DataPlayer.createIfNotExistMongo(uuid, userName, ipAdress.getHostString(), countryCode,
-								timeZoneCode);
+						player = DataPlayer.createIfNotExistMongo(uuid, userName, ipAdress.getHostString(), response);
 						DataPlayer.saveRedisPlayer(player);
 						BattlebitsAPI.debug("CONNECTION > MONGO SUCCESS");
 					} else {
@@ -73,7 +62,7 @@ public class AccountListener implements Listener {
 					}
 					DataPlayer.checkCache(uuid);
 					BattlebitsAPI.debug("CONNECTION > JOIN DATA");
-					player.setJoinData(userName, ipAdress.getHostString(), countryCode, timeZoneCode);
+					player.setJoinData(userName, ipAdress.getHostString(), response);
 					player.setServerConnectedType(ServerType.NONE);
 					BattlebitsAPI.debug("CONNECTION > JOINED");
 					BattlebitsAPI.getAccountCommon().loadBattlePlayer(uuid, player);
