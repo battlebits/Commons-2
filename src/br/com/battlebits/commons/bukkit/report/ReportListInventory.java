@@ -1,5 +1,6 @@
 package br.com.battlebits.commons.bukkit.report;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +27,7 @@ public class ReportListInventory {
 	private static int itemsPerPage = 36;
 
 	public ReportListInventory(Player player, int page) {
-		List<Report> reports =  null; // TODO GetReports
+		List<Report> reports =  new ArrayList<>(); // TODO GetReports
 		Iterator<Report> iterator = reports.iterator();
 		while (iterator.hasNext()) {
 			Report report = iterator.next();
@@ -138,6 +139,7 @@ public class ReportListInventory {
 			}
 			if (type == ClickType.RIGHT) {
 				// TODO TELEPORT
+				topInventory.open(p);
 				return;
 			}
 			new ReportInventory(p, report);
