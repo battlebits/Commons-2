@@ -144,6 +144,7 @@ public class BanMenu {
 			w += 1;
 		}
 		for (int i = pageEnd - pageStart; i < itemsPerPage; i++) {
+			menu.setItem(w, nullItem);
 			if (w % 9 == 7) {
 				w += 3;
 				continue;
