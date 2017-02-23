@@ -15,25 +15,26 @@ import com.google.common.base.Splitter;
 
 import lombok.Getter;
 
+@Getter
 public class BattleBoard {
 
-	@Getter
 	private Scoreboard scoreboard;
-
-	@Getter
-	private Objective objective;
+	
+	private Objective sidebar;
+	private Objective belowName;
+	private Objective playerList;
 
 	public BattleBoard(Player player) {
 		Scoreboard playerScoreboard = player.getScoreboard();
 		Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
 		scoreboard = !playerScoreboard.equals(mainScoreboard) ? playerScoreboard : Bukkit.getScoreboardManager().getNewScoreboard();
-		objective = scoreboard.registerNewObjective("sidebar", "dummy");
-		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		sidebar = scoreboard.registerNewObjective("sidebar", "dummy");
+		sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
 		player.setScoreboard(scoreboard);
 	}
 
 	public void setDisplayName(String displayName) {
-		objective.setDisplayName(displayName);
+		sidebar.setDisplayName(displayName);
 	}
 
 	public void setText(Row row, String text) {
@@ -41,7 +42,7 @@ public class BattleBoard {
 
 			Team team = scoreboard.getTeam(row.getTeam());
 			if (team == null) {
-				objective.getScore(row.getScore()).setScore(row.getId());
+				sidebar.getScore(row.getScore()).setScore(row.getId());
 				team = scoreboard.registerNewTeam(row.getTeam());
 				if (!team.hasEntry(row.getScore()))
 					team.addEntry(row.getScore());
@@ -84,6 +85,31 @@ public class BattleBoard {
 			}
 		}
 	}
+	
+	public boolean hasBelowName() {
+		return belowName != null;
+	}
+	
+	public boolean hasPlayerList() {
+		return playerList != null;
+	}
+	
+	public Objective registerPlayerList() {
+		if (playerList == null) {
+			playerList = scoreboard.registerNewObjective("playerList", "dummy");
+			playerList.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+		}
+		return playerList;
+	}
+	
+	public Objective registerBelowName(String displayName) {
+		if (belowName == null) {
+			belowName = scoreboard.registerNewObjective("belowName", "dummy");
+			belowName.setDisplaySlot(DisplaySlot.BELOW_NAME);
+			belowName.setDisplayName(displayName);
+		}
+		return belowName;
+	}
 
 	public void setRows(Map<Integer, String> rows) {
 		for (Row row : Row.values()) {
@@ -103,7 +129,7 @@ public class BattleBoard {
 	}
 
 	public void unregisterAll() {
-		objective.unregister();
+		sidebar.unregister();
 	}
 
 	public enum Row {
