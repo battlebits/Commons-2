@@ -143,6 +143,13 @@ public class BanMenu {
 			}
 			w += 1;
 		}
+		for (int i = pageEnd - pageStart; i < itemsPerPage; i++) {
+			if (w % 9 == 7) {
+				w += 3;
+				continue;
+			}
+			w += 1;
+		}
 		if (banList.size() == 0) {
 			menu.setItem(31, new ItemBuilder().type(Material.PAINTING).name("§c§lOps!")
 					.lore(Arrays.asList("§%nothing-found%§")).build());
