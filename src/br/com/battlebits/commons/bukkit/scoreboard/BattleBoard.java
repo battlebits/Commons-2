@@ -24,7 +24,9 @@ public class BattleBoard {
 	private Objective objective;
 
 	public BattleBoard(Player player) {
-		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+		Scoreboard playerScoreboard = player.getScoreboard();
+		Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+		scoreboard = !playerScoreboard.equals(mainScoreboard) ? playerScoreboard : Bukkit.getScoreboardManager().getNewScoreboard();
 		objective = scoreboard.registerNewObjective("sidebar", "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		player.setScoreboard(scoreboard);
