@@ -19,6 +19,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Splitter;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bukkit.BukkitMain;
@@ -98,11 +100,13 @@ public class TranslationInjector implements Injector {
 						} else if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW) {
 							PacketContainer packet = event.getPacket().deepClone();
 							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
-							String message = translate(
-									BattlebitsAPI.getParser().parse(component.getJson()).getAsString(), lang);
-							message = message.substring(0, message.length() > 32 ? 32 : message.length());
-							packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
-							event.setPacket(packet);
+							JsonElement element = BattlebitsAPI.getParser().parse(component.getJson()); 
+							if (!(element instanceof JsonObject && ((JsonObject) element).has("translate"))) {
+								String message = translate(element.getAsString(), lang);								
+								message = message.substring(0, message.length() > 32 ? 32 : message.length());
+								packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
+								event.setPacket(packet);
+							}
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_OBJECTIVE) {
 							PacketContainer packet = event.getPacket().deepClone();
 							String message = event.getPacket().getStrings().read(1);
