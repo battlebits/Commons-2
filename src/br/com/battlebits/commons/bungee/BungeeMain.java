@@ -73,29 +73,31 @@ public class BungeeMain extends Plugin {
 	@Override
 	public void onEnable() {
 		try {
-
 			if (!getDataFolder().exists()) {
 	            getDataFolder().mkdir();
 	        }
 			
 	        File configFile = new File(getDataFolder(), "config.yml");
+	        
 	        if (!configFile.exists()) {
-	            try {
-	                configFile.createNewFile();
-	                try (InputStream is = getResourceAsStream("config.yml");
-	                     OutputStream os = new FileOutputStream(configFile)) {
-	                	 ByteStreams.copy(is, os);
-	                }
-	            } catch (IOException e) {
+	        	try {
+	        		configFile.createNewFile();
+	        		try (InputStream is = getResourceAsStream("config.yml"); 
+	        				OutputStream os = new FileOutputStream(configFile)) {
+	                	ByteStreams.copy(is, os);
+	        		}
+	        	} catch (IOException e) {
 	                throw new RuntimeException("Unable to create configuration file", e);
-	            }
+				}
 	        }
-			
+
 			config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		
 		loadConfiguration();
+		
 		try {
 			MongoBackend mongoBackend = new MongoBackend(mongoHostname, mongoDatabase, mongoUsername, mongoPassword,
 					mongoPort);
