@@ -63,15 +63,16 @@ public class AccountMenu {
 		Date date = new Date(battlePlayer.getFirstTimePlaying());
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 		StringBuilder loreBuilder = new StringBuilder();
-		loreBuilder.append("\n" + ChatColor.GRAY + "§%first-join%§: " + df.format(date));
+		loreBuilder.append("\n" + ChatColor.GRAY + "§%first-join%§: " + ChatColor.RESET + df.format(date));
 		date = new Date(battlePlayer.getLastLoggedIn());
-		loreBuilder.append("\n" + ChatColor.GRAY + "§%last-login%§: " + df.format(date));
-		loreBuilder.append("\n" + ChatColor.GRAY + "§%total-online-time%§: "
+		loreBuilder.append("\n" + ChatColor.GRAY + "§%last-login%§: " + ChatColor.RESET + df.format(date));
+		loreBuilder.append("\n" + ChatColor.GRAY + "§%total-online-time%§: " + ChatColor.RESET
 				+ DateUtils.formatDifference(opener.getLanguage(), battlePlayer.getOnlineTime() / 1000) + "\n");
 		if (battlePlayer.isOnline()) {
 			date = new Date(System.currentTimeMillis() - battlePlayer.getJoinTime());
-			loreBuilder.append("\n" + ChatColor.GRAY + "§%current-online-time%§: " + DateUtils.formatDifference(
-					opener.getLanguage(), (System.currentTimeMillis() - battlePlayer.getJoinTime()) / 1000));
+			loreBuilder.append(
+					"\n" + ChatColor.GRAY + "§%current-online-time%§: " + ChatColor.RESET + DateUtils.formatDifference(
+							opener.getLanguage(), (System.currentTimeMillis() - battlePlayer.getJoinTime()) / 1000));
 		}
 		builder.lore(loreBuilder.toString());
 		menu.setItem(25, builder.build());
@@ -90,22 +91,22 @@ public class AccountMenu {
 		}
 		builder.lore(loreBuilder.toString());
 		menu.setItem(31, builder.build());
-
-		menu.setItem(46, new MenuItem(new ItemBuilder().type(Material.REDSTONE_COMPARATOR).name("§%preferences%§")
-				.lore("§%preferences-lore%§").build(), new MenuClickHandler() {
-					@Override
-					public void onClick(Player p, Inventory inv, ClickType type, ItemStack stack, int slot) {
-						// TODO Open Preferences menu
-					}
-				}));
+		if (opener.getUniqueId().equals(battlePlayer.getUniqueId()))
+			menu.setItem(47, new MenuItem(new ItemBuilder().type(Material.REDSTONE_COMPARATOR).name("§%preferences%§")
+					.lore("§%preferences-lore%§").build(), new MenuClickHandler() {
+						@Override
+						public void onClick(Player p, Inventory inv, ClickType type, ItemStack stack, int slot) {
+							// TODO Open Preferences menu
+						}
+					}));
 		builder = new ItemBuilder().type(Material.COMPASS).name("§%location%§");
 		loreBuilder = new StringBuilder();
-		loreBuilder.append("§%country%§: " + battlePlayer.getCountry());
-		if (battlePlayer.getUniqueId() == opener.getUniqueId() || opener.hasGroupPermission(Group.TRIAL)) {
-			loreBuilder.append("\n§%region%§: " + battlePlayer.getRegion());
-			loreBuilder.append("\n§%city%§: " + battlePlayer.getCity());
+		loreBuilder.append("§%country%§: " + ChatColor.RESET + battlePlayer.getCountry());
+		if (battlePlayer.getUniqueId() == opener.getUniqueId() || opener.hasGroupPermission(Group.STAFF)) {
+			loreBuilder.append("\n§%region%§: " + ChatColor.RESET + battlePlayer.getRegion());
+			loreBuilder.append("\n§%city%§: " + ChatColor.RESET + battlePlayer.getCity());
 		}
-		menu.setItem(47, builder.lore(loreBuilder.toString()).build());
+		menu.setItem(46, builder.lore(loreBuilder.toString()).build());
 
 		builder = new ItemBuilder().type(Material.EYE_OF_ENDER).name("§%groups%§");
 		loreBuilder = new StringBuilder();
@@ -148,17 +149,17 @@ public class AccountMenu {
 						new MuteMenu(player, opener, battlePlayer, menu, 1);
 					}
 				}));
+		if (opener.getUniqueId().equals(battlePlayer.getUniqueId()) || battlePlayer.hasGroupPermission(Group.STAFF)) {
+			menu.setItem(8,
+					new ItemBuilder().type(Material.NETHER_STAR).name("§%ip-info%§")
+							.lore(T.t(opener.getLanguage(), "ip-info-lore",
+									new String[] { "%actual%", battlePlayer.getIpAddress() },
+									new String[] { "%last-ip-address%", battlePlayer.getLastIpAddress() }))
+							.build());
 
-		menu.setItem(8,
-				new ItemBuilder().type(Material.NETHER_STAR).name("§%ip-info%§")
-						.lore(T.t(opener.getLanguage(), "ip-info-lore",
-								new String[] { "%actual%", battlePlayer.getIpAddress() },
-								new String[] { "%last-ip-address%", battlePlayer.getLastIpAddress() }))
-						.build());
-
-		menu.setItem(17, new ItemBuilder().type(Material.BOOKSHELF).name("§%report-points%§")
-				.lore(ChatColor.GRAY + "" + battlePlayer.getReportPoints()).build());
-
+			menu.setItem(17, new ItemBuilder().type(Material.BOOKSHELF).name("§%report-points%§")
+					.lore(ChatColor.GRAY + "" + battlePlayer.getReportPoints()).build());
+		}
 		ItemStack nullItem = new ItemBuilder().type(Material.STAINED_GLASS_PANE).durability(15).name(" ").build();
 		for (int i = 0; i < menu.getInventory().getSize(); i++) {
 			if (menu.getItem(i) == null)

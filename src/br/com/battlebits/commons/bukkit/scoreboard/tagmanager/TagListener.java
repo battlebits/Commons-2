@@ -54,7 +54,7 @@ public class TagListener implements Listener {
 				if (manager.getPlugin().isOldTag()) {
 					id = chars[bp.getTag().ordinal()] + "";
 				}
-				String tag = bp.getTag().getPrefix();
+				String tag = bp.getTag().getPrefix(bp.getLanguage());
 				String league = " §7(" + bp.getLeague().getSymbol() + "§7)";
 				if (manager.getPlugin().isOldTag()) {
 					tag = tag.substring(tag.length() - 2, tag.length());
