@@ -79,7 +79,6 @@ public class DataPlayer extends Data {
 			for (Entry<String, String> entry : fields.entrySet()) {
 				obj.add(entry.getKey(), BattlebitsAPI.getParser().parse(entry.getValue()));
 			}
-			System.out.println(obj.toString());
 			player = gson.fromJson(obj.toString(), BattlePlayer.class);
 		}
 		return player;
@@ -140,11 +139,15 @@ public class DataPlayer extends Data {
 		BukkitPlayer player = null;
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Map<String, String> fields = jedis.hgetAll("account:" + uuid.toString());
-			if (fields == null || fields.isEmpty())
+			if (fields == null || fields.isEmpty() || fields.size() < 40)
 				return null;
 			JsonObject obj = new JsonObject();
 			for (Entry<String, String> entry : fields.entrySet()) {
-				obj.add(entry.getKey(), BattlebitsAPI.getParser().parse(entry.getValue()));
+				try {
+					obj.add(entry.getKey(), BattlebitsAPI.getParser().parse(entry.getValue()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			player = BattlebitsAPI.getGson().fromJson(obj.toString(), BukkitPlayer.class);
 		}
@@ -155,14 +158,7 @@ public class DataPlayer extends Data {
 		JsonObject jsonObject = BattlebitsAPI.getParser().parse(gson.toJson(player)).getAsJsonObject();
 		Map<String, String> playerElements = new HashMap<>();
 		for (Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-			String key = entry.getKey();
-			String value;
-			if (!entry.getValue().isJsonPrimitive()) {
-				value = entry.getValue().toString();
-			} else {
-				value = entry.getValue().getAsString();
-			}
-			playerElements.put(key, value);
+			playerElements.put(entry.getKey(), gson.toJson(entry.getValue()));
 		}
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			jedis.hmset("account:" + player.getUniqueId().toString(), playerElements);
@@ -182,10 +178,9 @@ public class DataPlayer extends Data {
 		if (!jsonObject.has(fieldName))
 			return;
 		JsonElement element = jsonObject.get(fieldName);
-		String value = !element.isJsonPrimitive() ? element.toString() : element.getAsString();
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
-			jedis.hset("account:" + player.getUniqueId().toString(), fieldName, value);
+			jedis.hset("account:" + player.getUniqueId().toString(), fieldName, gson.toJson(element));
 
 			JsonObject json = new JsonObject();
 			json.add("uniqueId", new JsonPrimitive(player.getUniqueId().toString()));

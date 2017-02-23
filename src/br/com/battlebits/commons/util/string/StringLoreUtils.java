@@ -26,11 +26,11 @@ public class StringLoreUtils {
 				text = color;
 			}
 			String toAdd = split[i];
-			if (toAdd.contains("�"))
+			if (toAdd.contains("§"))
 				color = ChatColor.getLastColors(toAdd.toLowerCase());
-			if (toAdd.contains("\\n")) {
-				toAdd = toAdd.substring(0, toAdd.indexOf("\\n"));
-				split[i] = split[i].substring(toAdd.length() + 2);
+			if (toAdd.contains("\n")) {
+				toAdd = toAdd.substring(0, toAdd.indexOf("\n"));
+				split[i] = split[i].substring(toAdd.length() + 1);
 				lore.add(text + (text.length() == 0 ? "" : " ") + toAdd);
 				text = color;
 				i--;
@@ -40,6 +40,12 @@ public class StringLoreUtils {
 		}
 		lore.add(text);
 		return lore;
+	}
+
+	public static void main(String[] args) {
+		String str = "§7§l➟ ✪ LEGENDARY\n§7§l➟ ✫ MASTER\n§7§l➟ ✹ ELITE\n§7§l➟ ✦ DIAMOND\n§7§l➟ ✷ GOLD\n§7§l➟ ✶ SILVER\n§7§l➟ ☷ EXPERT\n§7§l➟ ☲ ADVANCED\n§7§l➟ ☰ PRIMARY\n§6§l➟ §f- UNRANKED";
+		for(String s : getLore(30, str))
+			System.out.println(s);
 	}
 
 }

@@ -3,6 +3,7 @@ package br.com.battlebits.commons.bukkit.command.register;
 import org.bukkit.entity.Player;
 
 import br.com.battlebits.commons.bukkit.command.BukkitCommandArgs;
+import br.com.battlebits.commons.bukkit.menu.account.AccountMenu;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
@@ -13,7 +14,8 @@ public class AccountCommand implements CommandClass {
 
 	@Command(name = "account", aliases = { "acc", "conta" })
 	public void account(BukkitCommandArgs args) {
-
+		BattlePlayer player = BattlePlayer.getPlayer(args.getPlayer().getUniqueId());
+		new AccountMenu(args.getPlayer(), player, player);
 	}
 
 	@Command(name = "language", aliases = { "lang" })
