@@ -35,7 +35,7 @@ public class PlayerListener implements Listener {
 			event.setCancelled(true);
 		}
 		if (event.getMessage().split(" ")[0].contains(":")) {
-			event.getPlayer().sendMessage("cant-type-two-dot-command");
+			event.getPlayer().sendMessage("§%cant-type-two-dot-command%§");
 			event.setCancelled(true);
 		}
 	}
@@ -112,15 +112,13 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onChangeLiga(PlayerChangeLeagueEvent event) {
-		if (event.getBukkitPlayer() == null)
+		if (event.getPlayer() == null)
 			return;
 		if (event.getNewLeague().ordinal() < event.getOldLeague().ordinal())
 			return;
 		HashMap<String, String> replaces = new HashMap<>();
 		replaces.put("%league%", event.getNewLeague().toString());
 		replaces.put("%symbol%", event.getNewLeague().getSymbol());
-		event.getPlayer().sendMessage(
-				"§%league-prefix%§ " + T.t(event.getBukkitPlayer().getLanguage(), "league-rank-level-up", replaces));
+		event.getPlayer().sendMessage("§%league-prefix%§ " + T.t(event.getBukkitPlayer().getLanguage(), "league-rank-level-up", replaces));
 	}
-
 }
