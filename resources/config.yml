@@ -1,0 +1,11 @@
+remove-player-dat: false
+mongo:
+  hostname: 'localhost'
+  port: 27017
+  database: ''
+  username: ''
+  password: ''
+redis:
+  hostname: 'localhost'
+  password: ''
+  port: 6379

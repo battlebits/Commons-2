@@ -138,17 +138,18 @@ public class BukkitMain extends JavaPlugin {
 	}
 
 	private void loadConfiguration() {
-		removePlayerDat = getConfig().getBoolean("remove-player-dat");
+		saveDefaultConfig();
+		removePlayerDat = getConfig().getBoolean("remove-player-dat", false);
 		
-		mongoHostname = getConfig().getString("mongo.hostname");
-		mongoPort = getConfig().getInt("mongo.port");
-		mongoDatabase = getConfig().getString("mongo.database");
-		mongoUsername = getConfig().getString("mongo.username");
-		mongoPassword = getConfig().getString("mongo.password");
+		mongoHostname = getConfig().getString("mongo.hostname", "localhost");
+		mongoPort = getConfig().getInt("mongo.port", 27017);
+		mongoDatabase = getConfig().getString("mongo.database", "");
+		mongoUsername = getConfig().getString("mongo.username", "");
+		mongoPassword = getConfig().getString("mongo.password", "");
 
-		redisHostname = getConfig().getString("redis.hostname");
-		redisPassword = getConfig().getString("redis.password");
-		redisPort = getConfig().getInt("redis.port");
+		redisHostname = getConfig().getString("redis.hostname", "localhost");
+		redisPassword = getConfig().getString("redis.password", "");
+		redisPort = getConfig().getInt("redis.port", 6379);
 	}
 
 	private void registerListeners() {
