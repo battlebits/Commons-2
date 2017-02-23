@@ -36,7 +36,6 @@ public class ClassGetter {
 		String resPath = resource.getPath().replace("%20", " ");
 		String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
 		JarFile jarFile;
-		System.out.println(jarPath);
 		try {
 			jarFile = new JarFile(jarPath);
 		} catch (IOException e) {
