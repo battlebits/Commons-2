@@ -15,6 +15,7 @@ import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.backend.sql.MySQLBackend;
 import br.com.battlebits.commons.core.clan.ClanCommon;
+import br.com.battlebits.commons.core.party.PartyCommon;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.util.mojang.NameFetcher;
 import br.com.battlebits.commons.util.mojang.UUIDFetcher;
@@ -37,6 +38,8 @@ public class BattlebitsAPI {
 
 	@Getter
 	private static ClanCommon clanCommon = new ClanCommon();
+	@Getter
+	private static PartyCommon partyCommon = new PartyCommon();
 	@Getter
 	private static AccountCommon accountCommon = new AccountCommon();
 	@Getter

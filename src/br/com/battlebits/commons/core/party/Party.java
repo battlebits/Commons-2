@@ -1,30 +1,30 @@
 package br.com.battlebits.commons.core.party;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-import br.com.battlebits.commons.core.account.BattlePlayer;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class Party {
-	private UUID uniqueId;
-	private BattlePlayer partyOwner;
-	private List<BattlePlayer> participants;
-
-	public Party(UUID uniqueId, BattlePlayer player) {
-		this.uniqueId = uniqueId;
-		participants = new ArrayList<>();
-		participants.add(player);
+	@NonNull
+	private UUID owner;
+	
+	private Set<UUID> members = new HashSet<>();
+	
+	public boolean contains(UUID uuid) {
+		return uuid.equals(owner) || members.contains(uuid);
 	}
-
-	public void addParticipant(BattlePlayer player) {
-		participants.remove(player);
+	
+	public void removeMember(UUID member) {
+		members.remove(member);
 	}
-
-	public void removeParticipant(BattlePlayer player) {
-		participants.remove(player);
+	
+	public void addMember(UUID member) {
+		members.add(member);
 	}
-
 }
