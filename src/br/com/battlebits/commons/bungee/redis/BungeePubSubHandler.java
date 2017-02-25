@@ -18,6 +18,8 @@ import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.LeavePay
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StartPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StopPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.UpdatePayload;
+import br.com.battlebits.commons.core.party.BungeeParty;
+import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.core.server.loadbalancer.server.MinigameServer;
@@ -65,6 +67,22 @@ public class BungeePubSubHandler extends JedisPubSub {
 				Object object = BattlebitsAPI.getGson().fromJson(jsonObject.get("value"), f.getGenericType());
 				f.set(clan, object);
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		} else if (channel.equals("party-field")) {
+			JsonObject jsonObject = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
+			String source = jsonObject.get("source").getAsString();
+			if (source.equals(BattlebitsAPI.getServerId()))
+				return;
+			UUID uuid = UUID.fromString(jsonObject.get("owner").getAsString());
+			Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+			if (party == null)
+				return;
+			try {
+				Field field = getField(BungeeParty.class, jsonObject.get("field").getAsString());
+				Object object = BattlebitsAPI.getGson().fromJson(jsonObject.get("value"), field.getGenericType());
+				field.set(party, object);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (channel.equals("server-info")) {
@@ -150,23 +168,17 @@ public class BungeePubSubHandler extends JedisPubSub {
 			}
 		}
 	}
-
-	public static Field getField(Class<?> clazz, String name) {
-		try {
-			Field field = clazz.getDeclaredField(name);
-			field.setAccessible(true);
-			return field;
-		} catch (Exception e) {
+	
+	private Field getField(Class<?> clazz, String fieldName) {
+		while ((clazz != null) && (clazz != Object.class)) {
 			try {
-				Field field = clazz.getDeclaredField(name);
+				Field field = clazz.getDeclaredField(fieldName);
 				field.setAccessible(true);
-				return field;
-			} catch (Exception e2) {
-				if (clazz.getSuperclass() != null)
-					return getField(clazz.getSuperclass(), name);
+				return field;				
+			} catch (NoSuchFieldException e) {
+				clazz = clazz.getSuperclass();
 			}
 		}
 		return null;
 	}
-
 }

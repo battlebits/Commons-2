@@ -46,7 +46,7 @@ public class TagListener implements Listener {
 			return;
 		player.setTag(player.getTag());
 		for (Player o : Bukkit.getOnlinePlayers()) {
-			if (o.getUniqueId() != p.getUniqueId()) {
+			if (!o.getUniqueId().equals(p.getUniqueId())) {
 				BukkitPlayer bp = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(o.getUniqueId());
 				if (bp == null)
 					continue;

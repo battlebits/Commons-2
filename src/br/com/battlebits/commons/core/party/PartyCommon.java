@@ -11,7 +11,7 @@ public class PartyCommon {
 	public PartyCommon() {
 		this.partys = new HashMap<>();
 	}
-	
+
 	public boolean inParty(UUID uuid) {
 		return getParty(uuid) != null;
 	}
@@ -22,6 +22,14 @@ public class PartyCommon {
 	
 	public Party getByOwner(UUID owner) {
 		return partys.values().stream().filter(p -> p.getOwner().equals(owner)).findFirst().orElse(null);
+	}
+	
+	public Party loadParty(Party party) {
+		return partys.computeIfAbsent(party.getOwner(), v -> party);
+	}
+	
+	public void removeParty(Party party) {
+		partys.remove(party.getOwner());
 	}
 	
 	public void removeParty(UUID owner) {

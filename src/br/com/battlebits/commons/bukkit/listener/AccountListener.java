@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,8 +24,11 @@ import br.com.battlebits.commons.bukkit.event.account.PlayerUpdatedFieldEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataClan;
+import br.com.battlebits.commons.core.data.DataParty;
 import br.com.battlebits.commons.core.data.DataPlayer;
 import br.com.battlebits.commons.core.data.DataServer;
+import br.com.battlebits.commons.core.party.BukkitParty;
+import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
 import br.com.battlebits.commons.util.GeoIpUtils;
@@ -88,6 +92,14 @@ public class AccountListener implements Listener {
 					e.printStackTrace();
 				}
 			}
+			
+			/* Party */
+			Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+			if (party == null) {
+				party = DataParty.getRedisParty(uuid, BukkitParty.class);
+				if (party != null) BattlebitsAPI.getPartyCommon().loadParty(party);
+			}
+			
 			BattlebitsAPI.debug("ACCOUNT > CLOSE");
 		} catch (Exception e) {
 			event.setKickMessage(T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed"));
@@ -124,30 +136,41 @@ public class AccountListener implements Listener {
 			}
 		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
-
-	// @EventHandler
-	// public void onAdminMode(PlayerAdminModeEvent event) {
-	// new BukkitRunnable() {
-	// @Override
-	// public void run() {
-	// if (event
-	// .getAdminMode() ==
-	// br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent.AdminMode.ADMIN)
-	// {
-	// DataServer.leavePlayer(event.getPlayer().getUniqueId());
-	// } else {
-	// DataServer.joinPlayer(event.getPlayer().getUniqueId());
-	// }
-	// }
-	// }.runTaskAsynchronously(BukkitMain.getInstance());
-	// }
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onJoin(PlayerJoinEvent event) {
+		UUID uuid = event.getPlayer().getUniqueId();
+		
+		/* Party */
+		Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+		if (party == null) {
+			party = BattlebitsAPI.getPartyCommon().getParty(uuid);
+			if (party != null) party.onMemberJoin(uuid);
+		} else {
+			party.onOwnerJoin();
+		}
+	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onLeave(PlayerQuitEvent event) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				removePlayer(event.getPlayer().getUniqueId());
+				UUID uuid = event.getPlayer().getUniqueId();
+				
+				/* Party */
+				BukkitParty party = (BukkitParty) BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+				if (party == null) {
+					party = (BukkitParty) BattlebitsAPI.getPartyCommon().getParty(uuid);
+					if (party != null) party.onMemberLeave(uuid);
+				} else {
+					party.onOwnerLeave();
+				}
+				
+				if (party.getBukkitOwner() == null && party.getBukkitMembers().isEmpty())
+					BattlebitsAPI.getPartyCommon().removeParty(party);
+			
+				removePlayer(uuid);
 			}
 		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}

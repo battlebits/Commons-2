@@ -16,6 +16,8 @@ import br.com.battlebits.commons.bukkit.event.account.PlayerUpdatedFieldEvent;
 import br.com.battlebits.commons.bukkit.event.redis.RedisPubSubMessageEvent;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
+import br.com.battlebits.commons.core.party.BukkitParty;
+import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.util.reflection.Reflection;
 import redis.clients.jedis.JedisPubSub;
 
@@ -68,25 +70,35 @@ public class BukkitPubSubHandler extends JedisPubSub {
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
+		} else if (channel.equals("party-field")) {
+			JsonObject jsonObject = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
+			String source = jsonObject.get("source").getAsString();
+			if (source.equals(BattlebitsAPI.getServerId()))
+				return;
+			UUID uuid = UUID.fromString(jsonObject.get("owner").getAsString());
+			Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+			if (party == null)
+				return;
+			try {
+				Field field = getField(BukkitParty.class, jsonObject.get("field").getAsString());
+				Object object = BattlebitsAPI.getGson().fromJson(jsonObject.get("value"), field.getGenericType());
+				field.set(party, object);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-
-	public static Field getField(Class<?> clazz, String name) {
-		try {
-			Field field = clazz.getDeclaredField(name);
-			field.setAccessible(true);
-			return field;
-		} catch (Exception e) {
+	
+	private Field getField(Class<?> clazz, String fieldName) {
+		while ((clazz != null) && (clazz != Object.class)) {
 			try {
-				Field field = clazz.getDeclaredField(name);
+				Field field = clazz.getDeclaredField(fieldName);
 				field.setAccessible(true);
-				return field;
-			} catch (Exception e2) {
-				if (clazz.getSuperclass() != null)
-					return getField(clazz.getSuperclass(), name);
+				return field;				
+			} catch (NoSuchFieldException e) {
+				clazz = clazz.getSuperclass();
 			}
 		}
 		return null;
 	}
-
 }

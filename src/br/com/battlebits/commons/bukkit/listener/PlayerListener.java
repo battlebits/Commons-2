@@ -111,14 +111,12 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onChangeLiga(PlayerChangeLeagueEvent event) {
-		if (event.getPlayer() == null)
-			return;
-		if (event.getNewLeague().ordinal() < event.getOldLeague().ordinal())
-			return;
-		HashMap<String, String> replaces = new HashMap<>();
-		replaces.put("%league%", event.getNewLeague().toString());
-		replaces.put("%symbol%", event.getNewLeague().getSymbol());
-		event.getPlayer().sendMessage("§%league-prefix%§ " + T.t(event.getBukkitPlayer().getLanguage(), "league-rank-level-up", replaces));
+	public void onPlayerChangeLeague(PlayerChangeLeagueEvent event) {
+		if (event.getPlayer() != null && event.getNewLeague().ordinal() > event.getOldLeague().ordinal()) {
+			HashMap<String, String> replaces = new HashMap<>();
+			replaces.put("%league%", event.getNewLeague().toString());
+			replaces.put("%symbol%", event.getNewLeague().getSymbol());
+			event.getPlayer().sendMessage("§%league-prefix%§ " + T.t(event.getBukkitPlayer().getLanguage(), "league-rank-level-up", replaces));
+		}
 	}
 }

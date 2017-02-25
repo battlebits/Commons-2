@@ -91,6 +91,11 @@ public class MenuInventory {
 	public MenuItem getItem(int slot) {
 		return this.slotItem.get(slot);
 	}
+	
+	public void clear() {
+		slotItem.clear();
+		inv.clear();
+	}
 
 	public void open(Player p) {
 		if (!onePerPlayer) {

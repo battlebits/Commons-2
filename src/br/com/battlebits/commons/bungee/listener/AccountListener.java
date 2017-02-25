@@ -10,8 +10,11 @@ import br.com.battlebits.commons.bungee.manager.BanManager;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataClan;
+import br.com.battlebits.commons.core.data.DataParty;
 import br.com.battlebits.commons.core.data.DataPlayer;
 import br.com.battlebits.commons.core.data.DataServer;
+import br.com.battlebits.commons.core.party.BungeeParty;
+import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.T;
@@ -94,6 +97,16 @@ public class AccountListener implements Listener {
 							e.printStackTrace();
 						}
 					}
+					
+					/* Party */
+					Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+					if (party == null) {
+						party = DataParty.getRedisParty(uuid, BungeeParty.class);
+						if (party != null) BattlebitsAPI.getPartyCommon().loadParty(party);
+						if (party != null && DataParty.persist(uuid))
+							((BungeeParty) party).setCacheOnQuit(true);
+					}
+					
 					BattlebitsAPI.debug("ACCOUNT > CLOSE");
 				} catch (Exception e) {
 					event.setCancelled(true);
@@ -144,12 +157,24 @@ public class AccountListener implements Listener {
 		BungeeMain.getPlugin().getProxy().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
-				if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId()) != null)
+				UUID uuid = event.getPlayer().getUniqueId();
+				if (BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid) != null) {
+					
+					/* Party */
+					Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+					if (party == null) {
+						party = BattlebitsAPI.getPartyCommon().getParty(uuid);
+						if (party != null) party.onMemberJoin(uuid);
+					} else {
+						party.onOwnerJoin();
+					}
+					
 					DataServer.joinPlayer(event.getPlayer().getUniqueId());
+				}
 			}
 		});
 	}
-
+ 
 	@EventHandler
 	public void onQuit(PlayerDisconnectEvent event) {
 		removePlayer(event.getPlayer().getUniqueId());
@@ -159,32 +184,44 @@ public class AccountListener implements Listener {
 		BungeeMain.getPlugin().getProxy().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
-				BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
-				if (player == null)
-					return;
-				player.setLeaveData();
-				if (player.getClan() != null) {
-					Clan clan = player.getClan();
-					boolean removeClan = true;
-					for (UUID uuid : clan.getParticipants().keySet()) {
-						if (uuid == player.getUniqueId())
-							continue;
-						ProxiedPlayer p = BungeeMain.getPlugin().getProxy().getPlayer(uuid);
-						if (p != null) {
-							removeClan = false;
-							break;
-						}
-					}
-					if (removeClan) {
-						DataClan.cacheRedisClan(clan.getUniqueId(), clan.getName());
-						BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
+				
+				/* Party */
+				Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+				if (party == null) {
+					party = BattlebitsAPI.getPartyCommon().getParty(uuid);
+					if (party != null) party.onMemberLeave(uuid);
+				} else {
+					party.onOwnerLeave();
+					if (((BungeeParty) party).isCacheOnQuit()) {
+						DataParty.expire(party);
 					}
 				}
-				DataPlayer.cacheRedisPlayer(player.getUniqueId());
-				DataServer.leavePlayer(player.getUniqueId());
-				BattlebitsAPI.getAccountCommon().unloadBattlePlayer(player.getUniqueId());
+
+				BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
+				if (player != null) {
+					player.setLeaveData();
+					if (player.getClan() != null) {
+						Clan clan = player.getClan();
+						boolean removeClan = true;
+						for (UUID uuid : clan.getParticipants().keySet()) {
+							if (uuid == player.getUniqueId())
+								continue;
+							ProxiedPlayer p = BungeeMain.getPlugin().getProxy().getPlayer(uuid);
+							if (p != null) {
+								removeClan = false;
+								break;
+							}
+						}
+						if (removeClan) {
+							DataClan.cacheRedisClan(clan.getUniqueId(), clan.getName());
+							BattlebitsAPI.getClanCommon().unloadClan(player.getClanUniqueId());
+						}
+					}
+					DataPlayer.cacheRedisPlayer(player.getUniqueId());
+					DataServer.leavePlayer(player.getUniqueId());
+					BattlebitsAPI.getAccountCommon().unloadBattlePlayer(player.getUniqueId());
+				}
 			}
 		});
 	}
-
 }

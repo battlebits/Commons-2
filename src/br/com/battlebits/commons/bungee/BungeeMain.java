@@ -19,6 +19,7 @@ import br.com.battlebits.commons.bungee.listener.ChatListener;
 import br.com.battlebits.commons.bungee.listener.LoadBalancerListener;
 import br.com.battlebits.commons.bungee.listener.MessageListener;
 import br.com.battlebits.commons.bungee.listener.MultiserverTeleport;
+import br.com.battlebits.commons.bungee.listener.PartyListener;
 import br.com.battlebits.commons.bungee.listener.ScreenshareListener;
 import br.com.battlebits.commons.bungee.manager.BanManager;
 import br.com.battlebits.commons.bungee.manager.BungeeServerManager;
@@ -130,7 +131,7 @@ public class BungeeMain extends Plugin {
 			e.printStackTrace();
 		}
 		getProxy().getScheduler().runAsync(this, pubSubListener = new PubSubListener(new BungeePubSubHandler(),
-				"account-field", "clan-field", "server-info"));
+				"account-field", "clan-field", "party-field", "server-info"));
 		for (Entry<String, Map<String, String>> entry : DataServer.getAllServers().entrySet()) {
 			try {
 				if (!entry.getValue().containsKey("type"))
@@ -167,6 +168,7 @@ public class BungeeMain extends Plugin {
 		getProxy().getPluginManager().registerListener(this, new LoadBalancerListener(serverManager));
 		getProxy().getPluginManager().registerListener(this, new MessageListener(serverManager));
 		getProxy().getPluginManager().registerListener(this, new MultiserverTeleport());
+		getProxy().getPluginManager().registerListener(this, new PartyListener());
 		getProxy().getPluginManager().registerListener(this, new ScreenshareListener());
 	}
 
