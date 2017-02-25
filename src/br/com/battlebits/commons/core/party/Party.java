@@ -16,7 +16,7 @@ public abstract class Party {
 	
 	private Set<UUID> members = new HashSet<>();
 	private Set<UUID> promoted = new HashSet<>();
-	
+
 	public boolean isPromoted(UUID uuid) {
 		return uuid.equals(owner) || promoted.contains(uuid);
 	}
@@ -33,6 +33,7 @@ public abstract class Party {
 		members.add(member);
 	}
 
+	public abstract void init();
 	public abstract void onOwnerJoin();
 	public abstract void onOwnerLeave();
 	public abstract void onMemberJoin(UUID member);

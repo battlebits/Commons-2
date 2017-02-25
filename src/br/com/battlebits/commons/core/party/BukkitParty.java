@@ -19,6 +19,9 @@ public class BukkitParty extends Party
 	}
 	
 	@Override
+	public void init() { }
+	
+	@Override
 	public void onOwnerJoin() { }
 	
 	@Override

@@ -16,7 +16,6 @@ import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class PartyCommand implements CommandClass
 {
@@ -47,16 +46,23 @@ public class PartyCommand implements CommandClass
 						{
 							if (party.getInviteQueue().containsKey(player.getUniqueId()))
 							{
-								party.addMember(target.getUniqueId());
+								int task = party.getInviteQueue().remove(player.getUniqueId());								
+								ProxyServer.getInstance().getScheduler().cancel(task);
+								
+								party.addMember(player.getUniqueId());
+								DataParty.saveRedisParty(party);
 								DataParty.saveRedisPartyField(party, "members");
 								
 								party.sendMessage(prefix + "command-party-new-member", new String[] {"%player%", player.getName()});
-			
-								ScheduledTask task = party.getInviteQueue().remove(player.getUniqueId());
-								
-								if (task != null) 
-									task.cancel();
 							}
+							else
+							{
+								player.sendMessage(TextComponent.fromLegacyText("2"));
+							}
+						}
+						else
+						{
+							player.sendMessage(TextComponent.fromLegacyText("1"));
 						}
 					}
 					else

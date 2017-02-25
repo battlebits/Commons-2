@@ -25,14 +25,24 @@ public class BungeeParty extends Party
 	@Getter
 	protected transient boolean cacheOnQuit = false;
 	protected transient ScheduledTask ownerLeave;
-	protected transient Map<UUID, ScheduledTask> memberLeave = new HashMap<>();
+	
+	protected Map<UUID, Integer> memberLeave = new HashMap<>();
 	
 	@Getter
-	protected transient Map<UUID, ScheduledTask> inviteQueue = new HashMap<>();
- 	
+	protected Map<UUID, Integer> inviteQueue = new HashMap<>();
+
 	public BungeeParty(UUID owner)
 	{
 		super(owner);
+		
+		BattlebitsAPI.getLogger().info("BungeeParty INSTANCE");
+	}
+	
+	@Override
+	public void init()
+	{
+		memberLeave = new HashMap<>();
+		inviteQueue = new HashMap<>();
 	}
 
 	@Override
@@ -48,7 +58,7 @@ public class BungeeParty extends Party
 		{
 			ownerLeave = null;
 			
-			memberLeave.values().forEach(t -> t.cancel());
+			memberLeave.values().forEach(t -> ProxyServer.getInstance().getScheduler().cancel(t));
 			
 			BattlebitsAPI.getPartyCommon().removeParty(getOwner());
 
@@ -58,11 +68,22 @@ public class BungeeParty extends Party
 	@Override
 	public void onMemberJoin(UUID member)
 	{
+		/**if (memberLeave == null) 
+			System.out.println("memberLeave é null");
+		else
+			System.out.println("memberLeave não é null");
+		
+		if (member == null) 
+			System.out.println("member é null");
+		else
+			System.out.println("member não é null");**/
+		
+		
 		if (memberLeave.containsKey(member))
 		{
-			ScheduledTask task = memberLeave.remove(member);
+			int task = memberLeave.remove(member);
 			
-			if (task != null) task.cancel();
+			ProxyServer.getInstance().getScheduler().cancel(task);
 		}
 	}
 	
@@ -75,19 +96,19 @@ public class BungeeParty extends Party
 			
 			removeMember(member);
 			
-		}, 1, TimeUnit.MINUTES));
+		}, 1, TimeUnit.MINUTES).getId());
 	}
 	
 	public void addInvite(ProxiedPlayer target)
 	{
-		inviteQueue.computeIfAbsent(target.getUniqueId(), t -> ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
+		getInviteQueue().computeIfAbsent(target.getUniqueId(), t -> ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
 		{
-			if (inviteQueue.containsKey(target.getUniqueId()))
+			if (getInviteQueue().containsKey(target.getUniqueId()))
 			{
-				inviteQueue.remove(target.getUniqueId());
+				getInviteQueue().remove(target.getUniqueId());
 			}
 			
-		}, 1, TimeUnit.MINUTES));
+		}, 1, TimeUnit.MINUTES).getId());
 	}
 
 	@Override

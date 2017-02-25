@@ -162,14 +162,17 @@ public class AccountListener implements Listener {
 				BukkitParty party = (BukkitParty) BattlebitsAPI.getPartyCommon().getByOwner(uuid);
 				if (party == null) {
 					party = (BukkitParty) BattlebitsAPI.getPartyCommon().getParty(uuid);
-					if (party != null) party.onMemberLeave(uuid);
+					if (party != null) {
+						party.onMemberLeave(uuid);
+						if (party.getBukkitOwner() == null && party.getBukkitMembers().isEmpty())
+							BattlebitsAPI.getPartyCommon().removeParty(party);
+					}
 				} else {
 					party.onOwnerLeave();
+					if (party.getBukkitMembers().isEmpty())
+						BattlebitsAPI.getPartyCommon().removeParty(party);
 				}
-				
-				if (party.getBukkitOwner() == null && party.getBukkitMembers().isEmpty())
-					BattlebitsAPI.getPartyCommon().removeParty(party);
-			
+	
 				removePlayer(uuid);
 			}
 		}.runTaskAsynchronously(BukkitMain.getInstance());

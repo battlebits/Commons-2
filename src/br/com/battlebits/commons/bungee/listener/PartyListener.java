@@ -18,7 +18,7 @@ public class PartyListener implements Listener
 		ProxiedPlayer player = event.getPlayer();
 		
 		if (player.getServer() != null && !event.getTarget().getName().startsWith("Lobby"))
-		{
+		{			
 			Party party = BattlebitsAPI.getPartyCommon().getByOwner(player.getUniqueId());
 			
 			if (party != null)

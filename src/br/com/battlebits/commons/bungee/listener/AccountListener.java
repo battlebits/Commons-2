@@ -102,9 +102,12 @@ public class AccountListener implements Listener {
 					Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
 					if (party == null) {
 						party = DataParty.getRedisParty(uuid, BungeeParty.class);
-						if (party != null) BattlebitsAPI.getPartyCommon().loadParty(party);
-						if (party != null && DataParty.persist(uuid))
-							((BungeeParty) party).setCacheOnQuit(true);
+						if (party != null) {
+							party.init();
+							BattlebitsAPI.getPartyCommon().loadParty(party);
+							if (DataParty.persist(uuid))
+								((BungeeParty) party).setCacheOnQuit(true);
+						}
 					}
 					
 					BattlebitsAPI.debug("ACCOUNT > CLOSE");
