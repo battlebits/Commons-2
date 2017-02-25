@@ -94,7 +94,9 @@ public class MenuInventory {
 	
 	public void clear() {
 		slotItem.clear();
-		inv.clear();
+		if (!onePerPlayer) {
+			inv.clear();
+		}
 	}
 
 	public void open(Player p) {
