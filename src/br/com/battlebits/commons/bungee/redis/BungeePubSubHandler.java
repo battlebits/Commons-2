@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bungee.BungeeMain;
+import br.com.battlebits.commons.bungee.party.BungeeParty;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage;
@@ -18,7 +19,6 @@ import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.LeavePay
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StartPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.StopPayload;
 import br.com.battlebits.commons.core.data.DataServer.DataServerMessage.UpdatePayload;
-import br.com.battlebits.commons.core.party.BungeeParty;
 import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;

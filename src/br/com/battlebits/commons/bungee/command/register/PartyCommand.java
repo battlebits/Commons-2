@@ -8,10 +8,10 @@ import java.util.stream.Stream;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bungee.command.BungeeCommandArgs;
+import br.com.battlebits.commons.bungee.party.BungeeParty;
 import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
 import br.com.battlebits.commons.core.data.DataParty;
-import br.com.battlebits.commons.core.party.BungeeParty;
 import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;

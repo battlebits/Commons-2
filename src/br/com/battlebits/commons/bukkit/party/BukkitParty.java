@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.core.party;
+package br.com.battlebits.commons.bukkit.party;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import br.com.battlebits.commons.core.account.BattlePlayer;
+import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.translate.T;
 
 public class BukkitParty extends Party 

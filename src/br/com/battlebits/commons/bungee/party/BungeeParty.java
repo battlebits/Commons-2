@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.core.party;
+package br.com.battlebits.commons.bungee.party;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
+import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.translate.T;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,8 +37,8 @@ public class BungeeParty extends Party
 	@Override
 	public void init()
 	{
-		memberLeave = new HashMap<>();
 		inviteQueue = new HashMap<>();
+		memberLeave = new HashMap<>();
 	}
 
 	@Override
@@ -51,13 +52,13 @@ public class BungeeParty extends Party
 	{
 		ownerLeave = ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
 		{
-			ownerLeave = null;
+			BattlebitsAPI.getPartyCommon().removeParty(getOwner());
 			
 			memberLeave.values().forEach(t -> ProxyServer.getInstance().getScheduler().cancel(t));
-			
-			BattlebitsAPI.getPartyCommon().removeParty(getOwner());
 
-		}, 3, TimeUnit.MINUTES);
+			ownerLeave = null;
+
+		}, 3L, TimeUnit.MINUTES);
 	}
 	
 	@Override
@@ -80,19 +81,19 @@ public class BungeeParty extends Party
 			
 			removeMember(member);
 			
-		}, 1, TimeUnit.MINUTES).getId());
+		}, 1L, TimeUnit.MINUTES).getId());
 	}
 	
 	public void addInvite(ProxiedPlayer target)
 	{
-		getInviteQueue().computeIfAbsent(target.getUniqueId(), t -> ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
+		inviteQueue.computeIfAbsent(target.getUniqueId(), t -> ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
 		{
-			if (getInviteQueue().containsKey(target.getUniqueId()))
+			if (inviteQueue.containsKey(target.getUniqueId()))
 			{
-				getInviteQueue().remove(target.getUniqueId());
+				inviteQueue.remove(target.getUniqueId());
 			}
 			
-		}, 1, TimeUnit.MINUTES).getId());
+		}, 1L, TimeUnit.MINUTES).getId());
 	}
 
 	@Override
@@ -109,25 +110,6 @@ public class BungeeParty extends Party
 		}
 	}
 
-	/**public ProxiedPlayer getBungeeOwner()
-	{
-		return ProxyServer.getInstance().getPlayer(getOwner());
-	}
-	
-	public Set<ProxiedPlayer> getBungeeMembers()
-	{
-		Set<ProxiedPlayer> members = new HashSet<>();
-		
-		for (UUID uuid : getMembers())
-		{
-			ProxiedPlayer member = ProxyServer.getInstance().getPlayer(uuid);
-			
-			if (member != null) members.add(member);
-		}
-		
-		return members;
-	}**/
-	
 	@Override
 	public int getOnlineCount()
 	{
