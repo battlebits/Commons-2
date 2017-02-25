@@ -83,8 +83,8 @@ public class PartyCommand implements CommandClass
 					
 					if (party == null)
 					{
-						party = (BungeeParty) BattlebitsAPI.getPartyCommon().loadParty(new BungeeParty(player.getUniqueId()));
-						
+						party = new BungeeParty(player.getUniqueId());
+						BattlebitsAPI.getPartyCommon().loadParty(party);
 						DataParty.saveRedisParty(party);
 					}
 					else if (!party.isPromoted(player.getUniqueId()))
@@ -100,10 +100,17 @@ public class PartyCommand implements CommandClass
 					
 					if (target != null)
 					{
-						party.addInvite(target);
-						
-						player.sendMessage(TextComponent.fromLegacyText("VOCÊ CONVIDOU " + target.getName() + " PARA SUA PARTY"));
-						target.sendMessage(TextComponent.fromLegacyText(player.getName() + " CONVIDOU VOCÊ PARA UMA PARTY"));
+						if (!party.getInviteQueue().containsKey(target.getUniqueId()))
+						{
+							party.addInvite(target);
+							
+							player.sendMessage(TextComponent.fromLegacyText("VOCÊ CONVIDOU " + target.getName() + " PARA SUA PARTY"));
+							target.sendMessage(TextComponent.fromLegacyText(player.getName() + " CONVIDOU VOCÊ PARA UMA PARTY"));
+						}
+						else
+						{
+							player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(cmdArgs.getLanguage(), "command-party-already-invited")));
+						}		
 					}
 					else
 					{

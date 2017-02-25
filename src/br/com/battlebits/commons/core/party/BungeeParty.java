@@ -69,27 +69,24 @@ public class BungeeParty extends Party
 	@Override
 	public void onMemberLeave(UUID member)
 	{
-		if (!memberLeave.containsKey(member))
+		memberLeave.computeIfAbsent(member, t -> ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () -> 
 		{
-			memberLeave.put(member, ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
-			{
-				memberLeave.remove(member);
-				
-				removeMember(member);
-				
-			}, 1, TimeUnit.MINUTES));
-		}
+			memberLeave.remove(member);
+			
+			removeMember(member);
+			
+		}, 1, TimeUnit.MINUTES));
 	}
 	
 	public void addInvite(ProxiedPlayer target)
 	{
-		inviteQueue.put(target.getUniqueId(), ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () -> 
+		inviteQueue.computeIfAbsent(target.getUniqueId(), t -> ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
 		{
 			if (inviteQueue.containsKey(target.getUniqueId()))
 			{
 				inviteQueue.remove(target.getUniqueId());
 			}
-				
+			
 		}, 1, TimeUnit.MINUTES));
 	}
 
@@ -106,9 +103,7 @@ public class BungeeParty extends Party
 			}
 		}
 	}
-	
-	
-	
+
 	public ProxiedPlayer getBungeeOwner()
 	{
 		return ProxyServer.getInstance().getPlayer(getOwner());
