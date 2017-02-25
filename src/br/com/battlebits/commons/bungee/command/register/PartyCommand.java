@@ -57,12 +57,12 @@ public class PartyCommand implements CommandClass
 							}
 							else
 							{
-								player.sendMessage(TextComponent.fromLegacyText("2"));
+								player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(cmdArgs.getLanguage(), "command-party-not-invited")));
 							}
 						}
 						else
 						{
-							player.sendMessage(TextComponent.fromLegacyText("1"));
+							player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(cmdArgs.getLanguage(), "command-party-not-invited")));
 						}
 					}
 					else

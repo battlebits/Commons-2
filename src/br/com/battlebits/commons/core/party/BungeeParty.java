@@ -26,16 +26,13 @@ public class BungeeParty extends Party
 	protected transient boolean cacheOnQuit = false;
 	protected transient ScheduledTask ownerLeave;
 	
-	protected Map<UUID, Integer> memberLeave = new HashMap<>();
-	
 	@Getter
 	protected Map<UUID, Integer> inviteQueue = new HashMap<>();
+	protected Map<UUID, Integer> memberLeave = new HashMap<>();
 
 	public BungeeParty(UUID owner)
 	{
-		super(owner);
-		
-		BattlebitsAPI.getLogger().info("BungeeParty INSTANCE");
+		super(owner);		
 	}
 	
 	@Override
@@ -68,17 +65,6 @@ public class BungeeParty extends Party
 	@Override
 	public void onMemberJoin(UUID member)
 	{
-		/**if (memberLeave == null) 
-			System.out.println("memberLeave é null");
-		else
-			System.out.println("memberLeave não é null");
-		
-		if (member == null) 
-			System.out.println("member é null");
-		else
-			System.out.println("member não é null");**/
-		
-		
 		if (memberLeave.containsKey(member))
 		{
 			int task = memberLeave.remove(member);
