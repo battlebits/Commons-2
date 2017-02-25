@@ -1,9 +1,7 @@
 package br.com.battlebits.commons.core.party;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -111,7 +109,7 @@ public class BungeeParty extends Party
 		}
 	}
 
-	public ProxiedPlayer getBungeeOwner()
+	/**public ProxiedPlayer getBungeeOwner()
 	{
 		return ProxyServer.getInstance().getPlayer(getOwner());
 	}
@@ -128,5 +126,20 @@ public class BungeeParty extends Party
 		}
 		
 		return members;
+	}**/
+	
+	@Override
+	public int getOnlineCount()
+	{
+		int count = 0;
+		
+		if (ProxyServer.getInstance().getPlayer(getOwner()) != null)
+			count++;
+		
+		for (UUID uuid : getMembers())
+			if (ProxyServer.getInstance().getPlayer(uuid) != null)
+				count++;
+		
+		return count;
 	}
 }

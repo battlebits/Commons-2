@@ -65,4 +65,19 @@ public class BukkitParty extends Party
 		
 		return members;
 	}
+	
+	@Override
+	public int getOnlineCount()
+	{
+		int count = 0;
+		
+		if (Bukkit.getPlayer(getOwner()) != null)
+			count++;
+		
+		for (UUID uuid : getMembers())
+			if (Bukkit.getPlayer(uuid) != null)
+				count++;
+		
+		return count;
+	}
 }

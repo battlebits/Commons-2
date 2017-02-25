@@ -36,6 +36,7 @@ public abstract class Party {
 	public abstract void init();
 	public abstract void onOwnerJoin();
 	public abstract void onOwnerLeave();
+	public abstract int getOnlineCount();
 	public abstract void onMemberJoin(UUID member);
 	public abstract void onMemberLeave(UUID member);
 	public abstract void sendMessage(String id, String[]... replace);

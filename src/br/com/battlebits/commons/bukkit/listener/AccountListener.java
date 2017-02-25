@@ -157,19 +157,19 @@ public class AccountListener implements Listener {
 			@Override
 			public void run() {
 				UUID uuid = event.getPlayer().getUniqueId();
-				
+
 				/* Party */
 				BukkitParty party = (BukkitParty) BattlebitsAPI.getPartyCommon().getByOwner(uuid);
 				if (party == null) {
 					party = (BukkitParty) BattlebitsAPI.getPartyCommon().getParty(uuid);
 					if (party != null) {
 						party.onMemberLeave(uuid);
-						if (party.getBukkitOwner() == null && party.getBukkitMembers().isEmpty())
+						if (party.getOnlineCount() == 0)
 							BattlebitsAPI.getPartyCommon().removeParty(party);
 					}
 				} else {
 					party.onOwnerLeave();
-					if (party.getBukkitMembers().isEmpty())
+					if (party.getOnlineCount() == 0)
 						BattlebitsAPI.getPartyCommon().removeParty(party);
 				}
 	
