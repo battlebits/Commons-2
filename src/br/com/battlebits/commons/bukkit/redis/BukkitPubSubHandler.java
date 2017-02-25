@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.battlebits.commons.BattlebitsAPI;
@@ -85,6 +86,22 @@ public class BukkitPubSubHandler extends JedisPubSub {
 				field.set(party, object);
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		} else if (channel.equals("party-action")) {
+			JsonObject jsonObject = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
+			String source = jsonObject.get("source").getAsString();
+			if (source.equals(BattlebitsAPI.getServerId()))
+				return;
+			String action = jsonObject.get("action").getAsString();
+			if (action.equalsIgnoreCase("load")) {
+				JsonElement value = jsonObject.get("value");
+				Party party = BattlebitsAPI.getGson().fromJson(value, BukkitParty.class);
+				if (BattlebitsAPI.getPartyCommon().getByOwner(party.getOwner()) == null)
+					BattlebitsAPI.getPartyCommon().loadParty(party);
+			} else if (action.equalsIgnoreCase("unload")) {
+				UUID uuid = UUID.fromString(jsonObject.get("owner").getAsString());
+				Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
+				if (party != null) BattlebitsAPI.getPartyCommon().removeParty(party);
 			}
 		}
 	}

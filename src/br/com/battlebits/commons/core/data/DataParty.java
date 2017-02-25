@@ -40,7 +40,7 @@ public class DataParty extends Data
 			publish.add("value", gson.toJsonTree(party));
 			publish.addProperty("source", BattlebitsAPI.getServerId());
 			
-			pipeline.publish("party", publish.toString());
+			pipeline.publish("party-action", publish.toString());
 			jedis.sync();
 		}
 	}
@@ -54,10 +54,10 @@ public class DataParty extends Data
 			JsonObject publish = new JsonObject();
 			
 			publish.addProperty("action", "unload");
-			publish.addProperty("uuid", party.getOwner().toString());
+			publish.addProperty("owner", party.getOwner().toString());
 			publish.addProperty("source", BattlebitsAPI.getServerId());
 
-			pipeline.publish("party", publish.toString());
+			pipeline.publish("party-action", publish.toString());
 			jedis.sync();
 		}
 	}

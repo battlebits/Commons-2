@@ -119,7 +119,7 @@ public class BukkitMain extends JavaPlugin {
 		registerCommonManagement();
 		enableCommonManagement();
 		getServer().getScheduler().runTaskAsynchronously(this,
-				pubSubListener = new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field", "party-field"));
+				pubSubListener = new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field", "party-field", "party-action"));
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
 		try {
 			new CommandLoader(new BukkitCommandFramework(this))

@@ -474,9 +474,10 @@ public class BattlePlayer {
 	}
 
 	public static Language getLanguage(UUID uuid) {
-		if (getPlayer(uuid) == null)
-			return BattlebitsAPI.getDefaultLanguage();
-		return getPlayer(uuid).getLanguage();
+		BattlePlayer player = getPlayer(uuid);		
+		if (player != null) 
+			return player.getLanguage();
+		return BattlebitsAPI.getDefaultLanguage(); 
 	}
 
 	public static BattlePlayer getPlayer(UUID uuid) {
