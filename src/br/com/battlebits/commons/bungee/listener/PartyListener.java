@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.core.party.Party;
+import br.com.battlebits.commons.core.server.ServerType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
@@ -17,7 +18,7 @@ public class PartyListener implements Listener
 	{
 		ProxiedPlayer player = event.getPlayer();
 		
-		if (player.getServer() != null && !event.getTarget().getName().startsWith("Lobby"))
+		if (player.getServer() != null && ServerType.getServerType(event.getTarget().getName()) != ServerType.LOBBY)
 		{			
 			Party party = BattlebitsAPI.getPartyCommon().getByOwner(player.getUniqueId());
 			

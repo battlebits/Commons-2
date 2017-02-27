@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.battlebits.commons.BattlebitsAPI;
@@ -72,36 +71,34 @@ public class BukkitPubSubHandler extends JedisPubSub {
 				e.printStackTrace();
 			}
 		} else if (channel.equals("party-field")) {
-			JsonObject jsonObject = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
-			String source = jsonObject.get("source").getAsString();
+			JsonObject json = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
+			String source = json.get("source").getAsString();
 			if (source.equals(BattlebitsAPI.getServerId()))
 				return;
-			UUID uuid = UUID.fromString(jsonObject.get("owner").getAsString());
+			UUID uuid = UUID.fromString(json.get("owner").getAsString());
 			Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
-			if (party == null)
-				return;
-			try {
-				Field field = getField(BukkitParty.class, jsonObject.get("field").getAsString());
-				Object object = BattlebitsAPI.getGson().fromJson(jsonObject.get("value"), field.getGenericType());
-				field.set(party, object);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (party != null) {
+				try {
+					Field field = getField(BukkitParty.class, json.get("field").getAsString());
+					Object object = BattlebitsAPI.getGson().fromJson(json.get("value"), field.getGenericType());
+					field.set(party, object);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		} else if (channel.equals("party-action")) {
-			JsonObject jsonObject = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
-			String source = jsonObject.get("source").getAsString();
+			JsonObject json = BattlebitsAPI.getParser().parse(message).getAsJsonObject();
+			String source = json.get("source").getAsString();
 			if (source.equals(BattlebitsAPI.getServerId()))
 				return;
-			String action = jsonObject.get("action").getAsString();
+			String action = json.get("action").getAsString();
 			if (action.equalsIgnoreCase("load")) {
-				JsonElement value = jsonObject.get("value");
-				Party party = BattlebitsAPI.getGson().fromJson(value, BukkitParty.class);
-				if (BattlebitsAPI.getPartyCommon().getByOwner(party.getOwner()) == null)
+				Party party = BattlebitsAPI.getGson().fromJson(json.get("value"), BukkitParty.class);
+				if (BattlebitsAPI.getPartyCommon().getByOwner(party.getOwner()) == null && party.getOnlineCount() > 0)
 					BattlebitsAPI.getPartyCommon().loadParty(party);
 			} else if (action.equalsIgnoreCase("unload")) {
-				UUID uuid = UUID.fromString(jsonObject.get("owner").getAsString());
-				Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
-				if (party != null) BattlebitsAPI.getPartyCommon().removeParty(party);
+				UUID owner = UUID.fromString(json.get("owner").getAsString());
+				BattlebitsAPI.getPartyCommon().removeParty(owner);
 			}
 		}
 	}

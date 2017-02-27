@@ -53,7 +53,7 @@ public class PartyCommand implements CommandClass
 								DataParty.saveRedisParty(party);
 								DataParty.saveRedisPartyField(party, "members");
 								
-								party.sendMessage(prefix + "command-party-new-member", new String[] {"%player%", player.getName()});
+								party.sendMessage(prefix, "command-party-new-member", new String[] {"%player%", player.getName()});
 							}
 							else
 							{
@@ -92,6 +92,7 @@ public class PartyCommand implements CommandClass
 						party = new BungeeParty(player.getUniqueId());
 						BattlebitsAPI.getPartyCommon().loadParty(party);
 						DataParty.saveRedisParty(party);
+						DataParty.loadParty(party);
 					}
 					else if (!party.isPromoted(player.getUniqueId()))
 					{
@@ -206,9 +207,10 @@ public class PartyCommand implements CommandClass
 					}
 					else
 					{
-						party.sendMessage(prefix + "command-party-owner-leave", new String[] {"%player%", player.getName()});
+						party.sendMessage(prefix, "command-party-owner-leave", new String[] {"%player%", player.getName()});
 						BattlebitsAPI.getPartyCommon().removeParty(party);
-						DataParty.delete(party);
+						DataParty.unloadParty(party);
+						DataParty.disbandParty(party);
 					}
 				}
 				else

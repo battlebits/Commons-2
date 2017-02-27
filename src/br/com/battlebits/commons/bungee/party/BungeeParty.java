@@ -9,10 +9,10 @@ import java.util.stream.Stream;
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
+import br.com.battlebits.commons.core.data.DataParty;
 import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.translate.T;
 import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -20,9 +20,6 @@ import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class BungeeParty extends Party
 {	
-	@Setter
-	@Getter
-	protected transient boolean cacheOnQuit = false;
 	protected transient ScheduledTask ownerLeave;
 	
 	@Getter
@@ -52,10 +49,9 @@ public class BungeeParty extends Party
 	{
 		ownerLeave = ProxyServer.getInstance().getScheduler().schedule(BungeeMain.getPlugin(), () ->
 		{
+			DataParty.unloadParty(BungeeParty.this);
 			BattlebitsAPI.getPartyCommon().removeParty(getOwner());
-			
 			memberLeave.values().forEach(t -> ProxyServer.getInstance().getScheduler().cancel(t));
-
 			ownerLeave = null;
 
 		}, 3L, TimeUnit.MINUTES);
@@ -97,7 +93,7 @@ public class BungeeParty extends Party
 	}
 
 	@Override
-	public void sendMessage(String id, String[]... replace)
+	public void sendMessage(String prefix, String id, String[]... replace)
 	{
 		for (UUID uuid : Stream.concat(Stream.of(getOwner()), getMembers().stream()).toArray(UUID[]::new))
 		{
@@ -105,7 +101,7 @@ public class BungeeParty extends Party
 			
 			if (player != null)
 			{
-				player.sendMessage(TextComponent.fromLegacyText(T.t(BattlePlayer.getLanguage(uuid), id, replace)));
+				player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(BattlePlayer.getLanguage(uuid), id, replace)));
 			}
 		}
 	}

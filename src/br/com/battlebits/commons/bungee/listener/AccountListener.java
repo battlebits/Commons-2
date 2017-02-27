@@ -104,9 +104,11 @@ public class AccountListener implements Listener {
 						party = DataParty.getRedisParty(uuid, BungeeParty.class);
 						if (party != null) {
 							party.init();
+							BattlebitsAPI.debug("REDIS > PARTY FOUND");
 							BattlebitsAPI.getPartyCommon().loadParty(party);
-							if (DataParty.persist(uuid))
-								((BungeeParty) party).setCacheOnQuit(true);
+							DataParty.checkCache(party);							
+						} else {
+							BattlebitsAPI.debug("REDIS > PARTY NOT FOUND");
 						}
 					}
 					
@@ -187,7 +189,7 @@ public class AccountListener implements Listener {
 		BungeeMain.getPlugin().getProxy().getScheduler().runAsync(BungeeMain.getPlugin(), new Runnable() {
 			@Override
 			public void run() {
-				
+								
 				/* Party */
 				Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
 				if (party == null) {
@@ -195,11 +197,9 @@ public class AccountListener implements Listener {
 					if (party != null) party.onMemberLeave(uuid);
 				} else {
 					party.onOwnerLeave();
-					if (((BungeeParty) party).isCacheOnQuit()) {
-						DataParty.expire(party);
-					}
+					DataParty.expire(party);
 				}
-
+				
 				BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
 				if (player != null) {
 					player.setLeaveData();

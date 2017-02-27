@@ -35,7 +35,7 @@ public class BukkitParty extends Party
 	public void onMemberLeave(UUID member) { }
 	
 	@Override
-	public void sendMessage(String id, String[]... replace) 
+	public void sendMessage(String prefix, String id, String[]... replace) 
 	{
 		for (UUID uuid : Stream.concat(Stream.of(getOwner()), getMembers().stream()).toArray(UUID[]::new))
 		{
@@ -43,7 +43,7 @@ public class BukkitParty extends Party
 			
 			if (player != null)
 			{
-				player.sendMessage(T.t(BattlePlayer.getLanguage(uuid), id, replace));
+				player.sendMessage(prefix + T.t(BattlePlayer.getLanguage(uuid), id, replace));
 			}
 		}
 	}

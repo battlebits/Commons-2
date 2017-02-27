@@ -39,5 +39,5 @@ public abstract class Party {
 	public abstract int getOnlineCount();
 	public abstract void onMemberJoin(UUID member);
 	public abstract void onMemberLeave(UUID member);
-	public abstract void sendMessage(String id, String[]... replace);
+	public abstract void sendMessage(String prefix, String id, String[]... replace);
 }

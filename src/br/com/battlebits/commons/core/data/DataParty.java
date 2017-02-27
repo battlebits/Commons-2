@@ -114,26 +114,32 @@ public class DataParty extends Data
 		}
 	}
 	
-	public static void delete(Party party)
+	public static void disbandParty(Party party)
 	{
 		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource())
 		{
 			BattlebitsAPI.debug("REDIS > DELETE");
-			Pipeline pipeline = jedis.pipelined();
-			pipeline.del("party:" + party.getOwner().toString());
+			Pipeline pipe = jedis.pipelined();
+			pipe.del("party:" + party.getOwner().toString());
 			jedis.sync();
 		}
 	}
 	
-	public static boolean persist(UUID owner)
+	public static boolean checkCache(Party party)
 	{
-		boolean result = false;
-		
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource())
-		{
-			result = jedis.persist("party:" + owner.toString()) == 1;
+		boolean bool = false;
+		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+			String key = "party:" + party.getOwner().toString();
+			if (jedis.ttl(key) >= 0) {
+				bool = jedis.persist(key) == 1;
+			}
 		}
 		
-		return result;
+		if (bool)
+			BattlebitsAPI.getLogger().info("REDIS > SHOULD REMOVE");
+		else
+			BattlebitsAPI.getLogger().info("REDIS > SUB-SERVER");
+		
+		return bool;
 	}
 }
