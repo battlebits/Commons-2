@@ -1,20 +1,29 @@
 package br.com.battlebits.commons.api.item;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import br.com.battlebits.commons.util.string.StringLoreUtils;
 
@@ -27,7 +36,11 @@ public class ItemBuilder {
 	private String displayName;
 	private HashMap<Enchantment, Integer> enchantments;
 	private ArrayList<String> lore;
-
+	
+	private Color leatherColor;
+	private String skullOwner;
+	private String skullSkinUrl;
+	
 	public ItemBuilder() {
 		material = Material.STONE;
 		amount = 1;
@@ -104,6 +117,21 @@ public class ItemBuilder {
 		return this;
 	}
 
+	public ItemBuilder setLeatherColor(Color color) {
+		this.leatherColor = color;
+		return this;
+	}
+	
+	public ItemBuilder setSkullOwner(String nickname) {
+		this.skullOwner = nickname;
+		return this;
+	}
+	
+	public ItemBuilder setSkullSkinURL(String url) {
+		this.skullSkinUrl = url;
+		return this;
+	}
+	
 	public ItemStack build() {
 
 		ItemStack stack = new ItemStack(material);
@@ -121,6 +149,29 @@ public class ItemBuilder {
 			}
 			if (lore != null && !lore.isEmpty()) {
 				meta.setLore(lore);
+			}
+			/* Colored Leather Armor */
+			if (leatherColor != null) {
+				if (meta instanceof LeatherArmorMeta) {
+					((LeatherArmorMeta) meta).setColor(leatherColor);
+				}
+			}
+			/* Skull Heads */
+			if (meta instanceof SkullMeta) {
+				SkullMeta skullMeta = (SkullMeta) meta;
+				if (skullSkinUrl != null) {
+					GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+					profile.getProperties().put("textures", new Property("textures", Base64.getEncoder().encodeToString(String.format("{textures:{SKIN:{url:\"%s\"}}}", skullSkinUrl).getBytes(StandardCharsets.UTF_8))));
+					try {
+						Field field = skullMeta.getClass().getDeclaredField("profile");
+						field.setAccessible(true);
+						field.set(skullMeta, profile);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else if (skullOwner != null) {
+					skullMeta.setDisplayName(skullOwner);					
+				}
 			}
 			stack.setItemMeta(meta);
 		}
