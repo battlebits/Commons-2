@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -25,6 +27,10 @@ public class MenuInventory {
 	private String title;
 	private Inventory inv;
 	private boolean onePerPlayer;
+
+	@Getter
+    @Setter
+	private MenuUpdateHandler updateHandler;
 
 	public MenuInventory(String title, int rows) {
 		this(title, rows, false);

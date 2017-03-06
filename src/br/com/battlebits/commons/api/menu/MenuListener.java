@@ -1,5 +1,7 @@
 package br.com.battlebits.commons.api.menu;
 
+import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -8,6 +10,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 public class MenuListener implements Listener{
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -39,4 +42,17 @@ public class MenuListener implements Listener{
 		}
 	}
 
+	@EventHandler(priority = EventPriority.MONITOR)
+    public void onUpdate(UpdateEvent event) {
+	    if (event.getType() != UpdateEvent.UpdateType.SECOND)
+	        return;
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            InventoryHolder holder = p.getOpenInventory().getTopInventory().getHolder();
+            if (holder != null && holder instanceof MenuHolder) {
+                MenuInventory menu = ((MenuHolder) holder).getMenu();
+                if (menu.getUpdateHandler() != null)
+                    menu.getUpdateHandler().onUpdate(p, menu);
+            }
+        });
+    }
 }
