@@ -16,7 +16,7 @@ import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.api.bossbar.entity.FakeBoss;
 import br.com.battlebits.commons.api.bossbar.entity.FakeDragon;
 import br.com.battlebits.commons.api.bossbar.entity.FakeWither;
-import br.com.battlebits.commons.bukkit.util.ProtocolUtils;
+import br.com.battlebits.commons.bukkit.protocolsupport.ProtocolSupportHook;
 
 public class BossBarAPI implements Listener
 {
@@ -109,14 +109,22 @@ public class BossBarAPI implements Listener
 	
 	private static FakeBoss createBoss(Player player)
 	{
-		switch (ProtocolUtils.getVersion(player))
+		switch (ProtocolSupportHook.getVersion(player))
 		{
-		    case "MINECRAFT_1_8":
+		    case MINECRAFT_1_8:
 		    	return new FakeWither(player);
-		    case "MINECRAFT_1_7_10":
+		    	
+		    case MINECRAFT_1_7_10:
 		    	return new FakeDragon(player);
-		    case "MINECRAFT_1_7_5":
+		    	
+		    case MINECRAFT_1_7_5:
 		    	return new FakeDragon(player);
+		    	
+		    default:
+		    {
+		    	BattlebitsAPI.debug("ViaVersion 1.9+");
+		    	break;
+		    }
 		}
 		
 		return null;

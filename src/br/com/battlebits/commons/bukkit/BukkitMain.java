@@ -25,11 +25,11 @@ import br.com.battlebits.commons.bukkit.listener.PlayerListener;
 import br.com.battlebits.commons.bukkit.listener.ScoreboardListener;
 import br.com.battlebits.commons.bukkit.messesnger.BungeeCordMessenger;
 import br.com.battlebits.commons.bukkit.permission.PermissionManager;
+import br.com.battlebits.commons.bukkit.protocolsupport.ProtocolSupportHook;
 import br.com.battlebits.commons.bukkit.redis.BukkitPubSubHandler;
 import br.com.battlebits.commons.bukkit.scheduler.UpdateScheduler;
 import br.com.battlebits.commons.bukkit.scoreboard.tagmanager.TagManager;
 import br.com.battlebits.commons.bukkit.util.BukkitUUID;
-import br.com.battlebits.commons.bukkit.util.ProtocolUtils;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
@@ -106,7 +106,7 @@ public class BukkitMain extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ProtocolUtils.checkServer();
+		ProtocolSupportHook.hook();
 		BattlebitsAPI.setGetter(new BukkitUUID());
 		BattlebitsAPI.setLogger(getLogger());
 		BattlebitsAPI.setServerAddress(Bukkit.getIp() + ":" + Bukkit.getPort());
