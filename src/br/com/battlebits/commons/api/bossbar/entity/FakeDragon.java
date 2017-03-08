@@ -62,14 +62,27 @@ public class FakeDragon extends FakeBoss
 	{
 		if (isAlive())
 		{
+			/* DataWatcher for Ender Dragon. */
 			WrappedDataWatcher watcher = new WrappedDataWatcher();
-			// TODO: 
-			
+			watcher.setObject(0, (byte) 0x20);
+			watcher.setObject(2, getDisplayName());
+			watcher.setObject(3, (byte) 1);
+			watcher.setObject(5, 0);
+			watcher.setObject(6, getHealth());
+			watcher.setObject(7, 0);
+			watcher.setObject(8, (byte) 0);
+			watcher.setObject(9, (byte) 0);
+			watcher.setObject(10, getDisplayName());
+			watcher.setObject(11, (byte) 1);
+			watcher.setObject(17, 0);
+			watcher.setObject(18, 0);
+			watcher.setObject(19, 0);
+			watcher.setObject(20, 1000);
+
+			/* Update DataWatcher */
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-			
 			packet.getIntegers().write(0, getId());
 			packet.getDataWatcherModifier().write(0, watcher);
-			
 			sendPacket(getPlayer(), packet);
 		}
 	}

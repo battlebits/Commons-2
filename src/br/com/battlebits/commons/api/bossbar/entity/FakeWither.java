@@ -26,6 +26,7 @@ public class FakeWither extends FakeBoss
 			Location wither = getWitherLocation(getPlayer().getLocation().clone(), 24D);
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
 			
+			/* Integers */
 			packet.getIntegers().write(0, getId());
 			packet.getIntegers().write(1, 64);
 			packet.getIntegers().write(2, wither.getBlockX() * 32);
@@ -35,6 +36,7 @@ public class FakeWither extends FakeBoss
 			packet.getIntegers().write(6, 0);
 			packet.getIntegers().write(7, 0);
 			
+			/* Bytes */
 			packet.getBytes().write(0, (byte)0);
 			packet.getBytes().write(1, (byte)0);
 			packet.getBytes().write(2, (byte)0);
@@ -60,12 +62,28 @@ public class FakeWither extends FakeBoss
 	{
 		if (isAlive())
 		{
+			/* DataWatcher for Wither. */
 			WrappedDataWatcher watcher = new WrappedDataWatcher();
+			watcher.setObject(0, (byte) 0x20);
+			watcher.setObject(2, getDisplayName());
+			watcher.setObject(3, (byte) 1);
+			watcher.setObject(5, 0);
+			watcher.setObject(6, getHealth());
+			watcher.setObject(7, 0);
+			watcher.setObject(8, (byte) 0);
+			watcher.setObject(9, (byte) 0);
+			watcher.setObject(10, getDisplayName());
+			watcher.setObject(11, (byte) 1);
+			watcher.setObject(17, 0);
+			watcher.setObject(18, 0);
+			watcher.setObject(19, 0);
+			watcher.setObject(20, 1000);
 			
-			
+			/* Update DataWatcher */
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-			packet.getIntegers().write(0, id);
+			packet.getIntegers().write(0, getId());
 			packet.getDataWatcherModifier().write(0, watcher);
+			sendPacket(getPlayer(), packet);
 		}	
 	}
 	
