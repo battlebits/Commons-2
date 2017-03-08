@@ -10,6 +10,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.api.bossbar.BossBarAPI;
 import br.com.battlebits.commons.api.item.ActionItemListener;
 import br.com.battlebits.commons.api.menu.MenuListener;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
@@ -28,6 +29,7 @@ import br.com.battlebits.commons.bukkit.redis.BukkitPubSubHandler;
 import br.com.battlebits.commons.bukkit.scheduler.UpdateScheduler;
 import br.com.battlebits.commons.bukkit.scoreboard.tagmanager.TagManager;
 import br.com.battlebits.commons.bukkit.util.BukkitUUID;
+import br.com.battlebits.commons.bukkit.util.ProtocolUtils;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
@@ -104,6 +106,7 @@ public class BukkitMain extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		ProtocolUtils.checkServer();
 		BattlebitsAPI.setGetter(new BukkitUUID());
 		BattlebitsAPI.setLogger(getLogger());
 		BattlebitsAPI.setServerAddress(Bukkit.getIp() + ":" + Bukkit.getPort());
@@ -161,6 +164,7 @@ public class BukkitMain extends JavaPlugin {
 
 		// APIs
 		getServer().getPluginManager().registerEvents(new ActionItemListener(), this);
+		getServer().getPluginManager().registerEvents(new BossBarAPI(), this);
 		getServer().getPluginManager().registerEvents(new MenuListener(), this);
 	}
 

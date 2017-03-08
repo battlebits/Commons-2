@@ -5,19 +5,44 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.api.bossbar.entity.FakeBoss;
+import br.com.battlebits.commons.api.bossbar.entity.FakeDragon;
 import br.com.battlebits.commons.api.bossbar.entity.FakeWither;
+import br.com.battlebits.commons.bukkit.util.ProtocolUtils;
 
-public class BossBarAPI
+public class BossBarAPI implements Listener
 {
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerQuit(PlayerQuitEvent event)
+	{
+		removeBar(event.getPlayer());
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerMove(PlayerMoveEvent event)
+	{
+		Player player = event.getPlayer();
+		FakeBoss boss = fakeBoss.get(player.getUniqueId());
+		
+		if (boss == null)
+			return;
+		
+		boss.move(event);
+	}
+	
 	private static Map<UUID, FakeBoss> fakeBoss = new HashMap<>();
 	
 	public static void setBar(Player player, String message, float percent)
 	{
-		FakeBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> new FakeWither(player));
+		FakeBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
 		
 		if (!boss.hasTask())
 		{
@@ -33,8 +58,8 @@ public class BossBarAPI
 	
 	public static void setBar(Player player, String message, int period)
 	{
-		FakeBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> new FakeWither(player));
-	
+		FakeBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
+		
 		boss.setDisplayName(message);
 		boss.setHealth(100F);
 		boss.update();
@@ -80,5 +105,20 @@ public class BossBarAPI
 			
 			boss.remove();
 		}
+	}
+	
+	private static FakeBoss createBoss(Player player)
+	{
+		switch (ProtocolUtils.getVersion(player))
+		{
+		    case "MINECRAFT_1_8":
+		    	return new FakeWither(player);
+		    case "MINECRAFT_1_7_10":
+		    	return new FakeDragon(player);
+		    case "MINECRAFT_1_7_5":
+		    	return new FakeDragon(player);
+		}
+		
+		return null;
 	}
 }
