@@ -1,6 +1,5 @@
-package br.com.battlebits.commons.bukkit.protocolsupport;
+package br.com.battlebits.commons.bukkit.protocol;
 
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +20,14 @@ public enum ProtocolVersion {
 
 	@Getter
 	@NonNull
-	private Integer protocolId;
-
-	public static ProtocolVersion getByProtocol(int protocol) {
-		return Arrays.stream(values()).filter(p -> p.getProtocolId() == protocol).findFirst().orElse(null);
+	private Integer id;
+	
+	public static ProtocolVersion getById(int id) {		
+		for (ProtocolVersion version : values()) {
+			if (version.getId() == id) {
+				return version;
+			}
+		}
+		return ProtocolVersion.UNKNOWN;
 	}
 }

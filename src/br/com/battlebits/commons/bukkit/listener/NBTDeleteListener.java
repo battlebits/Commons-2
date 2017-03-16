@@ -10,8 +10,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import br.com.battlebits.commons.bukkit.BukkitMain;
+import us.myles.ViaVersion.ViaVersionPlugin;
+import us.myles.ViaVersion.api.Via;
+
 
 public class NBTDeleteListener implements Listener {
 
@@ -28,6 +32,7 @@ public class NBTDeleteListener implements Listener {
 	}
 	
 	private void removePlayerFile(UUID uuid) {
+		
 		World world = Bukkit.getWorlds().get(0);
 		File playerdata = new File(world.getWorldFolder(), "playerdata");
 		if (playerdata.exists() && playerdata.isDirectory()) {

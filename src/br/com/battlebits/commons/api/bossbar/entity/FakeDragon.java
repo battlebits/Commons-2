@@ -8,7 +8,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
-public class FakeDragon extends FakeBoss 
+public class FakeDragon extends EntityBoss 
 {
 	public FakeDragon(Player player) 
 	{

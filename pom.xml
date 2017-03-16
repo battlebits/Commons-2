@@ -35,6 +35,10 @@
 			<url>http://repo.dmulloy2.net/content/groups/public/</url>
 		</repository>
 		<repository>
+            <id>viaversion-repo</id>
+            <url>https://repo.viaversion.com/</url>
+        </repository>
+		<repository>
 			<id>sonatype</id>
 			<name>Public sonatype Repository</name>
 			<url>https://oss.sonatype.org/content/groups/public/</url>
@@ -80,6 +84,11 @@
 			<artifactId>ProtocolLib-API</artifactId>
 			<version>4.1.0</version>
 		</dependency>
+		<dependency>
+            <groupId>us.myles</groupId>
+            <artifactId>viaversion</artifactId>
+            <version>1.0.4</version>
+        </dependency>
 		<dependency>
 			<groupId>org.twitter4j</groupId>
 			<artifactId>twitter4j-core</artifactId>

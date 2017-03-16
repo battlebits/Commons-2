@@ -13,10 +13,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.api.bossbar.entity.EntityBoss;
 import br.com.battlebits.commons.api.bossbar.entity.FakeBoss;
 import br.com.battlebits.commons.api.bossbar.entity.FakeDragon;
 import br.com.battlebits.commons.api.bossbar.entity.FakeWither;
-import br.com.battlebits.commons.bukkit.protocolsupport.ProtocolSupportHook;
+import br.com.battlebits.commons.bukkit.protocol.ProtocolHook;
 
 public class BossBarAPI implements Listener
 {
@@ -30,7 +31,7 @@ public class BossBarAPI implements Listener
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
 		Player player = event.getPlayer();
-		FakeBoss boss = fakeBoss.get(player.getUniqueId());
+		EntityBoss boss = fakeBoss.get(player.getUniqueId());
 		
 		if (boss == null)
 			return;
@@ -38,11 +39,11 @@ public class BossBarAPI implements Listener
 		boss.move(event);
 	}
 	
-	private static Map<UUID, FakeBoss> fakeBoss = new HashMap<>();
+	private static Map<UUID, EntityBoss> fakeBoss = new HashMap<>();
 	
 	public static void setBar(Player player, String message, float percent)
 	{
-		FakeBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
+		EntityBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
 		
 		if (!boss.hasTask())
 		{
@@ -58,7 +59,7 @@ public class BossBarAPI implements Listener
 	
 	public static void setBar(Player player, String message, int period)
 	{
-		FakeBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
+		EntityBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
 		
 		boss.setDisplayName(message);
 		boss.setHealth(100F);
@@ -98,7 +99,7 @@ public class BossBarAPI implements Listener
 	{
 		if (fakeBoss.containsKey(player.getUniqueId()))
 		{
-			FakeBoss boss = fakeBoss.remove(player.getUniqueId());
+			EntityBoss boss = fakeBoss.remove(player.getUniqueId());
 			
 			if (boss.hasTask())
 				boss.cancelTask();
@@ -107,26 +108,20 @@ public class BossBarAPI implements Listener
 		}
 	}
 	
-	private static FakeBoss createBoss(Player player)
+	private static EntityBoss createBoss(Player player)
 	{
-		switch (ProtocolSupportHook.getVersion(player))
+		switch (ProtocolHook.getVersion(player))
 		{
+		    case UNKNOWN: 
+			    return null;
 		    case MINECRAFT_1_8:
 		    	return new FakeWither(player);
-		    	
 		    case MINECRAFT_1_7_10:
 		    	return new FakeDragon(player);
-		    	
 		    case MINECRAFT_1_7_5:
 		    	return new FakeDragon(player);
-		    	
 		    default:
-		    {
-		    	BattlebitsAPI.debug("ViaVersion 1.9+");
-		    	break;
-		    }
-		}
-		
-		return null;
+		    	return new FakeBoss(player);
+		}		
 	}
 }
