@@ -29,13 +29,16 @@ public class NBTDeleteListener implements Listener {
 	
 	private void removePlayerFile(UUID uuid) {
 		World world = Bukkit.getWorlds().get(0);
-		File file = new File(world.getWorldFolder(), uuid.toString() + ".dat");
-		if (file.exists()) {
-			Bukkit.getScheduler().runTaskLater(BukkitMain.getInstance(), () -> {
-				if (!file.delete()) {
-					removePlayerFile(uuid);
-				}
-			}, 2L);
-		}
+		File playerdata = new File(world.getWorldFolder(), "playerdata");
+		if (playerdata.exists() && playerdata.isDirectory()) {
+			File file = new File(playerdata, uuid.toString() + ".dat");
+			if (file.exists()) {
+				Bukkit.getScheduler().runTaskLater(BukkitMain.getInstance(), () -> {
+					if (!file.delete()) {
+						removePlayerFile(uuid);
+					}
+				}, 2L);
+			}
+		}	
 	}
 }
