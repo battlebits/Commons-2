@@ -77,7 +77,7 @@ public class BungeeMain extends Plugin {
 			if (!getDataFolder().exists()) {
 	            getDataFolder().mkdir();
 	        }
-			
+	
 	        File configFile = new File(getDataFolder(), "config.yml");
 	        
 	        if (!configFile.exists()) {
@@ -125,7 +125,7 @@ public class BungeeMain extends Plugin {
 		loadListeners();
 		try {
 			new CommandLoader(new BungeeCommandFramework(plugin))
-					.loadCommandsFromPackage("br.com.battlebits.commons.bungee.command.register");
+					.loadCommandsFromPackage(getFile(), "br.com.battlebits.commons.bungee.command.register");
 		} catch (Exception e) {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();

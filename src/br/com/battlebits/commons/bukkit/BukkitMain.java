@@ -22,7 +22,7 @@ import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
 import br.com.battlebits.commons.bukkit.listener.AntiAFK;
 import br.com.battlebits.commons.bukkit.listener.ChatListener;
-import br.com.battlebits.commons.bukkit.listener.NBTDeleteListener;
+import br.com.battlebits.commons.bukkit.listener.PlayerNBTListener;
 import br.com.battlebits.commons.bukkit.listener.PlayerListener;
 import br.com.battlebits.commons.bukkit.listener.ScoreboardListener;
 import br.com.battlebits.commons.bukkit.messesnger.BungeeCordMessenger;
@@ -128,7 +128,7 @@ public class BukkitMain extends JavaPlugin {
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
 		try {
 			new CommandLoader(new BukkitCommandFramework(this))
-					.loadCommandsFromPackage("br.com.battlebits.commons.bukkit.command.register");
+					.loadCommandsFromPackage(getFile(), "br.com.battlebits.commons.bukkit.command.register");
 		} catch (Exception e) {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();
@@ -163,7 +163,7 @@ public class BukkitMain extends JavaPlugin {
 		pm.registerEvents(new AntiAFK(), this);
 		pm.registerEvents(new AccountListener(), this);
 		pm.registerEvents(new ChatListener(), this);
-		pm.registerEvents(new NBTDeleteListener(), this);
+		pm.registerEvents(new PlayerNBTListener(), this);
 		pm.registerEvents(new PlayerListener(), this);
 		pm.registerEvents(new ScoreboardListener(), this);
 	

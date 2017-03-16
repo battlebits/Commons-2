@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import br.com.battlebits.commons.bukkit.BukkitMain;
 
-public class NBTDeleteListener implements Listener {
+public class PlayerNBTListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerKick(PlayerKickEvent event) {
@@ -29,16 +29,14 @@ public class NBTDeleteListener implements Listener {
 	
 	private void removePlayerFile(UUID uuid) {
 		World world = Bukkit.getWorlds().get(0);
-		File playerdata = new File(world.getWorldFolder(), "playerdata");
-		if (playerdata.exists() && playerdata.isDirectory()) {
-			File file = new File(playerdata, uuid.toString() + ".dat");
-			if (file.exists()) {
-				Bukkit.getScheduler().runTaskLater(BukkitMain.getInstance(), () -> {
-					if (!file.delete()) {
-						removePlayerFile(uuid);
-					}
-				}, 2L);
-			}
+		File folder = new File(world.getWorldFolder(), "playerdata");
+		if (folder.exists() && folder.isDirectory()) {
+			File file = new File(folder, uuid.toString() + ".dat");
+			Bukkit.getScheduler().runTaskLater(BukkitMain.getInstance(), () -> {
+				if (file.exists() && !file.delete()) {
+					removePlayerFile(uuid);
+				}
+			}, 2L);
 		}	
 	}
 }

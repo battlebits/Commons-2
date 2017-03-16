@@ -1,5 +1,6 @@
 package br.com.battlebits.commons.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
@@ -35,6 +36,7 @@ public class ClassGetter {
 		String relPath = pkgname.replace('.', '/');
 		String resPath = resource.getPath().replace("%20", " ");
 		String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
+
 		JarFile jarFile;
 		try {
 			jarFile = new JarFile(jarPath);
@@ -62,5 +64,31 @@ public class ClassGetter {
 			e.printStackTrace();
 		}
 	}
+	
+	public static ArrayList<Class<?>> getClassesByJarFile(File file, String pkgname) {
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		
+		try {
+			String relPath = pkgname.replace('.', '/');		
+			try (JarFile jarFile = new JarFile(file)) {
+				Enumeration<JarEntry> entries = jarFile.entries();
+				while (entries.hasMoreElements()) {
+					JarEntry entry = entries.nextElement();
+					String entryName = entry.getName();
+					if (entryName.endsWith(".class") 
+							&& entryName.startsWith(relPath)
+							&& entryName.length() > (relPath.length() + "/".length())) {
+						String className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
+						Class<?> c = loadClass(className);
+						if (c != null)
+							classes.add(c);
+					}
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Unexpected IOException reading JAR File '" + file.getAbsolutePath() + "'", e);
+		}
 
+		return classes;
+	}
 }

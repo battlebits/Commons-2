@@ -49,8 +49,8 @@ public class ProtocolHook {
 				Method method = object.getClass().getMethod("getPlayerVersion", UUID.class);
 				return ProtocolVersion.getById((int) method.invoke(object, player.getUniqueId()));
 			} else if (protocolSupport) {
-				Class<?> apiClass = Class.forName("protocolsupport.api.ProtocolSupportAPI");
-				Method method = apiClass.getDeclaredMethod("getProtocolVersion", Player.class);
+				Class<?> clazz = Class.forName("protocolsupport.api.ProtocolSupportAPI");
+				Method method = clazz.getDeclaredMethod("getProtocolVersion", Player.class);
 				return ProtocolVersion.valueOf((String) method.invoke(null, player));
 			} else if (protocolHack) {
 				Object handle = player.getClass().getMethod("getHandle").invoke(player);
@@ -58,11 +58,8 @@ public class ProtocolHook {
 				Object networkManager = playerConnection.getClass().getField("networkManager").get(playerConnection);
 				return ProtocolVersion.getById((int) networkManager.getClass().getMethod("getVersion").invoke(networkManager));
 			}
-			return ProtocolVersion.UNKNOWN;
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-			return ProtocolVersion.UNKNOWN;
-		}
+		} catch (Exception e) { }
+		
+		return ProtocolVersion.UNKNOWN;
 	}
 }
