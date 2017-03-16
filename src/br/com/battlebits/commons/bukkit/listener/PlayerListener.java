@@ -63,7 +63,7 @@ public class PlayerListener implements Listener {
 				public void run() {
 					event.getPlayer().sendMessage("§%merry-christmas%§");
 				}
-			}.runTaskLater(BukkitMain.getInstance(), 2);
+			}.runTaskLater(BukkitMain.getInstance(), 2);			
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

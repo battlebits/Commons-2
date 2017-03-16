@@ -27,10 +27,10 @@ public abstract class EntityBoss
 	private Player player;
 	
 	@Getter
-	private String displayName;
+	protected String title;
 	
 	@Getter
-	private float health;
+	protected float health;
 	
 	@Getter
 	@Setter
@@ -53,11 +53,11 @@ public abstract class EntityBoss
 		}
 	}
 	
-	public boolean setDisplayName(String displayName) 
+	public boolean setTitle(String title) 
 	{
-		if (!Objects.equals(this.displayName, displayName))
+		if (!Objects.equals(this.title, title))
 		{
-			this.displayName = displayName;
+			this.title = title;
 			return true;
 		}
 		
@@ -66,9 +66,10 @@ public abstract class EntityBoss
 	
 	public boolean setHealth(float percent)
 	{
+		float minHealth = (this instanceof FakeWither ? 151F : 1F);
 		float maxHealth = (this instanceof FakeWither ? 300F : 200F);
-		float newHealth = Math.max(1F, (percent * 100F) / maxHealth);
-		
+		float newHealth = Math.max(minHealth, (percent / 100F) * maxHealth);
+
 		if (!Objects.equals(this.health, newHealth))
 		{
 			this.health = newHealth;

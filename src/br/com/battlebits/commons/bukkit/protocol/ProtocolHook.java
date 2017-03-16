@@ -1,11 +1,12 @@
 package br.com.battlebits.commons.bukkit.protocol;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import lombok.Getter;
 
 public class ProtocolHook {
@@ -20,22 +21,22 @@ public class ProtocolHook {
 	public static void hook() {
 		try {
 			Class.forName("protocolsupport.api.ProtocolSupportAPI");
-			BattlebitsAPI.getLogger().info("ProtocolSupport encontrado!");
+			BukkitMain.getInstance().getLogger().info("ProtocolSupport encontrado!");
 			protocolSupport = true;
 		} catch (ClassNotFoundException e) {
 			String version = Bukkit.getServer().getClass().getPackage().getName().substring(23);
 			if (version.equals("v1_7_R4")) {
 				try {
 					Class.forName("org.spigotmc.ProtocolInjector");
-					BattlebitsAPI.getLogger().info("ProtocolHack encontrado!");
+					BukkitMain.getInstance().getLogger().info("ProtocolHack encontrado!");
 					protocolHack = true;
 				} catch (ClassNotFoundException e2) { }
 			}
 		}
-		
+
 		try {
 			Class.forName("us.myles.ViaVersion.api.Via");
-			BattlebitsAPI.getLogger().info("ViaVersion encontrado!");
+			BukkitMain.getInstance().getLogger().info("ViaVersion encontrado!");
 			viaVersion = true;
 		} catch (ClassNotFoundException e) { }
 	}
@@ -43,10 +44,10 @@ public class ProtocolHook {
 	public static ProtocolVersion getVersion(Player player) {
 		try {
 			if (viaVersion) {
-				Class<?> viaClass = Class.forName("us.myles.ViaVersion.api.Via");
-				Object viaApi = viaClass.getDeclaredMethod("getAPI").invoke(null);
-				Method method = viaApi.getClass().getMethod("getPlayerVersion", Player.class);
-				return ProtocolVersion.getById((int) method.invoke(null, player));
+				Class<?> clazz = Class.forName("us.myles.ViaVersion.api.Via");
+				Object object = clazz.getDeclaredMethod("getAPI").invoke(null);
+				Method method = object.getClass().getMethod("getPlayerVersion", UUID.class);
+				return ProtocolVersion.getById((int) method.invoke(object, player.getUniqueId()));
 			} else if (protocolSupport) {
 				Class<?> apiClass = Class.forName("protocolsupport.api.ProtocolSupportAPI");
 				Method method = apiClass.getDeclaredMethod("getProtocolVersion", Player.class);
@@ -59,6 +60,8 @@ public class ProtocolHook {
 			}
 			return ProtocolVersion.UNKNOWN;
 		} catch (Exception e) {
+			e.printStackTrace();
+			
 			return ProtocolVersion.UNKNOWN;
 		}
 	}

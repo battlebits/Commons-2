@@ -24,7 +24,7 @@ public enum ProtocolVersion {
 	
 	public static ProtocolVersion getById(int id) {		
 		for (ProtocolVersion version : values()) {
-			if (version.getId() == id) {
+			if (id == version.getId()) {
 				return version;
 			}
 		}

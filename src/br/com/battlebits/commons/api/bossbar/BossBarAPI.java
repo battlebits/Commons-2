@@ -12,6 +12,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.google.common.base.Preconditions;
+
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.api.bossbar.entity.EntityBoss;
 import br.com.battlebits.commons.api.bossbar.entity.FakeBoss;
@@ -31,7 +33,7 @@ public class BossBarAPI implements Listener
 	public void onPlayerMove(PlayerMoveEvent event)
 	{
 		Player player = event.getPlayer();
-		EntityBoss boss = fakeBoss.get(player.getUniqueId());
+		EntityBoss boss = entityMap.get(player.getUniqueId());
 		
 		if (boss == null)
 			return;
@@ -39,17 +41,20 @@ public class BossBarAPI implements Listener
 		boss.move(event);
 	}
 	
-	private static Map<UUID, EntityBoss> fakeBoss = new HashMap<>();
+	private static Map<UUID, EntityBoss> entityMap = new HashMap<>();
 	
 	public static void setBar(Player player, String message, float percent)
 	{
-		EntityBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
+		Preconditions.checkNotNull(message, "Message cannot be null.");
+	    Preconditions.checkArgument(percent >= 0F && percent <= 100F, "Health must be between 0 and 100.");
 		
-		if (!boss.hasTask())
+		EntityBoss boss = entityMap.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
+		
+		if (boss != null && !boss.hasTask())
 		{
 			boolean update = false;
 			
-			update |= boss.setDisplayName(message);
+			update |= boss.setTitle(message);
 			update |= boss.setHealth(percent);
 			
 			if (update)
@@ -59,47 +64,53 @@ public class BossBarAPI implements Listener
 	
 	public static void setBar(Player player, String message, int period)
 	{
-		EntityBoss boss = fakeBoss.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
+		Preconditions.checkNotNull(message, "Message cannot be null.");
+		Preconditions.checkArgument(period > 0, "Period must be greater than 0.");
 		
-		boss.setDisplayName(message);
-		boss.setHealth(100F);
-		boss.update();
+		EntityBoss boss = entityMap.computeIfAbsent(player.getUniqueId(), v -> createBoss(player));
 		
-		boss.startTask(new BukkitRunnable() 
+		if (boss != null && !boss.hasTask())
 		{
-			float health = 100F;
+			boss.setTitle(message);
+			boss.setHealth(100F);
+			boss.update();
 			
-			@Override
-			public void run() 
+			boss.startTask(new BukkitRunnable() 
 			{
-				health -= (100F / period);
+				float health = 100F;
 				
-				if (health > 1F)
+				@Override
+				public void run() 
 				{
-					int i = (int) (health / (100F / period))+1;
-					BattlebitsAPI.debug("BOSSBAR TEMPO RESTANTE > " + i);
-					boss.setDisplayName(message);
-					boss.setHealth(health);
-					boss.update();
+					health -= (100F / period);
+					
+					if (health > 1F)
+					{
+						int i = (int) (health / (100F / period))+1;
+						BattlebitsAPI.debug("BOSSBAR TEMPO RESTANTE > " + i);
+						boss.setTitle(message);
+						boss.setHealth(health);
+						boss.update();
+					}
+					else
+					{
+						removeBar(player);
+					}				
 				}
-				else
-				{
-					removeBar(player);
-				}				
-			}
-		});
+			});
+		}
 	}
 	
 	public static boolean hasBar(Player player)
 	{
-		return fakeBoss.containsKey(player.getUniqueId());
+		return entityMap.containsKey(player.getUniqueId());
 	}
 	
 	public static void removeBar(Player player)
 	{
-		if (fakeBoss.containsKey(player.getUniqueId()))
+		if (entityMap.containsKey(player.getUniqueId()))
 		{
-			EntityBoss boss = fakeBoss.remove(player.getUniqueId());
+			EntityBoss boss = entityMap.remove(player.getUniqueId());
 			
 			if (boss.hasTask())
 				boss.cancelTask();
@@ -113,6 +124,7 @@ public class BossBarAPI implements Listener
 		switch (ProtocolHook.getVersion(player))
 		{
 		    case UNKNOWN: 
+		    	BattlebitsAPI.debug("ProtocolVersion is UNKNOWN");
 			    return null;
 		    case MINECRAFT_1_8:
 		    	return new FakeWither(player);
