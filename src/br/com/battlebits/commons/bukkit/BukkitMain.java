@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -21,6 +22,7 @@ import br.com.battlebits.commons.bukkit.injector.TranslationInjector;
 import br.com.battlebits.commons.bukkit.listener.AccountListener;
 import br.com.battlebits.commons.bukkit.listener.AntiAFK;
 import br.com.battlebits.commons.bukkit.listener.ChatListener;
+import br.com.battlebits.commons.bukkit.listener.NBTDeleteListener;
 import br.com.battlebits.commons.bukkit.listener.PlayerListener;
 import br.com.battlebits.commons.bukkit.listener.ScoreboardListener;
 import br.com.battlebits.commons.bukkit.messesnger.BungeeCordMessenger;
@@ -156,16 +158,19 @@ public class BukkitMain extends JavaPlugin {
 	}
 
 	private void registerListeners() {
-		getServer().getPluginManager().registerEvents(new AntiAFK(), this);
-		getServer().getPluginManager().registerEvents(new AccountListener(), this);
-		getServer().getPluginManager().registerEvents(new ChatListener(), this);
-		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-		getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
-
+		PluginManager pm = getServer().getPluginManager();
+		
+		pm.registerEvents(new AntiAFK(), this);
+		pm.registerEvents(new AccountListener(), this);
+		pm.registerEvents(new ChatListener(), this);
+		pm.registerEvents(new NBTDeleteListener(), this);
+		pm.registerEvents(new PlayerListener(), this);
+		pm.registerEvents(new ScoreboardListener(), this);
+	
 		// APIs
-		getServer().getPluginManager().registerEvents(new ActionItemListener(), this);
-		getServer().getPluginManager().registerEvents(new BossBarAPI(), this);
-		getServer().getPluginManager().registerEvents(new MenuListener(), this);
+		pm.registerEvents(new ActionItemListener(), this);
+		pm.registerEvents(new BossBarAPI(), this);
+		pm.registerEvents(new MenuListener(), this);
 	}
 
 	public static void broadcastMessage(String id, String[]... replace) {
