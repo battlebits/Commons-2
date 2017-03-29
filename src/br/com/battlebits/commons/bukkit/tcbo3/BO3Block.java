@@ -13,7 +13,7 @@ import lombok.Getter;
  */
 
 @AllArgsConstructor
-public class BO3Block
+class BO3Block
 {
 	@Getter
 	protected int x, y, z;

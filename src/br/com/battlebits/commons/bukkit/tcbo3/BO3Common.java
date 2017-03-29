@@ -44,11 +44,14 @@ public class BO3Common
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static void place(Location location, List<BO3Block> blocks)
+	public static void paste(Location location, List<BO3Block> blocks)
 	{
-		if (blocks != null && !blocks.isEmpty())
-		{				
-			blocks.forEach(b -> location.clone().add(b.getX(), b.getY(), b.getZ()).getBlock().setTypeIdAndData(b.getMaterial().getId(), b.getData(), true));
-		}
+		blocks.forEach(b -> location.clone().add(b.getX(), b.getY(), b.getZ()).getBlock().setTypeIdAndData(b.getMaterial().getId(), b.getData(), true));
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static void undo(Location location, List<BO3Block> blocks)
+	{
+		blocks.forEach(b -> location.clone().add(b.getX(), b.getY(), b.getZ()).getBlock().setTypeIdAndData(0, (byte)0, true));
 	}
 }
