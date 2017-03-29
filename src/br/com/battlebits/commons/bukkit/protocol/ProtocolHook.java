@@ -57,6 +57,9 @@ public class ProtocolHook {
 				Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
 				Object networkManager = playerConnection.getClass().getField("networkManager").get(playerConnection);
 				return ProtocolVersion.getById((int) networkManager.getClass().getMethod("getVersion").invoke(networkManager));
+			} else {
+				String version = Bukkit.getServer().getClass().getPackage().getName().substring(23);
+				return ProtocolVersion.getByPackageVersion(version);
 			}
 		} catch (Exception e) { }
 		

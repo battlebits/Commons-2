@@ -7,6 +7,7 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -67,8 +68,8 @@ public class ClassGetter {
 	}
 	
 	/** This method fixes this error: http://prnt.sc/epvtn9 */
-	public static ArrayList<Class<?>> getClassesForPackageByFile(File file, String pkgname) {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+	public static List<Class<?>> getClassesForPackageByFile(File file, String pkgname) {
+		List<Class<?>> classes = new ArrayList<Class<?>>();
 		
 		try {
 			String relPath = pkgname.replace('.', '/');		
@@ -80,7 +81,9 @@ public class ClassGetter {
 					if (entryName.endsWith(".class") 
 							&& entryName.startsWith(relPath)
 							&& entryName.length() > (relPath.length() + "/".length())) {
-						String className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
+						String className = entryName.replace('/', '.').replace('\\', '.');
+						if (className.endsWith(".class"))
+							className = className.substring(0, className.length()-6);
 						Class<?> c = loadClass(className);
 						if (c != null)
 							classes.add(c);
@@ -94,7 +97,7 @@ public class ClassGetter {
 		return classes;
 	}
 	
-	public static ArrayList<Class<?>> getClassesForPackageByPlugin(Object plugin, String pkgname) {
+	public static List<Class<?>> getClassesForPackageByPlugin(Object plugin, String pkgname) {
 		try {
 			Method method = plugin.getClass().getMethod("getFile");
 			method.setAccessible(true);
