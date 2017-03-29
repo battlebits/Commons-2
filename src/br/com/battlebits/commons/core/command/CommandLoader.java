@@ -33,7 +33,7 @@ public class CommandLoader {
 	
 	public int loadCommandsFromPackage(File jarFile, String packageName) {
 		int i = 0;
-		for (Class<?> commandClass : ClassGetter.getClassesByJarFile(jarFile, packageName)) {
+		for (Class<?> commandClass : ClassGetter.getClassesForPackageByFile(jarFile, packageName)) {
 			if (CommandClass.class.isAssignableFrom(commandClass)) {
 				try {
 					CommandClass commands = (CommandClass) commandClass.newInstance();

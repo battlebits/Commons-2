@@ -2,6 +2,7 @@ package br.com.battlebits.commons.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -65,7 +66,8 @@ public class ClassGetter {
 		}
 	}
 	
-	public static ArrayList<Class<?>> getClassesByJarFile(File file, String pkgname) {
+	/** This method fixes this error: http://prnt.sc/epvtn9 */
+	public static ArrayList<Class<?>> getClassesForPackageByFile(File file, String pkgname) {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		
 		try {
@@ -90,5 +92,17 @@ public class ClassGetter {
 		}
 
 		return classes;
+	}
+	
+	public static ArrayList<Class<?>> getClassesForPackageByPlugin(Object plugin, String pkgname) {
+		try {
+			Method method = plugin.getClass().getMethod("getFile");
+			method.setAccessible(true);
+			File file = (File) method.invoke(plugin);
+			return getClassesForPackageByFile(file, pkgname);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 }
