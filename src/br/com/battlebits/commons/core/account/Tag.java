@@ -9,6 +9,7 @@ public enum Tag {
 
 	DONO("§4§l§%owner%§§4", Group.DONO, false), //
 	ESTRELA("§1§l§%star%§§1", Group.DONO, false), //
+	ADMINCEO("§4§l§%admin%§§4", Group.ADMINCEO, false), //
 	ADMIN("§c§l§%admin%§§c", Group.ADMIN, false), //
 	MANAGER("§c§l§%manager%§§c", Group.MANAGER, false), //
 	MODPLUS("§5§l§%modplus%§§5", Group.MODPLUS, false), //
