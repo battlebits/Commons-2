@@ -39,7 +39,7 @@ public class BO3Common
 					int x = Integer.parseInt(data[0]);
 					int y = Integer.parseInt(data[1]);
 					int z = Integer.parseInt(data[2]);
-					
+					 
 					String[] block = data[3].split(":");
 					Material bType = Material.valueOf(block[0]);
 					byte bData = block.length > 1 ? Byte.parseByte(block[1]) : 0;

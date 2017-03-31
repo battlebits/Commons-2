@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map.Entry;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -37,14 +39,17 @@ public class ItemBuilder {
 	private HashMap<Enchantment, Integer> enchantments;
 	private ArrayList<String> lore;
 	
-	private Color leatherColor;
-	private String skullOwner;
-	private String skullSkinUrl;
+	private Color color;
+	private String skin;
+	private String skinUrl;
+
+	private boolean hideAttributes;
 	
 	public ItemBuilder() {
 		material = Material.STONE;
 		amount = 1;
 		durability = 0;
+		hideAttributes = false;
 		useMeta = false;
 		glow = false;
 	}
@@ -98,7 +103,11 @@ public class ItemBuilder {
 		this.lore = new ArrayList<>(StringLoreUtils.getLore(30, text));
 		return this;
 	}
-
+	
+	public ItemBuilder lore(String ... lore) {
+		return lore(Arrays.asList(lore));
+	}
+	
 	public ItemBuilder lore(List<String> text) {
 		if (!this.useMeta) {
 			this.useMeta = true;
@@ -113,22 +122,37 @@ public class ItemBuilder {
 	}
 
 	public ItemBuilder glow() {
-		glow = true;
+		glow = true;		
 		return this;
 	}
 
-	public ItemBuilder setLeatherColor(Color color) {
-		this.leatherColor = color;
+	public ItemBuilder color(Color color) {
+		this.useMeta = true;
+		this.color = color;
 		return this;
 	}
 	
-	public ItemBuilder setSkullOwner(String nickname) {
-		this.skullOwner = nickname;
+	public ItemBuilder skin(String skin) {
+		this.useMeta = true;
+		this.skin = skin;
+		return this;		
+	}
+	
+	public ItemBuilder skinURL(String skinURL) {
+		this.useMeta = true;
+		this.skinUrl = skinURL;
+		return this;
+	}
+
+	public ItemBuilder hideAttributes() {
+		this.useMeta = true;
+		this.hideAttributes = true;
 		return this;
 	}
 	
-	public ItemBuilder setSkullSkinURL(String url) {
-		this.skullSkinUrl = url;
+	public ItemBuilder showAttributes() {
+		this.useMeta = true;
+		this.hideAttributes = false;
 		return this;
 	}
 	
@@ -144,24 +168,28 @@ public class ItemBuilder {
 		}
 		if (useMeta) {
 			ItemMeta meta = stack.getItemMeta();
+			
 			if (displayName != null) {
 				meta.setDisplayName(displayName.replace("&", "§"));
 			}
+			
 			if (lore != null && !lore.isEmpty()) {
 				meta.setLore(lore);
 			}
-			/* Colored Leather Armor */
-			if (leatherColor != null) {
+			
+			/** Colored Leather Armor */
+			if (color != null) {
 				if (meta instanceof LeatherArmorMeta) {
-					((LeatherArmorMeta) meta).setColor(leatherColor);
+					((LeatherArmorMeta) meta).setColor(color);
 				}
 			}
-			/* Skull Heads */
+			
+			/** Skull Heads */
 			if (meta instanceof SkullMeta) {
 				SkullMeta skullMeta = (SkullMeta) meta;
-				if (skullSkinUrl != null) {
+				if (skinUrl != null) {
 					GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-					profile.getProperties().put("textures", new Property("textures", Base64.getEncoder().encodeToString(String.format("{textures:{SKIN:{url:\"%s\"}}}", skullSkinUrl).getBytes(StandardCharsets.UTF_8))));
+					profile.getProperties().put("textures", new Property("textures", Base64.getEncoder().encodeToString(String.format("{textures:{SKIN:{url:\"%s\"}}}", skinUrl).getBytes(StandardCharsets.UTF_8))));
 					try {
 						Field field = skullMeta.getClass().getDeclaredField("profile");
 						field.setAccessible(true);
@@ -169,10 +197,18 @@ public class ItemBuilder {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				} else if (skullOwner != null) {
-					skullMeta.setDisplayName(skullOwner);					
+				} else if (skin != null) {
+					skullMeta.setDisplayName(skin);					
 				}
 			}
+			
+			/** Item Flags */
+			if (hideAttributes) {
+				meta.addItemFlags(ItemFlag.values());
+			} else {
+				meta.removeItemFlags(ItemFlag.values());
+			}
+			
 			stack.setItemMeta(meta);
 		}
 		if (glow && (enchantments == null || enchantments.isEmpty())) {
@@ -226,5 +262,33 @@ public class ItemBuilder {
 			e.printStackTrace();
 		}
 		return stack;
+	}
+	
+	public static ItemBuilder fromStack(ItemStack stack) {
+		ItemBuilder builder =  new ItemBuilder().type(stack.getType()).amount(stack.getAmount()).durability(stack.getDurability());
+		
+		if (stack.hasItemMeta()) {
+			ItemMeta meta = stack.getItemMeta();
+			
+			if (meta.hasDisplayName())
+				builder.name(meta.getDisplayName());
+			
+			if (meta.hasLore())
+				builder.lore(meta.getLore());
+			
+			if (meta instanceof LeatherArmorMeta) {
+				Color color = ((LeatherArmorMeta) meta).getColor();
+				if (color != null)
+					builder.color(color);				
+			}
+			
+			if (meta instanceof SkullMeta) {
+				SkullMeta sm = (SkullMeta) meta;
+				if (sm.hasOwner())
+					builder.skin(sm.getOwner());
+			}
+		}
+		
+		return builder;
 	}
 }
