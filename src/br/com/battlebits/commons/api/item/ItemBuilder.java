@@ -198,7 +198,7 @@ public class ItemBuilder {
 						e.printStackTrace();
 					}
 				} else if (skin != null) {
-					skullMeta.setDisplayName(skin);					
+					skullMeta.setOwner(skin);					
 				}
 			}
 			
