@@ -23,7 +23,7 @@ public class WitherBoss extends BossBarEntity {
 		if (!isAlive()) {
 			setAlive(true);
 			Location loc = getPlayer().getLocation().clone();
-			Location pos = loc.getDirection().multiply(24D).add(loc.toVector()).toLocation(loc.getWorld());
+			Location pos = loc.getDirection().multiply(48D).add(loc.toVector()).toLocation(loc.getWorld());
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
 			packet.getDataWatcherModifier().write(0, new WrappedDataWatcher());
 			packet.getIntegers().write(0, getId());
@@ -69,7 +69,7 @@ public class WitherBoss extends BossBarEntity {
 	public void move(PlayerMoveEvent event) {
 		if (isAlive()) {
 			Location to = event.getTo().clone();
-			Location pos = to.getDirection().multiply(24D).add(to.toVector()).toLocation(to.getWorld());
+			Location pos = to.getDirection().multiply(48D).add(to.toVector()).toLocation(to.getWorld());
 			if ((lastX != pos.getBlockX()) || (lastY != pos.getBlockY()) || (lastZ != pos.getBlockZ())) {
 				PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
 				packet.getIntegers().write(0, getId());

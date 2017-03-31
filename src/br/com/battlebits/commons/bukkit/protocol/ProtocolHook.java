@@ -57,6 +57,21 @@ public class ProtocolHook {
 				Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
 				Object networkManager = playerConnection.getClass().getField("networkManager").get(playerConnection);
 				return ProtocolVersion.getById((int) networkManager.getClass().getMethod("getVersion").invoke(networkManager));
+			} else {
+				String version = Bukkit.getServer().getClass().getPackage().getName().substring(23);
+				if (version.startsWith("v1_7_R")) {
+					if (version.endsWith("R1") || version.endsWith("R2"))
+						return ProtocolVersion.MINECRAFT_1_7_5;
+					return ProtocolVersion.MINECRAFT_1_7_10;
+				} else if (version.startsWith("v1_8_R")) {
+					return ProtocolVersion.MINECRAFT_1_8;
+				} else if (version.startsWith("v1_9_R")) {
+					return ProtocolVersion.MINECRAFT_1_9;
+				} else if (version.startsWith("v1_10_R")) {
+					return ProtocolVersion.MINECRAFT_1_10;
+				} else if (version.startsWith("v1_11_R")) {
+					return ProtocolVersion.MINECRAFT_1_11;
+				}
 			}
 		} catch (Exception e) { }
 		
