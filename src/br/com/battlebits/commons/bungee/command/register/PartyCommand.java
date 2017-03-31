@@ -13,7 +13,9 @@ import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
 import br.com.battlebits.commons.core.data.DataParty;
 import br.com.battlebits.commons.core.translate.T;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -107,17 +109,37 @@ public class PartyCommand implements CommandClass
 					
 					if (target != null)
 					{
-						if (!party.getInviteQueue().containsKey(target.getUniqueId()))
+						if (!target.getUniqueId().equals(player.getUniqueId()))
 						{
-							party.addInvite(target);
-							
-							player.sendMessage(TextComponent.fromLegacyText("VOCÊ CONVIDOU " + target.getName() + " PARA SUA PARTY"));
-							target.sendMessage(TextComponent.fromLegacyText(player.getName() + " CONVIDOU VOCÊ PARA UMA PARTY"));
+							if (!party.getInviteQueue().containsKey(target.getUniqueId()))
+							{
+								/**String tag = "";**/								
+								party.addInvite(target);
+								
+								player.sendMessage(TextComponent.fromLegacyText("§6§lPARTY §fVocê convidou §e" + target.getName() + " §fpara entrar em sua §6§lPARTY§f."));
+								target.sendMessage(TextComponent.fromLegacyText("§6§lPARTY §fVocê foi convidado para entrar na §6§lPARTY §fde §e" + player.getName() + "§f."));
+								
+								TextComponent clickHere = new TextComponent("aqui");
+								clickHere.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + player.getName()));
+								clickHere.setColor(ChatColor.YELLOW);
+								clickHere.setUnderlined(true);
+								clickHere.setBold(true);
+
+								TextComponent extraText = new TextComponent(TextComponent.fromLegacyText(" §fpara aceitar o pedido de §e" + player.getName() + "§f."));
+								TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText("§6§lPARTY §fClique "));
+								textComponent.addExtra(clickHere);
+								textComponent.addExtra(extraText);
+								target.sendMessage(textComponent);
+							}
+							else
+							{
+								player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(cmdArgs.getLanguage(), "command-party-already-invited")));
+							}
 						}
-						else
+						else 
 						{
-							player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(cmdArgs.getLanguage(), "command-party-already-invited")));
-						}		
+							player.sendMessage(TextComponent.fromLegacyText("§6§lPARTY §fVocê não pode se convidar!"));
+						}
 					}
 					else
 					{

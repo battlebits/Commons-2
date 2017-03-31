@@ -60,18 +60,24 @@ public class ItemBuilder {
 	}
 
 	public ItemBuilder amount(int amount) {
-		if (amount > 64) {
-			amount = 64;
-		} else if (amount == 0) {
+		if (amount > material.getMaxStackSize())
+			amount = material.getMaxStackSize();
+		if (amount <= 0)
 			amount = 1;
-		}
 		this.amount = amount;
 		return this;
 	}
-
+	
 	public ItemBuilder durability(int durability) {
-		if (durability >= 0 && durability <= 15) {
+		return durability(durability, false);
+	}
+	
+	public ItemBuilder durability(int durability, boolean percent) {
+		int maxDurability = Math.max(15, material.getMaxDurability());
+		if (!percent && durability >= 0 && durability <= maxDurability) {
 			this.durability = (short) durability;
+		} else if (durability >= 1 && durability <= 100) {
+			this.durability = (short) (maxDurability - ((maxDurability * durability) / 100));
 		}
 		return this;
 	}
