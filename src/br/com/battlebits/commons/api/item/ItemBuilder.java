@@ -40,16 +40,18 @@ public class ItemBuilder {
 	private ArrayList<String> lore;
 	
 	private Color color;
-	private String skin;
+	private String skinOwner;
 	private String skinUrl;
 
 	private boolean hideAttributes;
+	private boolean unbreakable;
 	
 	public ItemBuilder() {
 		material = Material.STONE;
 		amount = 1;
 		durability = 0;
 		hideAttributes = false;
+		unbreakable = false;
 		useMeta = false;
 		glow = false;
 	}
@@ -140,7 +142,7 @@ public class ItemBuilder {
 	
 	public ItemBuilder skin(String skin) {
 		this.useMeta = true;
-		this.skin = skin;
+		this.skinOwner = skin;
 		return this;		
 	}
 	
@@ -162,16 +164,22 @@ public class ItemBuilder {
 		return this;
 	}
 	
+	public ItemBuilder unbreakable() {
+		this.unbreakable = true;
+		return this;
+	}
+	
 	public ItemStack build() {
-
 		ItemStack stack = new ItemStack(material);
 		stack.setAmount(amount);
 		stack.setDurability(durability);
+		
 		if (enchantments != null && !enchantments.isEmpty()) {
 			for (Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
 				stack.addUnsafeEnchantment(entry.getKey(), entry.getValue());
 			}
 		}
+		
 		if (useMeta) {
 			ItemMeta meta = stack.getItemMeta();
 			
@@ -203,10 +211,12 @@ public class ItemBuilder {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				} else if (skin != null) {
-					skullMeta.setOwner(skin);					
+				} else if (skinOwner != null) {
+					skullMeta.setOwner(skinOwner);					
 				}
 			}
+			
+			meta.spigot().setUnbreakable(unbreakable);
 			
 			/** Item Flags */
 			if (hideAttributes) {
@@ -217,6 +227,7 @@ public class ItemBuilder {
 			
 			stack.setItemMeta(meta);
 		}
+		
 		if (glow && (enchantments == null || enchantments.isEmpty())) {
 			try {
 				Constructor<?> caller = MinecraftReflection.getCraftItemStackClass()
@@ -231,26 +242,44 @@ public class ItemBuilder {
 				e.printStackTrace();
 			}
 		}
+		
 		material = Material.STONE;
 		amount = 1;
 		durability = 0;
+		
 		if (useMeta) {
 			useMeta = false;
 		}
+		
 		if (glow) {
 			glow = false;
 		}
+		
+		if (hideAttributes) {
+			hideAttributes = false;
+		}
+		
+		if (unbreakable) {
+			unbreakable = false;
+		}
+
 		if (displayName != null) {
 			displayName = null;
 		}
+		
 		if (enchantments != null) {
 			enchantments.clear();
 			enchantments = null;
 		}
+		
 		if (lore != null) {
 			lore.clear();
 			lore = null;
 		}
+
+		skinOwner = null;
+		skinUrl = null;
+		color = null;
 		return stack;
 	}
 
