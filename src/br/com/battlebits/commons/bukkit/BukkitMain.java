@@ -25,7 +25,7 @@ import br.com.battlebits.commons.bukkit.listener.ChatListener;
 import br.com.battlebits.commons.bukkit.listener.PlayerNBTListener;
 import br.com.battlebits.commons.bukkit.listener.PlayerListener;
 import br.com.battlebits.commons.bukkit.listener.ScoreboardListener;
-import br.com.battlebits.commons.bukkit.messesnger.BungeeCordMessenger;
+import br.com.battlebits.commons.bukkit.messenger.BungeeCordMessenger;
 import br.com.battlebits.commons.bukkit.permission.PermissionManager;
 import br.com.battlebits.commons.bukkit.protocol.ProtocolHook;
 import br.com.battlebits.commons.bukkit.redis.BukkitPubSubHandler;

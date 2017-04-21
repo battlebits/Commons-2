@@ -1,4 +1,4 @@
-package br.com.battlebits.commons.bukkit.messesnger;
+package br.com.battlebits.commons.bukkit.messenger;
 
 import java.util.UUID;
 
