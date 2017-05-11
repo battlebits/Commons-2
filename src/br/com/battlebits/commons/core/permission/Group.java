@@ -19,7 +19,6 @@ public enum Group {
 	MODPLUS(new StreamerGroup()), //
 	MANAGER(new StreamerGroup()), //
 	ADMIN(new StreamerGroup()), //
-	ADMINCEO(new OwnerGroup()),
 	DONO(new OwnerGroup());
 
 	private GroupInterface group;
