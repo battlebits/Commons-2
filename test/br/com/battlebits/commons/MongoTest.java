@@ -66,7 +66,7 @@ public class MongoTest {
 	public static void maina(String[] args) {
 		MongoBackend backend = new MongoBackend();
 		backend.startConnection();
-		BattlebitsAPI.setMongo(backend);
+		BattlebitsAPI.setCommonsMongo(backend);
 		BattlebitsAPI.setLogger(Logger.getGlobal());
 		for (Language lang : Language.values()) {
 			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));

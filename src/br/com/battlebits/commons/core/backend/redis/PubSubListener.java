@@ -19,7 +19,7 @@ public class PubSubListener implements Runnable {
 	@Override
 	public void run() {
 		boolean broken = false;
-		try (Jedis rsc = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis rsc = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			try {
 				rsc.subscribe(jpsh, channels);
 			} catch (Exception e) {

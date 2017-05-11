@@ -28,13 +28,13 @@ public class BattlebitsAPI {
 
 	@Getter
 	@Setter
-	private static MySQLBackend mysql;
+	private static MySQLBackend commonsMysql;
 	@Getter
 	@Setter
-	private static MongoBackend mongo;
+	private static MongoBackend commonsMongo;
 	@Getter
 	@Setter
-	private static RedisBackend redis;
+	private static RedisBackend commonsRedis;
 
 	@Getter
 	private static ClanCommon clanCommon = new ClanCommon();

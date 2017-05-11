@@ -44,7 +44,7 @@ public class DataClan extends Data {
 	}
 
 	public static Clan getMongoClan(UUID uuid) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		Document found = collection.find(Filters.eq("uniqueId", uuid)).first();
 		if (found == null)
@@ -53,7 +53,7 @@ public class DataClan extends Data {
 	}
 
 	public static Clan getMongoClan(String name) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		Document found = collection.find(Filters.eq("name", name)).first();
 		if (found == null)
@@ -62,7 +62,7 @@ public class DataClan extends Data {
 	}
 
 	public static Clan getRedisClan(String name) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			String str = jedis.get("clan:uniqueId:" + name);
 			if (str != null && !str.isEmpty()) {
 				return getRedisClan(UUID.fromString(str));
@@ -73,7 +73,7 @@ public class DataClan extends Data {
 
 	public static Clan getRedisClan(UUID uniqueId) {
 		Clan clan = null;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			if (!jedis.exists("account:" + "clan:" + uniqueId.toString()))
 				return null;
 			Map<String, String> fields = jedis.hgetAll("clan:" + uniqueId.toString());
@@ -133,7 +133,7 @@ public class DataClan extends Data {
 				value = element.getAsString();
 			}
 		}
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		collection.updateOne(Filters.eq("uniqueId", clan.getUniqueId().toString()),
 				new Document("$set", new Document(fieldName, value)));
@@ -150,7 +150,7 @@ public class DataClan extends Data {
 		} else {
 			value = element.getAsString();
 		}
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			jedis.hset("clan:" + clan.getUniqueId().toString(), fieldName, value);
 
@@ -166,7 +166,7 @@ public class DataClan extends Data {
 	}
 
 	public static void saveMongoClan(Clan clan) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		Document found = collection.find(Filters.eq("uniqueId", clan.getUniqueId())).first();
 		if (found == null) {
@@ -191,7 +191,7 @@ public class DataClan extends Data {
 			playerElements.put(key, value);
 		}
 
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.hmset("clan:" + clan.getUniqueId().toString(), playerElements);
 			pipe.set("clan:uniqueId:" + clan.getName(), clan.getName());
@@ -201,7 +201,7 @@ public class DataClan extends Data {
 	}
 
 	public static boolean clanNameExists(String clanName) {
-		MongoClient client = BattlebitsAPI.getMongo().getClient();
+		MongoClient client = BattlebitsAPI.getCommonsMongo().getClient();
 		MongoDatabase database = client.getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		Document found = collection.find(Filters.eq("clanName", clanName)).first();
@@ -209,7 +209,7 @@ public class DataClan extends Data {
 	}
 
 	public static boolean clanAbbreviationExists(String abbreviation) {
-		MongoClient client = BattlebitsAPI.getMongo().getClient();
+		MongoClient client = BattlebitsAPI.getCommonsMongo().getClient();
 		MongoDatabase database = client.getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		Document found = collection.find(Filters.eq("abbreviation", abbreviation)).first();
@@ -217,14 +217,14 @@ public class DataClan extends Data {
 	}
 
 	public static void disbandMongoClan(Clan clan) {
-		MongoClient client = BattlebitsAPI.getMongo().getClient();
+		MongoClient client = BattlebitsAPI.getCommonsMongo().getClient();
 		MongoDatabase database = client.getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		collection.deleteOne(Filters.eq("uniqueId", clan.getUniqueId()));
 	}
 
 	public static void disbandRedisClan(Clan clan) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.del("clan:" + clan.getUniqueId().toString());
 			pipe.del("clan:uniqueId:" + clan.getName());
@@ -234,7 +234,7 @@ public class DataClan extends Data {
 	}
 
 	public static void cacheRedisClan(UUID uuid, String clanName) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			BattlebitsAPI.debug("REDIS > EXPIRE 300");
 			jedis.expire("clan:" + uuid.toString(), 300);
 			jedis.expire("clan:uniqueId:" + clanName, 300);
@@ -243,7 +243,7 @@ public class DataClan extends Data {
 
 	public static boolean checkCache(UUID uuid) {
 		boolean bol = false;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			String key = "clan:" + uuid.toString();
 			bol = jedis.persist(key) == 1;
 		}
@@ -255,7 +255,7 @@ public class DataClan extends Data {
 	}
 
 	public static UUID getNewUniqueId() {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("clan");
 		UUID uuid;
 		do {

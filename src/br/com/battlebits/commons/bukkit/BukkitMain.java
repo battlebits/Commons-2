@@ -103,8 +103,8 @@ public class BukkitMain extends JavaPlugin {
 			RedisBackend redisBackend = new RedisBackend(redisHostname, redisPassword, redisPort);
 			mongoBackend.startConnection();
 			redisBackend.startConnection();
-			BattlebitsAPI.setMongo(mongoBackend);
-			BattlebitsAPI.setRedis(redisBackend);
+			BattlebitsAPI.setCommonsMongo(mongoBackend);
+			BattlebitsAPI.setCommonsRedis(redisBackend);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -138,8 +138,8 @@ public class BukkitMain extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		DataServer.stopServer();
-		BattlebitsAPI.getMongo().closeConnection();
-		BattlebitsAPI.getRedis().closeConnection();
+		BattlebitsAPI.getCommonsMongo().closeConnection();
+		BattlebitsAPI.getCommonsRedis().closeConnection();
 	}
 
 	private void loadConfiguration() {

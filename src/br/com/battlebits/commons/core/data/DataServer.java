@@ -33,7 +33,7 @@ public class DataServer extends Data {
 	// TRANSLATIONS
 	@SuppressWarnings("unchecked")
 	public static Map<String, String> loadTranslation(Language language) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("translation");
 		Document found = collection.find(Filters.eq("language", language.toString())).first();
 		if (found != null) {
@@ -44,7 +44,7 @@ public class DataServer extends Data {
 	}
 
 	public static void addTranslationTag(Language language, String tag) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("translation");
 		Document found = collection.find(Filters.eq("language", language.toString())).first();
 		if (found != null) {
@@ -61,7 +61,7 @@ public class DataServer extends Data {
 
 	public static String getServerId(String ipAddress) {
 		try {
-			MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+			MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 			MongoCollection<Document> collection = database.getCollection("serverId");
 			Document found = collection.find(Filters.eq("address", ipAddress)).first();
 			if (found != null) {
@@ -75,7 +75,7 @@ public class DataServer extends Data {
 	
 	public static Set<UUID> getPlayers(String serverId) {
 		Set<UUID> players = new HashSet<>();
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			for(String uuid : jedis.hgetAll("server:" + serverId + ":players").values()) {
 				UUID uniqueId = UUID.fromString(uuid);
 				players.add(uniqueId);
@@ -88,7 +88,7 @@ public class DataServer extends Data {
 
 	public static Map<String, Map<String, String>> getAllServers() {
 		Map<String, Map<String, String>> map = new HashMap<>();
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			String[] str = new String[ServerType.values().length];
 			for (int i = 0; i < ServerType.values().length; i++) {
 				str[i] = "server:type:" + ServerType.values()[i].toString().toLowerCase();
@@ -106,7 +106,7 @@ public class DataServer extends Data {
 	}
 
 	public static void newServer(int maxPlayers) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.sadd("server:type:" + ServerType.getServerType(BattlebitsAPI.getServerId()).toString().toLowerCase(),
 					BattlebitsAPI.getServerId());
@@ -126,7 +126,7 @@ public class DataServer extends Data {
 	}
 
 	public static void updateStatus(MinigameState state, int time) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.hset("server:" + BattlebitsAPI.getServerId(), "state", state.toString().toLowerCase());
 			pipe.hset("server:" + BattlebitsAPI.getServerId(), "time", time + "");
@@ -138,7 +138,7 @@ public class DataServer extends Data {
 	}
 
 	public static void setJoinEnabled(boolean bol) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.hset("server:" + BattlebitsAPI.getServerId(), "joinenabled", bol + "");
 			pipe.publish("server-info",
@@ -149,7 +149,7 @@ public class DataServer extends Data {
 	}
 
 	public static void stopServer() {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.srem("server:type:" + ServerType.getServerType(BattlebitsAPI.getServerId()).toString().toLowerCase(),
 					BattlebitsAPI.getServerId());
@@ -163,7 +163,7 @@ public class DataServer extends Data {
 	}
 
 	public static void joinPlayer(UUID uuid) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.sadd("server:" + BattlebitsAPI.getServerId() + ":players", uuid.toString());
 			pipe.publish("server-info",
@@ -174,7 +174,7 @@ public class DataServer extends Data {
 	}
 
 	public static void leavePlayer(UUID uuid) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			pipe.srem("server:" + BattlebitsAPI.getServerId() + ":players", uuid.toString());
 			pipe.publish("server-info",
@@ -186,7 +186,7 @@ public class DataServer extends Data {
 
 	public static long getPlayerCount(String serverId) {
 		long number = 0l;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			number = jedis.scard("server:" + serverId + ":players");
 		}
 		return number;
@@ -194,7 +194,7 @@ public class DataServer extends Data {
 
 	public static long getPlayerCount(ServerType serverType) {
 		long number = 0l;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Set<String> servers = jedis.smembers("server:type:" + serverType.toString().toLowerCase());
 			for (String serverId : servers) {
 				number += jedis.scard("server:" + serverId + ":players");

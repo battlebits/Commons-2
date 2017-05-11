@@ -29,7 +29,7 @@ public class MongoBackend implements Backend {
 		seeds.add(new ServerAddress(hostname, port));
 		List<MongoCredential> credentials = new ArrayList<MongoCredential>();
 		if (!username.isEmpty() && !password.isEmpty() && !database.isEmpty()) {
-			credentials.add(MongoCredential.createMongoCRCredential(username, database, password.toCharArray()));
+			credentials.add(MongoCredential.createCredential(username, database, password.toCharArray()));
 		}
 		client = new MongoClient(seeds, credentials);
 	}

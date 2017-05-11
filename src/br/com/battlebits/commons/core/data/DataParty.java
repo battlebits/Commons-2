@@ -14,7 +14,7 @@ public class DataParty extends Data
 {
 	public static <T> T getRedisParty(UUID owner, Class<T> clazz)
 	{
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource())
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource())
 		{
 			if (!jedis.exists("party:" + owner.toString())) return null;
 			
@@ -31,7 +31,7 @@ public class DataParty extends Data
 	
 	public static void loadParty(Party party)
 	{
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) 
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) 
 		{
 			Pipeline pipeline = jedis.pipelined();
 			
@@ -47,7 +47,7 @@ public class DataParty extends Data
 	
 	public static void unloadParty(Party party)
 	{
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) 
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) 
 		{
 			Pipeline pipeline = jedis.pipelined();
 			
@@ -66,7 +66,7 @@ public class DataParty extends Data
 	{
 		Map<String, String> tree = toRedisTree(party);
 
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) 
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) 
 		{
 			Pipeline pipeline = jedis.pipelined();
 			pipeline.hmset("party:" + party.getOwner().toString(), tree);
@@ -89,7 +89,7 @@ public class DataParty extends Data
 			else
 				value = element.getAsString();
 			
-			try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource())
+			try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource())
 			{
 				Pipeline pipeline = jedis.pipelined();
 				
@@ -107,7 +107,7 @@ public class DataParty extends Data
 	
 	public static void expire(Party party) 
 	{
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource())
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource())
 		{
 			BattlebitsAPI.debug("REDIS > EXPIRE 300");
 			jedis.expire("party:" + party.getOwner().toString(), 300);
@@ -116,7 +116,7 @@ public class DataParty extends Data
 	
 	public static void disbandParty(Party party)
 	{
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource())
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource())
 		{
 			BattlebitsAPI.debug("REDIS > DELETE");
 			Pipeline pipe = jedis.pipelined();
@@ -128,7 +128,7 @@ public class DataParty extends Data
 	public static boolean checkCache(Party party)
 	{
 		boolean bool = false;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			String key = "party:" + party.getOwner().toString();
 			if (jedis.ttl(key) >= 0) {
 				bool = jedis.persist(key) == 1;

@@ -34,7 +34,7 @@ public class DataPlayer extends Data {
 	}
 
 	public static BattlePlayer getMongoPlayer(UUID uuid) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("account");
 
 		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
@@ -46,7 +46,7 @@ public class DataPlayer extends Data {
 
 	public static BattlePlayer createIfNotExistMongo(UUID uuid, String name, String address, IpCityResponse ipResponse) {
 		try {
-			MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+			MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 			MongoCollection<Document> collection = database.getCollection("account");
 
 			Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
@@ -69,7 +69,7 @@ public class DataPlayer extends Data {
 
 	public static BattlePlayer getRedisPlayer(UUID uuid) {
 		BattlePlayer player = null;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			if (!jedis.exists("account:" + uuid.toString()))
 				return null;
 			Map<String, String> fields = jedis.hgetAll("account:" + uuid.toString());
@@ -85,7 +85,7 @@ public class DataPlayer extends Data {
 	}
 
 	public static BukkitPlayer getMongoBukkitPlayer(UUID uuid) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("account");
 
 		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
@@ -96,7 +96,7 @@ public class DataPlayer extends Data {
 	}
 
 	public static void cacheRedisPlayer(UUID uuid) {
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			BattlebitsAPI.debug("REDIS > EXPIRE 300");
 			jedis.expire("account:" + uuid.toString(), 300);
 		}
@@ -104,7 +104,7 @@ public class DataPlayer extends Data {
 
 	public static boolean checkCache(UUID uuid) {
 		boolean bol = false;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			String key = "account:" + uuid.toString();
 			if (jedis.ttl(key) >= 0) {
 				bol = jedis.persist(key) == 1;
@@ -118,7 +118,7 @@ public class DataPlayer extends Data {
 	}
 
 	public static BukkitPlayer createIfNotExistMongoBukkit(UUID uuid, String name, String address, IpCityResponse response) {
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("account");
 
 		Document found = collection.find(Filters.eq("uniqueId", uuid.toString())).first();
@@ -137,7 +137,7 @@ public class DataPlayer extends Data {
 
 	public static BukkitPlayer getRedisBukkitPlayer(UUID uuid) {
 		BukkitPlayer player = null;
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Map<String, String> fields = jedis.hgetAll("account:" + uuid.toString());
 			if (fields == null || fields.isEmpty() || fields.size() < 40)
 				return null;
@@ -160,7 +160,7 @@ public class DataPlayer extends Data {
 		for (Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 			playerElements.put(entry.getKey(), gson.toJson(entry.getValue()));
 		}
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			jedis.hmset("account:" + player.getUniqueId().toString(), playerElements);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -178,7 +178,7 @@ public class DataPlayer extends Data {
 		if (!jsonObject.has(fieldName))
 			return;
 		JsonElement element = jsonObject.get(fieldName);
-		try (Jedis jedis = BattlebitsAPI.getRedis().getPool().getResource()) {
+		try (Jedis jedis = BattlebitsAPI.getCommonsRedis().getPool().getResource()) {
 			Pipeline pipe = jedis.pipelined();
 			jedis.hset("account:" + player.getUniqueId().toString(), fieldName, gson.toJson(element));
 
@@ -239,7 +239,7 @@ public class DataPlayer extends Data {
 		}
 		BattlebitsAPI.debug("SAVING MONGO FIELD");
 		try {
-			MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+			MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 			MongoCollection<Document> collection = database.getCollection("account");
 			collection.updateOne(Filters.eq("uniqueId", player.getUniqueId().toString()),
 					new Document("$set", new Document(fieldName, value)));
@@ -295,7 +295,7 @@ public class DataPlayer extends Data {
 			}
 		}
 
-		MongoDatabase database = BattlebitsAPI.getMongo().getClient().getDatabase("commons");
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
 		MongoCollection<Document> collection = database.getCollection("account");
 		collection.updateOne(Filters.eq("uniqueId", player.getUniqueId().toString()),
 				new Document("$set", new Document("configuration." + fieldName, value)));
