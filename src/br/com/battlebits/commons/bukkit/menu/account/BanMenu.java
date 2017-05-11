@@ -18,6 +18,7 @@ import br.com.battlebits.commons.api.menu.ClickType;
 import br.com.battlebits.commons.api.menu.MenuClickHandler;
 import br.com.battlebits.commons.api.menu.MenuInventory;
 import br.com.battlebits.commons.api.menu.MenuItem;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.translate.T;
@@ -26,8 +27,7 @@ import br.com.battlebits.commons.util.DateUtils;
 public class BanMenu {
 	private static int itemsPerPage = 21;
 
-	public BanMenu(Player player, BattlePlayer opener, BattlePlayer battlePlayer, MenuInventory topInventory,
-			int page) {
+	public BanMenu(Player player, BattlePlayer opener, BattlePlayer battlePlayer, MenuInventory topInventory, int page) {
 		List<Ban> banList = battlePlayer.getPunishHistoric().getBanHistory();
 		Collections.sort(banList, new Comparator<Ban>() {
 
@@ -36,19 +36,17 @@ public class BanMenu {
 				return (int) (o1.getBanTime() - o2.getBanTime());
 			}
 		});
-		MenuInventory menu = new MenuInventory(
-				"§%ban-list%§ [" + page + "/" + ((int) Math.ceil(banList.size() / itemsPerPage) + 1) + "]", 6, true);
+		MenuInventory menu = new MenuInventory("§%ban-list%§ [" + page + "/" + ((int) Math.ceil(banList.size() / itemsPerPage) + 1) + "]", 6, true);
 		ItemStack nullItem = new ItemBuilder().type(Material.STAINED_GLASS_PANE).durability(15).name(" ").build();
-		menu.setItem(0,
-				new MenuItem(new ItemBuilder().type(Material.BED).name("§%back%§").build(), new MenuClickHandler() {
-					@Override
-					public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
-						if (topInventory != null)
-							topInventory.open(arg0);
-						else
-							arg0.closeInventory();
-					}
-				}));
+		menu.setItem(0, new MenuItem(new ItemBuilder().type(Material.BED).name("§%back%§").build(), new MenuClickHandler() {
+			@Override
+			public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
+				if (topInventory != null)
+					topInventory.open(arg0);
+				else
+					arg0.closeInventory();
+			}
+		}));
 
 		menu.setItem(4, new ItemBuilder().type(Material.BARRIER).name("§%ban-list%§").build());
 
@@ -62,33 +60,25 @@ public class BanMenu {
 			pageEnd = banList.size();
 		}
 		if (page == 1) {
-			menu.setItem(27,
-					new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-last-dont-have%§").build());
+			menu.setItem(27, new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-last-dont-have%§").build());
 		} else {
-			menu.setItem(27,
-					new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-last-page%§")
-							.lore(Arrays.asList("§%page-last-click-here%§")).build(), new MenuClickHandler() {
-								@Override
-								public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3,
-										int arg4) {
-									new BanMenu(arg0, opener, battlePlayer, topInventory, page - 1);
-								}
-							}));
+			menu.setItem(27, new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-last-page%§").lore(Arrays.asList("§%page-last-click-here%§")).build(), new MenuClickHandler() {
+				@Override
+				public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
+					new BanMenu(arg0, opener, battlePlayer, topInventory, page - 1);
+				}
+			}));
 		}
 
 		if (Math.ceil(banList.size() / itemsPerPage) + 1 > page) {
-			menu.setItem(35,
-					new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-next-page%§")
-							.lore(Arrays.asList("§%page-next-click-here%§")).build(), new MenuClickHandler() {
-								@Override
-								public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3,
-										int arg4) {
-									new BanMenu(arg0, opener, battlePlayer, topInventory, page + 1);
-								}
-							}));
+			menu.setItem(35, new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-next-page%§").lore(Arrays.asList("§%page-next-click-here%§")).build(), new MenuClickHandler() {
+				@Override
+				public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
+					new BanMenu(arg0, opener, battlePlayer, topInventory, page + 1);
+				}
+			}));
 		} else {
-			menu.setItem(35,
-					new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-next-dont-have%§").build());
+			menu.setItem(35, new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-next-dont-have%§").build());
 		}
 		int w = 19;
 		for (int i = pageStart; i < pageEnd; i++) {
@@ -126,13 +116,7 @@ public class BanMenu {
 			Date date = new Date(ban.getBanTime());
 			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 			Date unban = new Date(ban.getUnbanTime());
-			lore = T.t(opener.getLanguage(), lore,
-					new String[] { "%bannedBy%", "%bannedIp%", "%banTime%", "%duration%", "%expire%", "%reason%",
-							"%server%", "%unbannedBy%", "%unbanTime%" },
-					new String[] { ban.getBannedBy(), ban.getBannedBy(), df.format(date), ban.getDuration() + "",
-							DateUtils.formatDifference(opener.getLanguage(),
-									(ban.getExpire() - System.currentTimeMillis()) / 1000),
-							ban.getReason(), ban.getServer(), ban.getUnbannedBy(), df.format(unban) });
+			lore = T.t(BukkitMain.getInstance(), opener.getLanguage(), lore, new String[] { "%bannedBy%", "%bannedIp%", "%banTime%", "%duration%", "%expire%", "%reason%", "%server%", "%unbannedBy%", "%unbanTime%" }, new String[] { ban.getBannedBy(), ban.getBannedBy(), df.format(date), ban.getDuration() + "", DateUtils.formatDifference(opener.getLanguage(), (ban.getExpire() - System.currentTimeMillis()) / 1000), ban.getReason(), ban.getServer(), ban.getUnbannedBy(), df.format(unban) });
 			ItemStack item = new ItemBuilder().type(type)//
 					.name(name)//
 					.lore(lore).build();
@@ -152,8 +136,7 @@ public class BanMenu {
 			w += 1;
 		}
 		if (banList.size() == 0) {
-			menu.setItem(31, new ItemBuilder().type(Material.PAINTING).name("§c§lOps!")
-					.lore(Arrays.asList("§%nothing-found%§")).build());
+			menu.setItem(31, new ItemBuilder().type(Material.PAINTING).name("§c§lOps!").lore(Arrays.asList("§%nothing-found%§")).build());
 		}
 
 		for (int i = 0; i < 9; i++) {

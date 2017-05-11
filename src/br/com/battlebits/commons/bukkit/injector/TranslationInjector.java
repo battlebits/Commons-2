@@ -64,8 +64,7 @@ public class TranslationInjector implements Injector {
 							for (int i = 0; i < packet.getChatComponents().size(); i++) {
 								WrappedChatComponent chatComponent = packet.getChatComponents().read(i);
 								if (chatComponent != null) {
-									packet.getChatComponents().write(i,
-											WrappedChatComponent.fromJson(translate(chatComponent.getJson(), lang)));
+									packet.getChatComponents().write(i, WrappedChatComponent.fromJson(translate(chatComponent.getJson(), lang)));
 								}
 							}
 							event.setPacket(packet);
@@ -88,8 +87,7 @@ public class TranslationInjector implements Injector {
 							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
 							if (component == null)
 								return;
-							packet.getChatComponents().write(0,
-									WrappedChatComponent.fromJson(translate(component.getJson(), lang)));
+							packet.getChatComponents().write(0, WrappedChatComponent.fromJson(translate(component.getJson(), lang)));
 							event.setPacket(packet);
 							return;
 						} else if (event.getPacketType() == PacketType.Play.Server.SCOREBOARD_SCORE) {
@@ -100,9 +98,9 @@ public class TranslationInjector implements Injector {
 						} else if (event.getPacketType() == PacketType.Play.Server.OPEN_WINDOW) {
 							PacketContainer packet = event.getPacket().deepClone();
 							WrappedChatComponent component = event.getPacket().getChatComponents().read(0);
-							JsonElement element = BattlebitsAPI.getParser().parse(component.getJson()); 
+							JsonElement element = BattlebitsAPI.getParser().parse(component.getJson());
 							if (!(element instanceof JsonObject && ((JsonObject) element).has("translate"))) {
-								String message = translate(element.getAsString(), lang);								
+								String message = translate(element.getAsString(), lang);
 								message = message.substring(0, message.length() > 32 ? 32 : message.length());
 								packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
 								event.setPacket(packet);
@@ -119,12 +117,12 @@ public class TranslationInjector implements Injector {
 							boolean matched = false;
 							Matcher matcher = finder.matcher(pre);
 							while (matcher.find()) {
-								pre = pre.replace(matcher.group(), T.t(lang, matcher.group(2)));
+								pre = pre.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2)));
 								matched = true;
 							}
 							matcher = finder.matcher(su);
 							while (matcher.find()) {
-								su = su.replace(matcher.group(), T.t(lang, matcher.group(2)));
+								su = su.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2)));
 								matched = true;
 							}
 							if (matched) {
@@ -139,7 +137,7 @@ public class TranslationInjector implements Injector {
 							matcher = finder.matcher(text);
 							matched = false;
 							while (matcher.find()) {
-								text = text.replace(matcher.group(), T.t(lang, matcher.group(2)));
+								text = text.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2)));
 								matched = true;
 							}
 							if (!matched)
@@ -189,11 +187,9 @@ public class TranslationInjector implements Injector {
 							WrappedChatComponent header = packet.getChatComponents().read(0);
 							WrappedChatComponent footer = packet.getChatComponents().read(1);
 							if (header != null)
-								packet.getChatComponents().write(0,
-										WrappedChatComponent.fromJson(translate(header.getJson(), lang)));
+								packet.getChatComponents().write(0, WrappedChatComponent.fromJson(translate(header.getJson(), lang)));
 							if (footer != null)
-								packet.getChatComponents().write(1,
-										WrappedChatComponent.fromJson(translate(footer.getJson(), lang)));
+								packet.getChatComponents().write(1, WrappedChatComponent.fromJson(translate(footer.getJson(), lang)));
 							event.setPacket(packet);
 						} else if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
 							PacketContainer packet = event.getPacket().deepClone();
@@ -216,8 +212,7 @@ public class TranslationInjector implements Injector {
 								return;
 							}
 							PacketContainer packetClone = event.getPacket().deepClone();
-							List<WrappedWatchableObject> objects = packetClone.getDataWatcherModifier().read(0)
-									.getWatchableObjects();
+							List<WrappedWatchableObject> objects = packetClone.getDataWatcherModifier().read(0).getWatchableObjects();
 							for (WrappedWatchableObject obj : objects) {
 								if (obj.getIndex() == 2) {
 									String str = (String) obj.getRawValue();
@@ -268,7 +263,7 @@ public class TranslationInjector implements Injector {
 			return "";
 		Matcher matcher = finder.matcher(message);
 		while (matcher.find()) {
-			message = message.replace(matcher.group(), T.t(lang, matcher.group(2).toLowerCase()));
+			message = message.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2).toLowerCase()));
 		}
 		return message;
 	}

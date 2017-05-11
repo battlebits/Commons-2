@@ -23,7 +23,6 @@ import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.punish.Mute;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
-import br.com.battlebits.commons.core.translate.Translate;
 import br.com.battlebits.commons.core.twitter.Twitter;
 import br.com.battlebits.commons.core.twitter.TwitterAccount;
 import br.com.battlebits.commons.util.DateUtils;
@@ -53,11 +52,11 @@ public class BanManager {
 			if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
 				String banSuccess = "";
 				if (ban.isPermanent()) {
-					banSuccess = T.t(pl.getLanguage(), "command-ban-prefix") + " "
-							+ T.t(pl.getLanguage(), "command-ban-success");
+					banSuccess = T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-ban-prefix") + " "
+							+ T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-ban-success");
 				} else {
-					banSuccess = T.t(pl.getLanguage(), "command-tempban-prefix") + " "
-							+ T.t(pl.getLanguage(), "command-tempban-success");
+					banSuccess = T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-tempban-prefix") + " "
+							+ T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-tempban-success");
 				}
 				banSuccess = banSuccess.replace("%player%",
 						player.getName() + "(" + player.getUniqueId().toString().replace("-", "") + ")");
@@ -102,8 +101,8 @@ public class BanManager {
 		for (ProxiedPlayer proxiedP : BungeeMain.getPlugin().getProxy().getPlayers()) {
 			BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedP.getUniqueId());
 			if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
-				String unbanSuccess = Translate.getTranslation(pl.getLanguage(), "command-unban-prefix") + " "
-						+ Translate.getTranslation(pl.getLanguage(), "command-unban-success");
+				String unbanSuccess = T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-unban-prefix") + " "
+						+ T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-unban-success");
 				unbanSuccess = unbanSuccess.replace("%player%",
 						player.getName() + "(" + player.getUniqueId().toString().replace("-", "") + ")");
 				unbanSuccess = unbanSuccess.replace("%unbannedBy%", ban.getUnbannedBy());
@@ -120,11 +119,11 @@ public class BanManager {
 			if (pl.hasGroupPermission(Group.HELPER) && pl.getConfiguration().isAlertsEnabled()) {
 				String banSuccess = "";
 				if (mute.isPermanent()) {
-					banSuccess = Translate.getTranslation(pl.getLanguage(), "command-mute-prefix") + " "
-							+ Translate.getTranslation(pl.getLanguage(), "command-mute-success");
+					banSuccess = T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-mute-prefix") + " "
+							+ T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-mute-success");
 				} else {
-					banSuccess = Translate.getTranslation(pl.getLanguage(), "command-tempmute-prefix") + " "
-							+ Translate.getTranslation(pl.getLanguage(), "command-tempmute-success");
+					banSuccess = T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-tempmute-prefix") + " "
+							+ T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-tempmute-success");
 				}
 				banSuccess = banSuccess.replace("%player%",
 						player.getName() + "(" + player.getUniqueId().toString().replace("-", "") + ")");
@@ -157,8 +156,8 @@ public class BanManager {
 		for (ProxiedPlayer proxiedP : BungeeMain.getPlugin().getProxy().getPlayers()) {
 			BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedP.getUniqueId());
 			if (pl.hasGroupPermission(Group.HELPER) && pl.getConfiguration().isAlertsEnabled()) {
-				String unbanSuccess = Translate.getTranslation(pl.getLanguage(), "command-unmute-prefix") + " "
-						+ Translate.getTranslation(pl.getLanguage(), "command-unmute-success");
+				String unbanSuccess = T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-unmute-prefix") + " "
+						+ T.t(BungeeMain.getPlugin(),pl.getLanguage(), "command-unmute-success");
 				unbanSuccess = unbanSuccess.replace("%player%",
 						player.getName() + "(" + player.getUniqueId().toString().replace("-", "") + ")");
 				unbanSuccess = unbanSuccess.replace("%unmutedBy%", mute.getUnmutedBy());
@@ -188,9 +187,9 @@ public class BanManager {
 	public static String getBanKickMessage(Ban ban, Language lang, TimeZone zone) {
 		String reason = "";
 		if (ban.isPermanent()) {
-			reason = Translate.getTranslation(lang, "banned-permanent");
+			reason = T.t(BungeeMain.getPlugin(),lang, "banned-permanent");
 		} else {
-			reason = Translate.getTranslation(lang, "banned-temp");
+			reason = T.t(BungeeMain.getPlugin(),lang, "banned-temp");
 		}
 		Date date = new Date(ban.getBanTime());
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -207,11 +206,11 @@ public class BanManager {
 	public static String getMuteMessage(Mute mute, Language lang) {
 		String message = "";
 		if (mute.isPermanent()) {
-			message = Translate.getTranslation(lang, "command-mute-prefix") + " "
-					+ Translate.getTranslation(lang, "command-mute-muted");
+			message = T.t(BungeeMain.getPlugin(),lang, "command-mute-prefix") + " "
+					+ T.t(BungeeMain.getPlugin(),lang, "command-mute-muted");
 		} else {
-			message = Translate.getTranslation(lang, "command-unmute-prefix") + " "
-					+ Translate.getTranslation(lang, "command-tempmute-muted");
+			message = T.t(BungeeMain.getPlugin(),lang, "command-unmute-prefix") + " "
+					+ T.t(BungeeMain.getPlugin(),lang, "command-tempmute-muted");
 		}
 		message = message.replace("%duration%",
 				DateUtils.formatDifference(lang, (mute.getExpire() - System.currentTimeMillis()) / 1000));

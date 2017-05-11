@@ -17,6 +17,7 @@ import br.com.battlebits.commons.core.backend.sql.MySQLBackend;
 import br.com.battlebits.commons.core.clan.ClanCommon;
 import br.com.battlebits.commons.core.party.PartyCommon;
 import br.com.battlebits.commons.core.translate.Language;
+import br.com.battlebits.commons.core.translate.Translate;
 import br.com.battlebits.commons.util.mojang.NameFetcher;
 import br.com.battlebits.commons.util.mojang.UUIDFetcher;
 import br.com.battlebits.commons.util.mojang.UUIDGetter;
@@ -60,6 +61,10 @@ public class BattlebitsAPI {
 	@Getter
 	public static Language defaultLanguage = Language.PORTUGUESE;
 
+	@Getter
+	@Setter
+	public static Translate translate;
+	
 	@Setter
 	private static UUIDGetter getter;
 

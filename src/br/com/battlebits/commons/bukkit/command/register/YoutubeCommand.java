@@ -13,7 +13,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
 import br.com.battlebits.commons.core.permission.Group;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 
 public class YoutubeCommand implements CommandClass {
 
@@ -26,12 +26,12 @@ public class YoutubeCommand implements CommandClass {
 		Player p = args.getPlayer();
 		BattlePlayer bP = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 		if (!bP.getServerGroup().toString().contains("YOUTUBER") && !bP.hasGroupPermission(Group.MODPLUS)) {
-			p.sendMessage(Translate.getTranslation(args.getLanguage(), "command-fake-no-access"));
+			p.sendMessage(T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fake-no-access"));
 			return;
 		}
-		String fakePrefix = Translate.getTranslation(args.getLanguage(), "command-fake-prefix") + " ";
+		String fakePrefix = T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fake-prefix") + " ";
 		if (args.getArgs().length != 1) {
-			p.sendMessage(fakePrefix + Translate.getTranslation(args.getLanguage(), "command-fake-usage"));
+			p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fake-usage"));
 			return;
 		}
 		String playerName = args.getArgs()[0];
@@ -47,11 +47,11 @@ public class YoutubeCommand implements CommandClass {
 		}
 
 		if (!FakePlayerAPI.validateName(playerName)) {
-			p.sendMessage(fakePrefix + Translate.getTranslation(args.getLanguage(), "command-fake-invalid"));
+			p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fake-invalid"));
 			return;
 		}
 		if (BattlebitsAPI.getUUIDOf(playerName) != null) {
-			p.sendMessage(fakePrefix + Translate.getTranslation(args.getLanguage(), "command-fake-player-exists"));
+			p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fake-player-exists"));
 			return;
 		}
 
@@ -63,14 +63,12 @@ public class YoutubeCommand implements CommandClass {
 				FakePlayerAPI.changePlayerName(p, playerName, true);
 				bP.setTag(bP.getTag());
 				bP.setFakeName(playerName);
-				p.sendMessage(
-						fakePrefix + Translate.getTranslation(args.getLanguage(), "command-fake-changed-success"));
+				p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fake-changed-success"));
 			}
 		}.runTask(BukkitMain.getInstance());
 	}
 
-	@Command(name = "fakeremove", aliases = { "removefake",
-			"removerfake" }, groupToUse = Group.YOUTUBER, noPermMessageId = "command-fakeremove-no-access")
+	@Command(name = "fakeremove", aliases = { "removefake", "removerfake" }, groupToUse = Group.YOUTUBER, noPermMessageId = "command-fakeremove-no-access")
 	public void fakeremove(BukkitCommandArgs args) {
 		if (!args.isPlayer()) {
 			args.getSender().sendMessage("COMANDO PARA PLAYERS");
@@ -79,8 +77,7 @@ public class YoutubeCommand implements CommandClass {
 		Player p = args.getPlayer();
 		BattlePlayer bP = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 		if (!bP.getServerGroup().toString().contains("YOUTUBER") && !bP.hasGroupPermission(Group.MODPLUS)) {
-			p.sendMessage(Translate.getTranslation(args.getLanguage(), "command-fakeremove-no-access")
-					.replace("%command%", args.getLabel()));
+			p.sendMessage(T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fakeremove-no-access").replace("%command%", args.getLabel()));
 			return;
 		}
 		bP.setFakeName("");
@@ -89,8 +86,7 @@ public class YoutubeCommand implements CommandClass {
 		FakePlayerAPI.changePlayerSkin(p, bP.getName(), bP.getUniqueId(), false);
 		FakePlayerAPI.changePlayerName(p, bP.getName(), true);
 		bP.setTag(bP.getTag());
-		p.sendMessage(Translate.getTranslation(args.getLanguage(), "command-fakeremove-prefix") + " "
-				+ Translate.getTranslation(bP.getLanguage(), "command-fakeremove-changed-success"));
+		p.sendMessage(T.t(BukkitMain.getInstance(), args.getLanguage(), "command-fakeremove-prefix") + " " + T.t(BukkitMain.getInstance(), bP.getLanguage(), "command-fakeremove-changed-success"));
 	}
 
 	@Command(name = "changeskin", groupToUse = Group.ULTIMATE, noPermMessageId = "command-changeskin-no-access", runAsync = true)
@@ -100,21 +96,20 @@ public class YoutubeCommand implements CommandClass {
 			return;
 		}
 		Player p = args.getPlayer();
-		String fakePrefix = Translate.getTranslation(args.getLanguage(), "command-changeskin-prefix") + " ";
+		String fakePrefix = T.t(BukkitMain.getInstance(), args.getLanguage(), "command-changeskin-prefix") + " ";
 		if (args.getArgs().length != 1) {
-			p.sendMessage(fakePrefix + Translate.getTranslation(args.getLanguage(), "command-changeskin-usage"));
+			p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-changeskin-usage"));
 			return;
 		}
 		String playerName = args.getArgs()[0];
 		if (!FakePlayerAPI.validateName(playerName)) {
-			p.sendMessage(fakePrefix + Translate.getTranslation(args.getLanguage(), "command-changeskin-invalid"));
+			p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-changeskin-invalid"));
 			return;
 		}
 		UUID uuid = BattlebitsAPI.getUUIDOf(playerName);
 
 		if (uuid == null) {
-			p.sendMessage(
-					fakePrefix + Translate.getTranslation(args.getLanguage(), "command-changeskin-player-not-exists"));
+			p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-changeskin-player-not-exists"));
 			return;
 		}
 
@@ -122,8 +117,7 @@ public class YoutubeCommand implements CommandClass {
 			@Override
 			public void run() {
 				FakePlayerAPI.changePlayerSkin(p, playerName, uuid, true);
-				p.sendMessage(fakePrefix
-						+ Translate.getTranslation(args.getLanguage(), "command-changeskin-changed-success"));
+				p.sendMessage(fakePrefix + T.t(BukkitMain.getInstance(), args.getLanguage(), "command-changeskin-changed-success"));
 			}
 		}.runTask(BukkitMain.getInstance());
 	}

@@ -9,11 +9,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.command.CommandArgs;
 import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -50,7 +51,7 @@ public class BungeeCommandFramework implements CommandFramework {
 					BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 					if (!bp.hasGroupPermission(command.groupToUse())) {
 						p.sendMessage(TextComponent
-								.fromLegacyText(Translate.getTranslation(bp.getLanguage(), command.noPermMessageId())));
+								.fromLegacyText(T.t(BungeeMain.getPlugin(),bp.getLanguage(), command.noPermMessageId())));
 						return true;
 					}
 					bp = null;

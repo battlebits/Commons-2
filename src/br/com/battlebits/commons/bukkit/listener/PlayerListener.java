@@ -43,8 +43,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void onWhitelist(PlayerCommandPreprocessEvent event) {
 		if (event.getMessage().toLowerCase().startsWith("/whitelist ")) {
-			if (event.getPlayer().hasPermission("minecraft.command.whitelist")
-					|| event.getPlayer().hasPermission("bukkit.command.whitelist")) {
+			if (event.getPlayer().hasPermission("minecraft.command.whitelist") || event.getPlayer().hasPermission("bukkit.command.whitelist")) {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
@@ -63,7 +62,7 @@ public class PlayerListener implements Listener {
 				public void run() {
 					event.getPlayer().sendMessage("§%merry-christmas%§");
 				}
-			}.runTaskLater(BukkitMain.getInstance(), 2);			
+			}.runTaskLater(BukkitMain.getInstance(), 2);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -97,14 +96,13 @@ public class PlayerListener implements Listener {
 		if (event.getResult() == Result.KICK_WHITELIST) {
 			if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId()) == null)
 				event.disallow(Result.KICK_OTHER, ChatColor.RED + "ERROR");
-			if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId())
-					.hasGroupPermission(Group.MODPLUS)) {
+			if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId()).hasGroupPermission(Group.MODPLUS)) {
 				event.allow();
 			}
 		}
 	}
 
-	@EventHandler(priority=EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onQuit(PlayerQuitEvent event) {
 		AdminMode.getInstance().removeAdmin(event.getPlayer());
 		VanishAPI.getInstance().removeVanish(event.getPlayer());
@@ -116,7 +114,7 @@ public class PlayerListener implements Listener {
 			HashMap<String, String> replaces = new HashMap<>();
 			replaces.put("%league%", event.getNewLeague().toString());
 			replaces.put("%symbol%", event.getNewLeague().getSymbol());
-			event.getPlayer().sendMessage("§%league-prefix%§ " + T.t(event.getBukkitPlayer().getLanguage(), "league-rank-level-up", replaces));
+			event.getPlayer().sendMessage("§%league-prefix%§ " + T.t(BukkitMain.getInstance(), event.getBukkitPlayer().getLanguage(), "league-rank-level-up", replaces));
 		}
 	}
 }

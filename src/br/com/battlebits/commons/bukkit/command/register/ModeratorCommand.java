@@ -20,22 +20,21 @@ import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.translate.Language;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 
 public class ModeratorCommand implements CommandClass {
 	private DecimalFormat locationFormater = new DecimalFormat("######.##");
 
 	@SuppressWarnings("deprecation")
-	@Command(name = "gamemode", aliases = {
-			"gm" }, groupToUse = Group.MANAGER, noPermMessageId = "command-gamemode-no-access")
+	@Command(name = "gamemode", aliases = { "gm" }, groupToUse = Group.MANAGER, noPermMessageId = "command-gamemode-no-access")
 	public void gamemode(BukkitCommandArgs cmdArgs) {
 		if (cmdArgs.isPlayer()) {
 			Player p = cmdArgs.getPlayer();
 			String[] args = cmdArgs.getArgs();
 			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
-			String prefix = Translate.getTranslation(bp.getLanguage(), "command-gamemode-prefix") + " ";
+			String prefix = T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-gamemode-prefix") + " ";
 			if (args.length == 0) {
-				p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "command-gamemode-usage"));
+				p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-gamemode-usage"));
 			} else {
 				GameMode gm = null;
 				try {
@@ -50,34 +49,26 @@ public class ModeratorCommand implements CommandClass {
 					if (args.length == 1) {
 						if (p.getGameMode() != gm) {
 							p.setGameMode(gm);
-							p.sendMessage(
-									prefix + Translate.getTranslation(bp.getLanguage(), "command-gamemode-changed-you")
-											.replace("%gamemode%", Translate.getTranslation(bp.getLanguage(),
-													"name-gamemode-" + gm.name().toLowerCase())));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-gamemode-changed-you").replace("%gamemode%", T.t(BukkitMain.getInstance(), bp.getLanguage(), "name-gamemode-" + gm.name().toLowerCase())));
 						} else {
-							p.sendMessage(prefix
-									+ Translate.getTranslation(bp.getLanguage(), "command-gamemode-already-you"));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-gamemode-already-you"));
 						}
 					} else {
 						Player t = Bukkit.getPlayer(args[1]);
 						if (t != null) {
 							if (t.getGameMode() != gm) {
 								t.setGameMode(gm);
-								p.sendMessage(prefix
-										+ Translate.getTranslation(bp.getLanguage(), "command-gamemode-changed-other")
-												.replace("%gamemode%", Translate.getTranslation(bp.getLanguage(),
-														"name-gamemode-" + gm.name().toLowerCase())));
+								p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-gamemode-changed-other").replace("%gamemode%", T.t(BukkitMain.getInstance(), bp.getLanguage(), "name-gamemode-" + gm.name().toLowerCase())));
 							} else {
-								p.sendMessage(prefix
-										+ Translate.getTranslation(bp.getLanguage(), "command-gamemode-already-other"));
+								p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-gamemode-already-other"));
 							}
 						} else {
-							p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "player-not-found"));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "player-not-found"));
 						}
 						t = null;
 					}
 				} else {
-					p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "command-gamemode-unknown"));
+					p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-gamemode-unknown"));
 				}
 				gm = null;
 			}
@@ -116,19 +107,17 @@ public class ModeratorCommand implements CommandClass {
 				return;
 			}
 
-			String prefix = Translate.getTranslation(bp.getLanguage(), "command-teleport-prefix") + " ";
+			String prefix = T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-prefix") + " ";
 			if (args.length == 0) {
-				p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "command-teleport-usage"));
+				p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-usage"));
 			} else if (args.length == 1 || event.getResult() == TeleportResult.ONLY_PLAYER_TELEPORT) {
 				Player t = Bukkit.getPlayer(args[0]);
 				if (t != null) {
 					p.teleport(t.getLocation());
-					p.sendMessage(
-							prefix + Translate.getTranslation(bp.getLanguage(), "command-teleport-teleported-to-player")
-									.replace("%player%", t.getName()));
+					p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-teleported-to-player").replace("%player%", t.getName()));
 					t = null;
 				} else {
-					p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "player-not-found"));
+					p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "player-not-found"));
 				}
 			} else {
 				if (args.length == 2 && event.getResult() == TeleportResult.ALLOWED) {
@@ -137,32 +126,24 @@ public class ModeratorCommand implements CommandClass {
 						Player target = Bukkit.getPlayer(args[1]);
 						if (target != null) {
 							player.teleport(target);
-							p.sendMessage(prefix + Translate
-									.getTranslation(bp.getLanguage(), "command-teleport-teleported-other-player")
-									.replace("%player%", player.getName()).replace("%target%", target.getName()));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-teleported-other-player").replace("%player%", player.getName()).replace("%target%", target.getName()));
 							target = null;
 						} else {
-							p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "player-not-found"));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "player-not-found"));
 						}
 						player = null;
 					} else {
-						p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "player-not-found"));
+						p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "player-not-found"));
 					}
-				} else if (args.length >= 3 && (event.getResult() == TeleportResult.ONLY_PLAYER_TELEPORT
-						|| event.getResult() == TeleportResult.ALLOWED)) {
+				} else if (args.length >= 3 && (event.getResult() == TeleportResult.ONLY_PLAYER_TELEPORT || event.getResult() == TeleportResult.ALLOWED)) {
 					if (args.length == 3) {
 						Location loc = getLocationBased(p.getLocation(), args[0], args[1], args[2]);
 						if (loc != null) {
 							p.teleport(loc);
-							p.sendMessage(
-									prefix + Translate.getTranslation(bp.getLanguage(), "command-teleport-to-location")
-											.replace("%x%", locationFormater.format(loc.getX()))
-											.replace("%y%", locationFormater.format(loc.getY()))
-											.replace("%z%", locationFormater.format(loc.getZ())));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-to-location").replace("%x%", locationFormater.format(loc.getX())).replace("%y%", locationFormater.format(loc.getY())).replace("%z%", locationFormater.format(loc.getZ())));
 							loc = null;
 						} else {
-							p.sendMessage(prefix
-									+ Translate.getTranslation(bp.getLanguage(), "command-teleport-invalid-location"));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-invalid-location"));
 						}
 					} else {
 						Player target = Bukkit.getPlayer(args[0]);
@@ -170,20 +151,14 @@ public class ModeratorCommand implements CommandClass {
 							Location loc = getLocationBased(target.getLocation(), args[1], args[2], args[3]);
 							if (loc != null) {
 								target.teleport(loc);
-								p.sendMessage(prefix + Translate
-										.getTranslation(bp.getLanguage(), "command-teleport-to-location-other")
-										.replace("%x%", locationFormater.format(loc.getX()))
-										.replace("%y%", locationFormater.format(loc.getY()))
-										.replace("%z%", locationFormater.format(loc.getZ()))
-										.replace("%target%", target.getName()));
+								p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-to-location-other").replace("%x%", locationFormater.format(loc.getX())).replace("%y%", locationFormater.format(loc.getY())).replace("%z%", locationFormater.format(loc.getZ())).replace("%target%", target.getName()));
 								loc = null;
 								target = null;
 							} else {
-								p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(),
-										"command-teleport-invalid-location"));
+								p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleport-invalid-location"));
 							}
 						} else {
-							p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "player-not-found"));
+							p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "player-not-found"));
 						}
 					}
 				}
@@ -198,51 +173,42 @@ public class ModeratorCommand implements CommandClass {
 		// TODO: ALERT STAFFS
 	}
 
-	@Command(name = "teleportall", aliases = {
-			"tpall" }, groupToUse = Group.MOD, noPermMessageId = "command-teleportall-no-access", runAsync = false)
+	@Command(name = "teleportall", aliases = { "tpall" }, groupToUse = Group.MOD, noPermMessageId = "command-teleportall-no-access", runAsync = false)
 	public void tpall(BukkitCommandArgs cmdArgs) {
 		if (cmdArgs.isPlayer()) {
 			Player p = cmdArgs.getPlayer();
 			String[] args = cmdArgs.getArgs();
 			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
-			String prefix = Translate.getTranslation(bp.getLanguage(), "command-teleportall-prefix") + " ";
+			String prefix = T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleportall-prefix") + " ";
 			if (args.length == 0) {
 				int i = 0;
 				for (Player on : Bukkit.getOnlinePlayers()) {
 					if (on != null && on.isOnline() && on.getUniqueId() != p.getUniqueId()) {
 						on.teleport(p.getLocation());
 						on.setFallDistance(0.0F);
-						on.sendMessage(
-								prefix + Translate.getTranslation(bp.getLanguage(), "command-teleportall-teleported")
-										.replace("%target%", p.getName()));
+						on.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleportall-teleported").replace("%target%", p.getName()));
 						i++;
 					}
 					on = null;
 				}
-				p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "command-teleportall-success")
-						.replace("%players%", i + ""));
+				p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleportall-success").replace("%players%", i + ""));
 			} else if (args.length == 1) {
 				Player t = Bukkit.getPlayer(args[0]);
 				if (t != null) {
 					int i = 0;
 					for (Player on : Bukkit.getOnlinePlayers()) {
-						if (on != null && on.isOnline() && on.getUniqueId() != t.getUniqueId()
-								&& on.getUniqueId() != p.getUniqueId()) {
+						if (on != null && on.isOnline() && on.getUniqueId() != t.getUniqueId() && on.getUniqueId() != p.getUniqueId()) {
 							on.teleport(t.getLocation());
 							on.setFallDistance(0.0F);
-							on.sendMessage(prefix
-									+ Translate.getTranslation(bp.getLanguage(), "command-teleportall-teleported")
-											.replace("%target%", t.getName()));
+							on.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleportall-teleported").replace("%target%", t.getName()));
 							i++;
 						}
 						on = null;
 					}
-					p.sendMessage(
-							prefix + Translate.getTranslation(bp.getLanguage(), "command-teleportall-success-other")
-									.replace("%players%", i + "").replace("%target%", t.getName()));
+					p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "command-teleportall-success-other").replace("%players%", i + "").replace("%target%", t.getName()));
 					t = null;
 				} else {
-					p.sendMessage(prefix + Translate.getTranslation(bp.getLanguage(), "player-not-found"));
+					p.sendMessage(prefix + T.t(BukkitMain.getInstance(), bp.getLanguage(), "player-not-found"));
 				}
 			}
 			prefix = null;
@@ -310,26 +276,23 @@ public class ModeratorCommand implements CommandClass {
 		return l;
 	}
 
-	@Command(name = "kick", aliases = {
-			"kickar" }, groupToUse = Group.TRIAL, noPermMessageId = "command-kick-no-access", runAsync = false)
+	@Command(name = "kick", aliases = { "kickar" }, groupToUse = Group.TRIAL, noPermMessageId = "command-kick-no-access", runAsync = false)
 	public void kick(BukkitCommandArgs cmdArgs) {
 		CommandSender sender = ((BukkitCommandSender) cmdArgs.getSender()).getSender();
 		String[] args = cmdArgs.getArgs();
 		Language language = BattlebitsAPI.getDefaultLanguage();
 		if (cmdArgs.isPlayer())
-			language = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId())
-					.getLanguage();
-		String prefix = Translate.getTranslation(language, "command-kick-prefix") + " ";
+			language = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getLanguage();
+		String prefix = T.t(BukkitMain.getInstance(), language, "command-kick-prefix") + " ";
 
 		if (args.length < 1) {
-			sender.sendMessage(prefix + Translate.getTranslation(language, "command-kick-usage").replace("%command%",
-					cmdArgs.getLabel()));
+			sender.sendMessage(prefix + T.t(BukkitMain.getInstance(), language, "command-kick-usage").replace("%command%", cmdArgs.getLabel()));
 			return;
 		}
 
 		Player target = BukkitMain.getInstance().getServer().getPlayer(args[0]);
 		if (target == null) {
-			sender.sendMessage(prefix + Translate.getTranslation(language, "player-not-found"));
+			sender.sendMessage(prefix + T.t(BukkitMain.getInstance(), language, "player-not-found"));
 			return;
 		}
 
@@ -349,17 +312,14 @@ public class ModeratorCommand implements CommandClass {
 			BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 			if (!player.isStaff())
 				continue;
-			String staffMessage = prefix + Translate.getTranslation(player.getLanguage(),
-					"command-kick-message-" + (hasReason ? "reason" : "no-reason"));
+			String staffMessage = prefix + T.t(BukkitMain.getInstance(), player.getLanguage(), "command-kick-message-" + (hasReason ? "reason" : "no-reason"));
 
 			staffMessage = staffMessage.replace("%player%", target.getName());
 			staffMessage = staffMessage.replace("%kickedBy%", sender.getName());
 			staffMessage = staffMessage.replace("%reason%", builder.toString());
 			p.sendMessage(staffMessage);
 		}
-		String kickMessage = Translate.getTranslation(
-				BattlebitsAPI.getAccountCommon().getBattlePlayer(target.getUniqueId()).getLanguage(),
-				"command-kick-message-target-" + (hasReason ? "reason" : "no-reason"));
+		String kickMessage = T.t(BukkitMain.getInstance(), BattlebitsAPI.getAccountCommon().getBattlePlayer(target.getUniqueId()).getLanguage(), "command-kick-message-target-" + (hasReason ? "reason" : "no-reason"));
 		kickMessage = kickMessage.replace("%kickedBy%", sender.getName());
 		kickMessage = kickMessage.replace("%reason%", builder.toString());
 		target.kickPlayer(kickMessage);

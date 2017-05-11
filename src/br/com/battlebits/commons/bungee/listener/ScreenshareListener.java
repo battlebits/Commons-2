@@ -6,7 +6,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.punish.Ban;
 import br.com.battlebits.commons.core.server.ServerType;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -31,7 +31,7 @@ public class ScreenshareListener implements Listener {
 			return;
 		event.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void onChangeServer(PlayerDisconnectEvent event) {
 		if (event.getPlayer().getServer() == null)
@@ -66,8 +66,8 @@ public class ScreenshareListener implements Listener {
 					proxied.connect(BungeeMain.getPlugin().getProxy().getServerInfo(player.getLastServer()));
 				}
 				proxied.sendMessage(TextComponent.fromLegacyText(
-						Translate.getTranslation(player.getLanguage(), "command-screenshare-prefix") + " " + Translate
-								.getTranslation(player.getLanguage(), "command-screenshare-moderator-leave")));
+						T.t(BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-prefix") + " " + T.t(
+								BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-moderator-leave")));
 			}
 		}
 	}
@@ -102,8 +102,8 @@ public class ScreenshareListener implements Listener {
 					proxied.connect(BungeeMain.getPlugin().getProxy().getServerInfo(player.getLastServer()));
 				}
 				proxied.sendMessage(TextComponent.fromLegacyText(
-						Translate.getTranslation(player.getLanguage(), "command-screenshare-prefix") + " " + Translate
-								.getTranslation(player.getLanguage(), "command-screenshare-moderator-leave")));
+						T.t(BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-prefix") + " " + T.t(
+								BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-moderator-leave")));
 			}
 		}
 	}
@@ -142,8 +142,8 @@ public class ScreenshareListener implements Listener {
 					proxied.connect(BungeeMain.getPlugin().getProxy().getServerInfo(player.getLastServer()));
 				}
 				proxied.sendMessage(TextComponent.fromLegacyText(
-						Translate.getTranslation(player.getLanguage(), "command-screenshare-prefix") + " " + Translate
-								.getTranslation(player.getLanguage(), "command-screenshare-moderator-leave")));
+						T.t(BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-prefix") + " " + T.t(
+								BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-moderator-leave")));
 			}
 		}
 	}

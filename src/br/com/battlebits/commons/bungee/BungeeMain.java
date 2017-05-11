@@ -32,7 +32,7 @@ import br.com.battlebits.commons.core.command.CommandLoader;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.server.ServerManager;
 import br.com.battlebits.commons.core.server.ServerType;
-import br.com.battlebits.commons.core.translate.Language;
+import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
@@ -118,9 +118,10 @@ public class BungeeMain extends Plugin {
 		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + BattlebitsAPI.getServerId());
 		DataServer.newServer(info.getMaxPlayers());
-		for (Language lang : Language.values()) {
-			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
-		}
+		Translate translate = new Translate(BattlebitsAPI.TRANSLATION_ID, BattlebitsAPI.getCommonsMongo());
+		translate.loadTranslations();
+		T.loadTranslate(this, translate);
+		BattlebitsAPI.setTranslate(translate);
 		getProxy().registerChannel(BattlebitsAPI.getBungeeChannel());
 		loadListeners();
 		try {

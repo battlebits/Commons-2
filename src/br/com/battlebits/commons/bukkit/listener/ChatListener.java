@@ -19,7 +19,7 @@ import br.com.battlebits.commons.bungee.manager.BanManager;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.punish.Mute;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.util.string.StringURLUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
@@ -85,16 +85,14 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onChat(AsyncPlayerChatEvent event) {
 		event.setCancelled(true);
-		BukkitPlayer player = (BukkitPlayer) BattlebitsAPI.getAccountCommon()
-				.getBattlePlayer(event.getPlayer().getUniqueId());
+		BukkitPlayer player = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId());
 		if (player == null) {
 			event.setCancelled(true);
 			return;
 		}
 		for (Player r : event.getRecipients()) {
 			try {
-				BukkitPlayer receiver = (BukkitPlayer) BattlebitsAPI.getAccountCommon()
-						.getBattlePlayer(r.getUniqueId());
+				BukkitPlayer receiver = (BukkitPlayer) BattlebitsAPI.getAccountCommon().getBattlePlayer(r.getUniqueId());
 				if (receiver == null) {
 					new BukkitRunnable() {
 						@Override
@@ -109,40 +107,28 @@ public class ChatListener implements Listener {
 					}.runTask(BukkitMain.getInstance());
 					continue;
 				}
-				if ((!receiver.getConfiguration().isIgnoreAll())
-						&& (!receiver.getBlockedPlayers().containsKey(player.getUniqueId())
-								&& (!player.getBlockedPlayers().containsKey(receiver.getUniqueId())))) {
+				if ((!receiver.getConfiguration().isIgnoreAll()) && (!receiver.getBlockedPlayers().containsKey(player.getUniqueId()) && (!player.getBlockedPlayers().containsKey(receiver.getUniqueId())))) {
 					TextComponent clan = null;
 					int text = 3;
 					if (player.getClan() != null) {
-						clan = new TextComponent(ChatColor.GRAY + "[" + ChatColor.DARK_GRAY
-								+ player.getClan().getAbbreviation() + ChatColor.GRAY + "] ");
-						clan.setClickEvent(
-								new ClickEvent(Action.RUN_COMMAND, "/clan info " + player.getClan().getName()));
+						clan = new TextComponent(ChatColor.GRAY + "[" + ChatColor.DARK_GRAY + player.getClan().getAbbreviation() + ChatColor.GRAY + "] ");
+						clan.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/clan info " + player.getClan().getName()));
 						TextComponent[] clanMessage = new TextComponent[] { //
-								new TextComponent(Translate.getTranslation(receiver.getLanguage(), "clan-hover-info")//
+								new TextComponent(T.t(BukkitMain.getInstance(), receiver.getLanguage(), "clan-hover-info")//
 										.replace("%clanName%", player.getClan().getName())//
 										.replace("%clanLeague%", player.getClan().getRank().name())//
 										.replace("%clanXp%", player.getClan().getXp() + "")//
-										.replace("%players%", player.getClan().getParticipants().size() + "/"
-												+ player.getClan().getSlots())) };
-						clan.setHoverEvent(
-								new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, clanMessage));
+										.replace("%players%", player.getClan().getParticipants().size() + "/" + player.getClan().getSlots())) };
+						clan.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, clanMessage));
 						text += 1;
 					}
 					TextComponent[] textTo = new TextComponent[text + event.getMessage().split(" ").length];
 					String tag = player.getTag().getPrefix(receiver.getLanguage());
-					TextComponent account = new TextComponent(tag
-							+ (ChatColor.stripColor(tag).trim().length() > 0 ? " " : "") + event.getPlayer().getName());
+					TextComponent account = new TextComponent(tag + (ChatColor.stripColor(tag).trim().length() > 0 ? " " : "") + event.getPlayer().getName());
 					account.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/account " + player.getName()));
-					account.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-							TextComponent.fromLegacyText(
-									Translate.getTranslation(receiver.getLanguage(), "account-hover-info"))));
-					TextComponent league = new TextComponent(
-							ChatColor.GRAY + " (" + player.getLeague().getSymbol() + ChatColor.GRAY + ")");
-					league.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-							TextComponent.fromLegacyText(ChatColor.BOLD + player.getLeague().getSymbol() + " "
-									+ ChatColor.BOLD + player.getLeague().name())));
+					account.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(T.t(BukkitMain.getInstance(), receiver.getLanguage(), "account-hover-info"))));
+					TextComponent league = new TextComponent(ChatColor.GRAY + " (" + player.getLeague().getSymbol() + ChatColor.GRAY + ")");
+					league.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(ChatColor.BOLD + player.getLeague().getSymbol() + " " + ChatColor.BOLD + player.getLeague().name())));
 					int i = 0;
 					if (clan != null) {
 						textTo[i] = clan;

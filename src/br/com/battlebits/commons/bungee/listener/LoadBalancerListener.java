@@ -5,7 +5,7 @@ import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.core.server.ServerManager;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
@@ -57,7 +57,7 @@ public class LoadBalancerListener implements Listener {
 			if (lobby != null && lobby.getServerInfo() != null) {
 				event.setTarget(lobby.getServerInfo());
 			} else {
-				player.disconnect(TextComponent.fromLegacyText(Translate.getTranslation(
+				player.disconnect(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),
 						BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId()).getLanguage(),
 						"server-not-available")));
 			}

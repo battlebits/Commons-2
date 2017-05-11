@@ -19,10 +19,11 @@ import br.com.battlebits.commons.api.item.ItemBuilder;
 import br.com.battlebits.commons.api.menu.ClickType;
 import br.com.battlebits.commons.api.menu.MenuClickHandler;
 import br.com.battlebits.commons.api.menu.MenuInventory;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.report.Report;
 import br.com.battlebits.commons.core.report.Report.ReportInformation;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.ChatColor;
 
 public class ReportInformationListInventory {
@@ -64,28 +65,24 @@ public class ReportInformationListInventory {
 			pageEnd = reports.size();
 		}
 		if (page == 1) {
-			menu.setItem(0,
-					new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-last-dont-have%§").build());
+			menu.setItem(0, new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-last-dont-have%§").build());
 		} else {
-			menu.setItem(0, new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-last-page%§")
-					.lore(Arrays.asList("§%page-last-click-here%§")).build(), new MenuClickHandler() {
-						@Override
-						public void onClick(Player p, Inventory inv, ClickType type, ItemStack stack, int slot) {
-							new ReportInformationListInventory(player, report, topInventory, page - 1);
-						}
-					});
+			menu.setItem(0, new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-last-page%§").lore(Arrays.asList("§%page-last-click-here%§")).build(), new MenuClickHandler() {
+				@Override
+				public void onClick(Player p, Inventory inv, ClickType type, ItemStack stack, int slot) {
+					new ReportInformationListInventory(player, report, topInventory, page - 1);
+				}
+			});
 		}
 		if (Math.ceil(reports.size() / itemsPerPage) + 1 > page) {
-			menu.setItem(8, new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-next-page%§")
-					.lore(Arrays.asList("§%page-next-click-here%§")).build(), new MenuClickHandler() {
-						@Override
-						public void onClick(Player p, Inventory inv, ClickType type, ItemStack stack, int slot) {
-							new ReportInformationListInventory(player, report, topInventory, page + 1);
-						}
-					});
+			menu.setItem(8, new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-next-page%§").lore(Arrays.asList("§%page-next-click-here%§")).build(), new MenuClickHandler() {
+				@Override
+				public void onClick(Player p, Inventory inv, ClickType type, ItemStack stack, int slot) {
+					new ReportInformationListInventory(player, report, topInventory, page + 1);
+				}
+			});
 		} else {
-			menu.setItem(8,
-					new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-next-dont-have%§").build());
+			menu.setItem(8, new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-next-dont-have%§").build());
 		}
 
 		// REPORT LIST
@@ -94,15 +91,13 @@ public class ReportInformationListInventory {
 
 		for (int i = pageStart; i < pageEnd; i++) {
 			ReportInformation reportInfo = reports.get(i);
-			String lore = Translate.getTranslation(BattlePlayer.getLanguage(player.getUniqueId()),
-					"playerInformation-lore");
+			String lore = T.t(BukkitMain.getInstance(),BattlePlayer.getLanguage(player.getUniqueId()), "playerInformation-lore");
 			Date date = new Date(reportInfo.getReportTime());
 			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			lore = lore.replace("%reason%", reportInfo.getReason());
 			lore = lore.replace("%reportPoints%", reportInfo.getReportLevel() + "");
 			lore = lore.replace("%date%", df.format(date));
-			ItemStack cabeca = new ItemBuilder().type(Material.SKULL_ITEM).durability(3)
-					.name(ChatColor.RED + reportInfo.getPlayerName()).lore(lore).build();
+			ItemStack cabeca = new ItemBuilder().type(Material.SKULL_ITEM).durability(3).name(ChatColor.RED + reportInfo.getPlayerName()).lore(lore).build();
 			SkullMeta skullMeta = (SkullMeta) cabeca.getItemMeta();
 			skullMeta.setOwner(reportInfo.getPlayerName());
 			cabeca.setItemMeta(skullMeta);
@@ -114,8 +109,7 @@ public class ReportInformationListInventory {
 			w += 1;
 		}
 		if (reports.size() == 0) {
-			menu.setItem(31, new ItemBuilder().type(Material.PAINTING).name("§c§lOps!").lore(Arrays.asList("§%error%§"))
-					.build());
+			menu.setItem(31, new ItemBuilder().type(Material.PAINTING).name("§c§lOps!").lore(Arrays.asList("§%error%§")).build());
 		}
 
 		ItemStack nullItem = new ItemBuilder().type(Material.STAINED_GLASS_PANE).durability(15).name(" ").build();

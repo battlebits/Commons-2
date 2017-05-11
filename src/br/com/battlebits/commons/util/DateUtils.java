@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.core.translate.Language;
-import br.com.battlebits.commons.core.translate.Translate;
 
 public class DateUtils {
 
@@ -35,24 +35,24 @@ public class DateUtils {
 		StringBuilder sb = new StringBuilder();
 
 		if (day > 0) {
-			sb.append(day).append(" ").append(day == 1 ? Translate.getTranslation(lang, "day") : Translate.getTranslation(lang, "day") + "s").append(" ");
+			sb.append(day).append(" ").append(day == 1 ? BattlebitsAPI.getTranslate().getTranslation(lang, "day") : BattlebitsAPI.getTranslate().getTranslation(lang, "day") + "s").append(" ");
 		}
 
 		if (hours > 0) {
-			sb.append(hours).append(" ").append(hours == 1 ? Translate.getTranslation(lang, "hour") : Translate.getTranslation(lang, "hour") + "s").append(" ");
+			sb.append(hours).append(" ").append(hours == 1 ? BattlebitsAPI.getTranslate().getTranslation(lang, "hour") : BattlebitsAPI.getTranslate().getTranslation(lang, "hour") + "s").append(" ");
 		}
 
 		if (minutes > 0) {
-			sb.append(minutes).append(" ").append(minutes == 1 ? Translate.getTranslation(lang, "minute") : Translate.getTranslation(lang, "minute") + "s").append(" ");
+			sb.append(minutes).append(" ").append(minutes == 1 ? BattlebitsAPI.getTranslate().getTranslation(lang, "minute") : BattlebitsAPI.getTranslate().getTranslation(lang, "minute") + "s").append(" ");
 		}
 
 		if (seconds > 0) {
-			sb.append(seconds).append(" ").append(seconds == 1 ? Translate.getTranslation(lang, "second") : Translate.getTranslation(lang, "second") + "s");
+			sb.append(seconds).append(" ").append(seconds == 1 ? BattlebitsAPI.getTranslate().getTranslation(lang, "second") : BattlebitsAPI.getTranslate().getTranslation(lang, "second") + "s");
 		}
 
 		String diff = sb.toString();
 
-		return diff.isEmpty() ? "1 " + Translate.getTranslation(lang, "second") + "s" : diff;
+		return diff.isEmpty() ? "1 " + BattlebitsAPI.getTranslate().getTranslation(lang, "second") + "s" : diff;
 	}
 
 	public static String getDifferenceFormat(Language lang, long timestamp) {

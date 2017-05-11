@@ -10,6 +10,7 @@ import br.com.battlebits.commons.api.admin.AdminMode;
 import br.com.battlebits.commons.api.chat.ChatAPI;
 import br.com.battlebits.commons.api.chat.ChatAPI.ChatState;
 import br.com.battlebits.commons.api.vanish.VanishAPI;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandArgs;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.command.CommandClass;
@@ -39,8 +40,7 @@ public class StaffCommand implements CommandClass {
 		}
 	}
 
-	@Command(name = "visible", aliases = { "vis",
-			"visivel" }, groupToUse = Group.TRIAL, noPermMessageId = "command-vanish-no-access")
+	@Command(name = "visible", aliases = { "vis", "visivel" }, groupToUse = Group.TRIAL, noPermMessageId = "command-vanish-no-access")
 	public void visible(BukkitCommandArgs args) {
 		if (args.isPlayer()) {
 			Player p = args.getPlayer();
@@ -49,8 +49,7 @@ public class StaffCommand implements CommandClass {
 		}
 	}
 
-	@Command(name = "invisible", aliases = { "invis",
-			"invisivel" }, groupToUse = Group.TRIAL, noPermMessageId = "command-vanish-no-access")
+	@Command(name = "invisible", aliases = { "invis", "invisivel" }, groupToUse = Group.TRIAL, noPermMessageId = "command-vanish-no-access")
 	public void invisible(BukkitCommandArgs args) {
 		if (args.isPlayer()) {
 			Player p = args.getPlayer();
@@ -70,25 +69,21 @@ public class StaffCommand implements CommandClass {
 			} else
 				group = VanishAPI.getInstance().hidePlayer(p);
 			VanishAPI.getInstance().setPlayerVanishToGroup(p, group);
-			p.sendMessage("§%command-vanish-prefix%§ " + T.t(bP.getLanguage(), "command-vanish-invisible",
-					new String[] { "%invisible%", group.toString() }));
+			p.sendMessage("§%command-vanish-prefix%§ " + T.t(BukkitMain.getInstance(), bP.getLanguage(), "command-vanish-invisible", new String[] { "%invisible%", group.toString() }));
 		}
 	}
 
-	@Command(name = "inventorysee", aliases = { "invsee",
-			"inv" }, groupToUse = Group.TRIAL, noPermMessageId = "command-inventorysee-no-access")
+	@Command(name = "inventorysee", aliases = { "invsee", "inv" }, groupToUse = Group.TRIAL, noPermMessageId = "command-inventorysee-no-access")
 	public void inventorysee(BukkitCommandArgs args) {
 		if (args.isPlayer()) {
 			Player p = args.getPlayer();
 			BattlePlayer bP = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 			if (args.getArgs().length == 0) {
-				p.sendMessage("§%command-inventorysee-prefix%§ " + T.t(bP.getLanguage(), "command-inventorysee-usage",
-						new String[] { "%command%", args.getLabel() }));
+				p.sendMessage("§%command-inventorysee-prefix%§ " + T.t(BukkitMain.getInstance(), bP.getLanguage(), "command-inventorysee-usage", new String[] { "%command%", args.getLabel() }));
 			} else {
 				Player t = Bukkit.getPlayer(args.getArgs()[0]);
 				if (t != null) {
-					p.sendMessage("§%command-inventorysee-prefix%§ " + T.t(bP.getLanguage(),
-							"command-inventorysee-success", new String[] { "%player%", t.getName() }));
+					p.sendMessage("§%command-inventorysee-prefix%§ " + T.t(BukkitMain.getInstance(), bP.getLanguage(), "command-inventorysee-success", new String[] { "%player%", t.getName() }));
 					p.openInventory(t.getInventory());
 				} else {
 					p.sendMessage("§%command-inventorysee-prefix%§ §%command-inventorysee-not-found%§");
@@ -124,8 +119,7 @@ public class StaffCommand implements CommandClass {
 		}
 	}
 
-	@Command(name = "clearchat", aliases = {
-			"limparchat" }, groupToUse = Group.TRIAL, noPermMessageId = "command-chat-no-access")
+	@Command(name = "clearchat", aliases = { "limparchat" }, groupToUse = Group.TRIAL, noPermMessageId = "command-chat-no-access")
 	public void clearchat(BukkitCommandArgs args) {
 		if (args.isPlayer()) {
 			HashMap<String, String> map = new HashMap<>();
@@ -133,8 +127,7 @@ public class StaffCommand implements CommandClass {
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				for (int i = 0; i < 100; i++)
 					p.sendMessage("");
-				p.sendMessage("§%command-chat-prefix%§ "
-						+ T.t(BattlePlayer.getLanguage(p.getUniqueId()), "command-chat-success", map));
+				p.sendMessage("§%command-chat-prefix%§ " + T.t(BukkitMain.getInstance(), BattlePlayer.getLanguage(p.getUniqueId()), "command-chat-success", map));
 			}
 		}
 	}

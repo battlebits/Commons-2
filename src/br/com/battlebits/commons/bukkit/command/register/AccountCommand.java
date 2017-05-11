@@ -2,6 +2,7 @@ package br.com.battlebits.commons.bukkit.command.register;
 
 import org.bukkit.entity.Player;
 
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandArgs;
 import br.com.battlebits.commons.bukkit.menu.account.AccountMenu;
 import br.com.battlebits.commons.core.account.BattlePlayer;
@@ -42,8 +43,7 @@ public class AccountCommand implements CommandClass {
 			return;
 		}
 		player.setLanguage(lang);
-		p.sendMessage("§%command-language-prefix%§ "
-				+ T.t(lang, "command-language-success", new String[] { "%language%", lang.toString() }));
+		p.sendMessage("§%command-language-prefix%§ " + T.t(BukkitMain.getInstance(), lang, "command-language-success", new String[] { "%language%", lang.toString() }));
 	}
 
 	@Command(name = "preferences", aliases = { "prefs", "preferencias" })

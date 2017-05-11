@@ -37,14 +37,14 @@ public class AccountListener implements Listener {
 		event.registerIntent(BungeeMain.getPlugin());
 		final String userName = event.getConnection().getName();
 		if(userName == null) {
-			String accountLoadFailed = T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
+			String accountLoadFailed = T.t(BungeeMain.getPlugin(),BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
 			event.setCancelReason(accountLoadFailed);
 			return;
 		}
 		final InetSocketAddress ipAdress = event.getConnection().getAddress();
 		final UUID uuid = event.getConnection().getUniqueId();
 		if(uuid == null) {
-			String accountLoadFailed = T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
+			String accountLoadFailed = T.t(BungeeMain.getPlugin(),BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
 			event.setCancelReason(accountLoadFailed);
 			return;
 		}
@@ -115,7 +115,7 @@ public class AccountListener implements Listener {
 					BattlebitsAPI.debug("ACCOUNT > CLOSE");
 				} catch (Exception e) {
 					event.setCancelled(true);
-					String accountLoadFailed = T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
+					String accountLoadFailed = T.t(BungeeMain.getPlugin(),BattlebitsAPI.getDefaultLanguage(), "account-load-failed");
 					event.setCancelReason(accountLoadFailed);
 					e.printStackTrace();
 					event.completeIntent(BungeeMain.getPlugin());
@@ -132,7 +132,7 @@ public class AccountListener implements Listener {
 						if (ipBan != null) {
 							if (!ipBan.getKey().equals(player.getUniqueId()))
 								BungeeMain.getPlugin().getBanManager().ban(player, new Ban("CONSOLE",
-										ipAdress.getHostString(), "proxy", T.t(player.getLanguage(), "alt-account")));
+										ipAdress.getHostString(), "proxy", T.t(BungeeMain.getPlugin(),player.getLanguage(), "alt-account")));
 						}
 					}
 				Ban ban = null;
@@ -153,7 +153,7 @@ public class AccountListener implements Listener {
 	@EventHandler(priority = -127)
 	public void onPostLoginCheck(PostLoginEvent event) {
 		if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId()) == null) {
-			event.getPlayer().disconnect(new TextComponent(T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed")));
+			event.getPlayer().disconnect(new TextComponent(T.t(BungeeMain.getPlugin(),BattlebitsAPI.getDefaultLanguage(), "account-load-failed")));
 		}
 	}
 

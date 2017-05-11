@@ -101,7 +101,7 @@ public class BungeeParty extends Party
 			
 			if (player != null)
 			{
-				player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(BattlePlayer.getLanguage(uuid), id, replace)));
+				player.sendMessage(TextComponent.fromLegacyText(prefix + T.t(BungeeMain.getPlugin(), BattlePlayer.getLanguage(uuid), id, replace)));
 			}
 		}
 	}

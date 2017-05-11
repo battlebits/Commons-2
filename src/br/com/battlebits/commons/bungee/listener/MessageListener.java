@@ -12,7 +12,6 @@ import br.com.battlebits.commons.core.server.ServerManager;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.core.translate.T;
-import br.com.battlebits.commons.core.translate.Translate;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -52,8 +51,7 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		case "CustomHungergames": {
@@ -65,8 +63,7 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		case "DoubleKitHungergames": {
@@ -78,14 +75,12 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		case "Fairplayhg": {
 			event.setCancelled(true);
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 
@@ -98,8 +93,7 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 
@@ -112,8 +106,7 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 
@@ -126,8 +119,7 @@ public class MessageListener implements Listener {
 					break;
 				}
 			}
-			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
+			proxiedPlayer.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),BattlePlayer.getLanguage(proxiedPlayer.getUniqueId()), "server-not-available")));
 			break;
 		}
 		default:
@@ -145,7 +137,7 @@ public class MessageListener implements Listener {
 			return;
 		ProxiedPlayer proxiedPlayer = (ProxiedPlayer) event.getReceiver();
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxiedPlayer.getUniqueId());
-		if(player == null)
+		if (player == null)
 			return;
 		ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
 		String subChannel = in.readUTF();
@@ -159,13 +151,16 @@ public class MessageListener implements Listener {
 			for (ProxiedPlayer online : BungeeMain.getPlugin().getProxy().getPlayers()) {
 				BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(online.getUniqueId());
 				if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
-					TextComponent message = new TextComponent(T.t(pl.getLanguage(), "anticheat-alert-prefix") + " "
-							+ T.t(pl.getLanguage(), "anticheat-alert-player",
+					TextComponent message = new TextComponent(T.t(BungeeMain.getPlugin(), pl.getLanguage(),
+							"anticheat-alert-prefix")
+							+ " "
+							+ T.t(BungeeMain.getPlugin(), pl.getLanguage(), "anticheat-alert-player",
 									new String[] { "%player%", "%count%", "%total%", "%ping%", "%hacktype%" },
 									new String[] { player.getName(), "" + count, "" + total, "" + ping, hackType }));
 					message.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/teleport " + player.getName()));
 					message.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-							new TextComponent[] { new TextComponent(T.t(pl.getLanguage(), "click-to-teleport")) }));
+							new TextComponent[] { new TextComponent(
+									T.t(BungeeMain.getPlugin(), pl.getLanguage(), "click-to-teleport")) }));
 					online.sendMessage(message);
 				}
 			}
@@ -178,13 +173,15 @@ public class MessageListener implements Listener {
 			for (ProxiedPlayer online : BungeeMain.getPlugin().getProxy().getPlayers()) {
 				BattlePlayer pl = BattlebitsAPI.getAccountCommon().getBattlePlayer(online.getUniqueId());
 				if (pl.hasGroupPermission(Group.TRIAL) && pl.getConfiguration().isAlertsEnabled()) {
-					TextComponent message = new TextComponent(T.t(pl.getLanguage(), "anticheat-alert-prefix") + " "
-							+ T.t(pl.getLanguage(), "anticheat-alert-ban",
-									new String[] { "%player%", "%ping%", "%hacktype%" },
-									new String[] { player.getName(), "" + ping, hackType }));
+					TextComponent message = new TextComponent(
+							T.t(BungeeMain.getPlugin(), pl.getLanguage(), "anticheat-alert-prefix") + " "
+									+ T.t(BungeeMain.getPlugin(), pl.getLanguage(), "anticheat-alert-ban",
+											new String[] { "%player%", "%ping%", "%hacktype%" },
+											new String[] { player.getName(), "" + ping, hackType }));
 					message.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/teleport " + player.getName()));
 					message.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-							new TextComponent[] { new TextComponent(T.t(pl.getLanguage(), "click-to-teleport")) }));
+							new TextComponent[] { new TextComponent(
+									T.t(BungeeMain.getPlugin(), pl.getLanguage(), "click-to-teleport")) }));
 					online.sendMessage(message);
 				}
 			}

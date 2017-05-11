@@ -9,8 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,7 +30,6 @@ import br.com.battlebits.commons.core.data.DataPlayer;
 import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.translate.T;
-import br.com.battlebits.commons.core.translate.Translate;
 import br.com.battlebits.commons.util.GeoIpUtils;
 import br.com.battlebits.commons.util.GeoIpUtils.IpCityResponse;
 
@@ -92,17 +91,18 @@ public class AccountListener implements Listener {
 					e.printStackTrace();
 				}
 			}
-			
+
 			/* Party */
 			Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
 			if (party == null) {
 				party = DataParty.getRedisParty(uuid, BukkitParty.class);
-				if (party != null) BattlebitsAPI.getPartyCommon().loadParty(party);
+				if (party != null)
+					BattlebitsAPI.getPartyCommon().loadParty(party);
 			}
-			
+
 			BattlebitsAPI.debug("ACCOUNT > CLOSE");
 		} catch (Exception e) {
-			event.setKickMessage(T.t(BattlebitsAPI.getDefaultLanguage(), "account-load-failed"));
+			event.setKickMessage(T.t(BukkitMain.getInstance(), BattlebitsAPI.getDefaultLanguage(), "account-load-failed"));
 			e.printStackTrace();
 			return;
 		}
@@ -112,7 +112,7 @@ public class AccountListener implements Listener {
 	public void onRemoveAccount(AsyncPlayerPreLoginEvent event) {
 		if (BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getUniqueId()) == null) {
 			event.setLoginResult(Result.KICK_OTHER);
-			event.setKickMessage(Translate.getTranslation(BattlebitsAPI.getDefaultLanguage(), "account-not-load"));
+			event.setKickMessage(T.t(BukkitMain.getInstance(), BattlebitsAPI.getDefaultLanguage(), "account-not-load"));
 		}
 		if (event.getLoginResult() != Result.ALLOWED) {
 			removePlayer(event.getUniqueId());
@@ -124,8 +124,7 @@ public class AccountListener implements Listener {
 		if (event.getResult() != org.bukkit.event.player.PlayerLoginEvent.Result.ALLOWED)
 			return;
 		if (BattlePlayer.getPlayer(event.getPlayer().getUniqueId()) == null) {
-			event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER,
-					Translate.getTranslation(BattlebitsAPI.getDefaultLanguage(), "account-not-load"));
+			event.disallow(org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER, T.t(BukkitMain.getInstance(), BattlebitsAPI.getDefaultLanguage(), "account-not-load"));
 			return;
 		}
 		new BukkitRunnable() {
@@ -136,16 +135,17 @@ public class AccountListener implements Listener {
 			}
 		}.runTaskAsynchronously(BukkitMain.getInstance());
 	}
-	
+
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onJoin(PlayerJoinEvent event) {
 		UUID uuid = event.getPlayer().getUniqueId();
-		
+
 		/* Party */
 		Party party = BattlebitsAPI.getPartyCommon().getByOwner(uuid);
 		if (party == null) {
 			party = BattlebitsAPI.getPartyCommon().getParty(uuid);
-			if (party != null) party.onMemberJoin(uuid);
+			if (party != null)
+				party.onMemberJoin(uuid);
 		} else {
 			party.onOwnerJoin();
 		}
@@ -172,7 +172,7 @@ public class AccountListener implements Listener {
 					if (party.getOnlineCount() == 0)
 						BattlebitsAPI.getPartyCommon().removeParty(party);
 				}
-	
+
 				removePlayer(uuid);
 			}
 		}.runTaskAsynchronously(BukkitMain.getInstance());
@@ -235,8 +235,7 @@ public class AccountListener implements Listener {
 			player.loadTags();
 			player.setTag(player.getDefaultTag());
 			VanishAPI.getInstance().updateVanishToPlayer(event.getPlayer());
-			Bukkit.getPluginManager()
-					.callEvent(new PlayerChangeGroupEvent(event.getPlayer(), player, player.getServerGroup()));
+			Bukkit.getPluginManager().callEvent(new PlayerChangeGroupEvent(event.getPlayer(), player, player.getServerGroup()));
 			break;
 		default:
 			break;

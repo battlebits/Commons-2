@@ -60,7 +60,7 @@ public class BukkitMain extends JavaPlugin {
 	private boolean antiAfkEnabled = true;
 
 	private boolean removePlayerDat = true;
-	
+
 	private String mongoHostname;
 	private String mongoDatabase;
 	private String mongoUsername;
@@ -98,8 +98,7 @@ public class BukkitMain extends JavaPlugin {
 	public void onEnable() {
 		loadConfiguration();
 		try {
-			MongoBackend mongoBackend = new MongoBackend(mongoHostname, mongoDatabase, mongoUsername, mongoPassword,
-					mongoPort);
+			MongoBackend mongoBackend = new MongoBackend(mongoHostname, mongoDatabase, mongoUsername, mongoPassword, mongoPort);
 			RedisBackend redisBackend = new RedisBackend(redisHostname, redisPassword, redisPort);
 			mongoBackend.startConnection();
 			redisBackend.startConnection();
@@ -117,18 +116,17 @@ public class BukkitMain extends JavaPlugin {
 		DataServer.newServer(Bukkit.getMaxPlayers());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeCordMessenger());
-		for (Language lang : Language.values()) {
-			Translate.loadTranslations(BattlebitsAPI.TRANSLATION_ID, lang, DataServer.loadTranslation(lang));
-		}
+		Translate translate = new Translate(BattlebitsAPI.TRANSLATION_ID, BattlebitsAPI.getCommonsMongo());
+		translate.loadTranslations();
+		T.loadTranslate(this, translate);
+		BattlebitsAPI.setTranslate(translate);
 		registerListeners();
 		registerCommonManagement();
 		enableCommonManagement();
-		getServer().getScheduler().runTaskAsynchronously(this,
-				pubSubListener = new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field", "party-field", "party-action"));
+		getServer().getScheduler().runTaskAsynchronously(this, pubSubListener = new PubSubListener(new BukkitPubSubHandler(), "account-field", "clan-field", "party-field", "party-action"));
 		getServer().getScheduler().runTaskTimer(this, new UpdateScheduler(), 1, 1);
 		try {
-			new CommandLoader(new BukkitCommandFramework(this))
-					.loadCommandsFromPackage(getFile(), "br.com.battlebits.commons.bukkit.command.register");
+			new CommandLoader(new BukkitCommandFramework(this)).loadCommandsFromPackage(getFile(), "br.com.battlebits.commons.bukkit.command.register");
 		} catch (Exception e) {
 			BattlebitsAPI.getLogger().warning("Erro ao carregar o commandFramework!");
 			e.printStackTrace();
@@ -145,7 +143,7 @@ public class BukkitMain extends JavaPlugin {
 	private void loadConfiguration() {
 		saveDefaultConfig();
 		removePlayerDat = getConfig().getBoolean("remove-player-dat", false);
-		
+
 		mongoHostname = getConfig().getString("mongo.hostname", "localhost");
 		mongoPort = getConfig().getInt("mongo.port", 27017);
 		mongoDatabase = getConfig().getString("mongo.database", "");
@@ -159,14 +157,14 @@ public class BukkitMain extends JavaPlugin {
 
 	private void registerListeners() {
 		PluginManager pm = getServer().getPluginManager();
-		
+
 		pm.registerEvents(new AntiAFK(), this);
 		pm.registerEvents(new AccountListener(), this);
 		pm.registerEvents(new ChatListener(), this);
 		pm.registerEvents(new PlayerNBTListener(), this);
 		pm.registerEvents(new PlayerListener(), this);
 		pm.registerEvents(new ScoreboardListener(), this);
-	
+
 		// APIs
 		pm.registerEvents(new ActionItemListener(), this);
 		pm.registerEvents(new BossBarAPI(), this);
@@ -178,7 +176,7 @@ public class BukkitMain extends JavaPlugin {
 			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId());
 			if (bp != null) {
 				Language lang = bp.getLanguage();
-				player.sendMessage(T.t(lang, id, replace));
+				player.sendMessage(T.t(BukkitMain.getInstance(), lang, id, replace));
 			}
 		}
 	}
@@ -188,7 +186,7 @@ public class BukkitMain extends JavaPlugin {
 			BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId());
 			if (bp != null) {
 				Language lang = bp.getLanguage();
-				player.sendMessage(T.t(lang, id, target, replace));
+				player.sendMessage(T.t(BukkitMain.getInstance(), lang, id, target, replace));
 			}
 		}
 	}

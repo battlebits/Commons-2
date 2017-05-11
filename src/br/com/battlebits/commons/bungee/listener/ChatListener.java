@@ -6,7 +6,7 @@ import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.account.Tag;
 import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.permission.Group;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -67,10 +67,10 @@ public class ChatListener implements Listener {
 			String tag = "";
 			if (clan.isOwner(bP)) {
 				tag = ChatColor.WHITE + " - " + ChatColor.DARK_RED + ""
-						+ Translate.getTranslation(onlineBp.getLanguage(), "owner");
+						+ T.t(BungeeMain.getPlugin(),onlineBp.getLanguage(), "owner");
 			} else if (clan.isAdministrator(bP)) {
 				tag = ChatColor.WHITE + " - " + ChatColor.RED + ""
-						+ Translate.getTranslation(onlineBp.getLanguage(), "admin");
+						+ T.t(BungeeMain.getPlugin(),onlineBp.getLanguage(), "admin");
 			}
 			String format = ChatColor.DARK_RED + "[CLAN" + tag.toUpperCase() + ChatColor.DARK_RED + "] "
 					+ ChatColor.GRAY + bP.getName() + ChatColor.WHITE + ": ";

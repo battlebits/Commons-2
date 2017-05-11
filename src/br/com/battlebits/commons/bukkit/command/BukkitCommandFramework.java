@@ -30,11 +30,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.command.CommandArgs;
 import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 
 public class BukkitCommandFramework implements CommandFramework {
 
@@ -75,7 +76,7 @@ public class BukkitCommandFramework implements CommandFramework {
 					Player p = (Player) sender;
 					BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 					if (!bp.hasGroupPermission(command.groupToUse())) {
-						p.sendMessage(Translate.getTranslation(bp.getLanguage(), command.noPermMessageId()));
+						p.sendMessage(T.t(BukkitMain.getInstance(), bp.getLanguage(), command.noPermMessageId()));
 						return true;
 					}
 					bp = null;
@@ -86,8 +87,7 @@ public class BukkitCommandFramework implements CommandFramework {
 						@Override
 						public void run() {
 							try {
-								entry.getKey().invoke(entry.getValue(),
-										new BukkitCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
+								entry.getKey().invoke(entry.getValue(), new BukkitCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
 							} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
 								e.printStackTrace();
 							}
@@ -95,8 +95,7 @@ public class BukkitCommandFramework implements CommandFramework {
 					}.runTaskAsynchronously(plugin);
 				} else {
 					try {
-						entry.getKey().invoke(entry.getValue(),
-								new BukkitCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
+						entry.getKey().invoke(entry.getValue(), new BukkitCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
 					} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
 						e.printStackTrace();
 					}
@@ -121,8 +120,7 @@ public class BukkitCommandFramework implements CommandFramework {
 		for (Method m : commandClass.getClass().getMethods()) {
 			if (m.getAnnotation(Command.class) != null) {
 				Command command = m.getAnnotation(Command.class);
-				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length <= 0
-						|| !CommandArgs.class.isAssignableFrom(m.getParameterTypes()[0])) {
+				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length <= 0 || !CommandArgs.class.isAssignableFrom(m.getParameterTypes()[0])) {
 					System.out.println("Unable to register command " + m.getName() + ". Unexpected method arguments");
 					continue;
 				}
@@ -132,10 +130,8 @@ public class BukkitCommandFramework implements CommandFramework {
 				}
 			} else if (m.getAnnotation(Completer.class) != null) {
 				Completer comp = m.getAnnotation(Completer.class);
-				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length == 0
-						|| m.getParameterTypes()[0] != CommandArgs.class) {
-					System.out.println(
-							"Unable to register tab completer " + m.getName() + ". Unexpected method arguments");
+				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length == 0 || m.getParameterTypes()[0] != CommandArgs.class) {
+					System.out.println("Unable to register tab completer " + m.getName() + ". Unexpected method arguments");
 					continue;
 				}
 				if (m.getReturnType() != List.class) {
@@ -162,8 +158,7 @@ public class BukkitCommandFramework implements CommandFramework {
 				help.add(topic);
 			}
 		}
-		IndexHelpTopic topic = new IndexHelpTopic(plugin.getName(), "All commands for " + plugin.getName(), null, help,
-				"Below is a list of all " + plugin.getName() + " commands:");
+		IndexHelpTopic topic = new IndexHelpTopic(plugin.getName(), "All commands for " + plugin.getName(), null, help, "Below is a list of all " + plugin.getName() + " commands:");
 		Bukkit.getServer().getHelpMap().addTopic(topic);
 	}
 
@@ -208,8 +203,7 @@ public class BukkitCommandFramework implements CommandFramework {
 					BukkitCompleter completer = (BukkitCompleter) field.get(command);
 					completer.addCompleter(label, m, obj);
 				} else {
-					System.out.println("Unable to register tab completer " + m.getName()
-							+ ". A tab completer is already registered for that command!");
+					System.out.println("Unable to register tab completer " + m.getName() + ". A tab completer is already registered for that command!");
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -262,8 +256,7 @@ public class BukkitCommandFramework implements CommandFramework {
 			try {
 				success = handleCommand(sender, commandLabel, this, args);
 			} catch (Throwable ex) {
-				throw new CommandException("Unhandled exception executing command '" + commandLabel + "' in plugin "
-						+ owningPlugin.getDescription().getFullName(), ex);
+				throw new CommandException("Unhandled exception executing command '" + commandLabel + "' in plugin " + owningPlugin.getDescription().getFullName(), ex);
 			}
 
 			if (!success && usageMessage.length() > 0) {
@@ -276,8 +269,7 @@ public class BukkitCommandFramework implements CommandFramework {
 		}
 
 		@Override
-		public List<String> tabComplete(CommandSender sender, String alias, String[] args)
-				throws CommandException, IllegalArgumentException {
+		public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws CommandException, IllegalArgumentException {
 			Validate.notNull(sender, "Sender cannot be null");
 			Validate.notNull(args, "Arguments cannot be null");
 			Validate.notNull(alias, "Alias cannot be null");
@@ -296,8 +288,7 @@ public class BukkitCommandFramework implements CommandFramework {
 				for (String arg : args) {
 					message.append(arg).append(' ');
 				}
-				message.deleteCharAt(message.length() - 1).append("' in plugin ")
-						.append(owningPlugin.getDescription().getFullName());
+				message.deleteCharAt(message.length() - 1).append("' in plugin ").append(owningPlugin.getDescription().getFullName());
 				throw new CommandException(message.toString(), ex);
 			}
 
@@ -326,8 +317,7 @@ public class BukkitCommandFramework implements CommandFramework {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label,
-				String[] args) {
+		public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
 			for (int i = args.length; i >= 0; i--) {
 				StringBuilder buffer = new StringBuilder();
 				buffer.append(label.toLowerCase());
@@ -340,8 +330,7 @@ public class BukkitCommandFramework implements CommandFramework {
 				if (completers.containsKey(cmdLabel)) {
 					Entry<Method, Object> entry = completers.get(cmdLabel);
 					try {
-						return (List<String>) entry.getKey().invoke(entry.getValue(),
-								new BukkitCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
+						return (List<String>) entry.getKey().invoke(entry.getValue(), new BukkitCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
 					} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 						e.printStackTrace();
 					}

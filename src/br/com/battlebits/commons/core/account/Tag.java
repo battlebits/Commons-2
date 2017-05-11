@@ -1,8 +1,8 @@
 package br.com.battlebits.commons.core.account;
 
+import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.translate.Language;
-import br.com.battlebits.commons.core.translate.Translate;
 import net.md_5.bungee.api.ChatColor;
 
 public enum Tag {
@@ -49,7 +49,7 @@ public enum Tag {
 		String tag = prefix;
 		for (String strTag : new String[] { "owner", "star", "admin", "manager", "streamer", "modplus", "mod", "trial",
 				"helper", "staff", "builder", "developer", "youtuber", "youtuberplus", "tournament", "winner" })
-			tag = tag.replace("§%" + strTag + "%§", Translate.getTranslation(language, strTag).toUpperCase());
+			tag = tag.replace("§%" + strTag + "%§", BattlebitsAPI.getTranslate().getTranslation(language, strTag).toUpperCase());
 		return tag;
 	}
 	

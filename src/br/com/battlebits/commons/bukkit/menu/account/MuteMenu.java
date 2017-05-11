@@ -18,6 +18,7 @@ import br.com.battlebits.commons.api.menu.ClickType;
 import br.com.battlebits.commons.api.menu.MenuClickHandler;
 import br.com.battlebits.commons.api.menu.MenuInventory;
 import br.com.battlebits.commons.api.menu.MenuItem;
+import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.punish.Mute;
 import br.com.battlebits.commons.core.translate.T;
@@ -26,8 +27,7 @@ import br.com.battlebits.commons.util.DateUtils;
 public class MuteMenu {
 	private static int itemsPerPage = 21;
 
-	public MuteMenu(Player player, BattlePlayer opener, BattlePlayer battlePlayer, MenuInventory topInventory,
-			int page) {
+	public MuteMenu(Player player, BattlePlayer opener, BattlePlayer battlePlayer, MenuInventory topInventory, int page) {
 		List<Mute> muteList = battlePlayer.getPunishHistoric().getMuteHistory();
 		Collections.sort(muteList, new Comparator<Mute>() {
 
@@ -36,22 +36,20 @@ public class MuteMenu {
 				return (int) (o1.getMuteTime() - o2.getMuteTime());
 			}
 		});
-		MenuInventory menu = new MenuInventory(
-				"§%mute-list%§ [" + page + "/" + ((int) Math.ceil(muteList.size() / itemsPerPage) + 1) + "]", 6, true);
+		MenuInventory menu = new MenuInventory("§%mute-list%§ [" + page + "/" + ((int) Math.ceil(muteList.size() / itemsPerPage) + 1) + "]", 6, true);
 		ItemStack nullItem = new ItemBuilder().type(Material.STAINED_GLASS_PANE).durability(15).name(" ").build();
-		menu.setItem(0,
-				new MenuItem(new ItemBuilder().type(Material.BED).name("§%back%§").build(), new MenuClickHandler() {
-					@Override
-					public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
-						if (topInventory != null)
-							topInventory.open(arg0);
-						else
-							arg0.closeInventory();
-					}
-				}));
+		menu.setItem(0, new MenuItem(new ItemBuilder().type(Material.BED).name("§%back%§").build(), new MenuClickHandler() {
+			@Override
+			public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
+				if (topInventory != null)
+					topInventory.open(arg0);
+				else
+					arg0.closeInventory();
+			}
+		}));
 
 		menu.setItem(4, new ItemBuilder().type(Material.BOOK_AND_QUILL).name("§%mute-list%§").build());
-		
+
 		int pageStart = 0;
 		int pageEnd = itemsPerPage;
 		if (page > 1) {
@@ -62,33 +60,25 @@ public class MuteMenu {
 			pageEnd = muteList.size();
 		}
 		if (page == 1) {
-			menu.setItem(27,
-					new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-last-dont-have%§").build());
+			menu.setItem(27, new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-last-dont-have%§").build());
 		} else {
-			menu.setItem(27,
-					new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-last-page%§")
-							.lore(Arrays.asList("§%page-last-click-here%§")).build(), new MenuClickHandler() {
-								@Override
-								public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3,
-										int arg4) {
-									new MuteMenu(arg0, opener, battlePlayer, topInventory, page - 1);
-								}
-							}));
+			menu.setItem(27, new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-last-page%§").lore(Arrays.asList("§%page-last-click-here%§")).build(), new MenuClickHandler() {
+				@Override
+				public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
+					new MuteMenu(arg0, opener, battlePlayer, topInventory, page - 1);
+				}
+			}));
 		}
 
 		if (Math.ceil(muteList.size() / itemsPerPage) + 1 > page) {
-			menu.setItem(35,
-					new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-next-page%§")
-							.lore(Arrays.asList("§%page-next-click-here%§")).build(), new MenuClickHandler() {
-								@Override
-								public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3,
-										int arg4) {
-									new MuteMenu(arg0, opener, battlePlayer, topInventory, page + 1);
-								}
-							}));
+			menu.setItem(35, new MenuItem(new ItemBuilder().type(Material.INK_SACK).durability(10).name("§%page-next-page%§").lore(Arrays.asList("§%page-next-click-here%§")).build(), new MenuClickHandler() {
+				@Override
+				public void onClick(Player arg0, Inventory arg1, ClickType arg2, ItemStack arg3, int arg4) {
+					new MuteMenu(arg0, opener, battlePlayer, topInventory, page + 1);
+				}
+			}));
 		} else {
-			menu.setItem(35,
-					new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-next-dont-have%§").build());
+			menu.setItem(35, new ItemBuilder().type(Material.INK_SACK).durability(8).name("§%page-next-dont-have%§").build());
 		}
 		int w = 19;
 		for (int i = pageStart; i < pageEnd; i++) {
@@ -126,13 +116,7 @@ public class MuteMenu {
 			Date date = new Date(mute.getMuteTime());
 			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 			Date unmute = new Date(mute.getUnmuteTime());
-			lore = T.t(opener.getLanguage(), lore,
-					new String[] { "%mutedBy%", "%mutedIp%", "%muteTime%", "%duration%", "%expire%", "%reason%",
-							"%server%", "%unmutedBy%", "%unmuteTime%" },
-					new String[] { mute.getMutedBy(), mute.getMutedBy(), df.format(date), mute.getDuration() + "",
-							DateUtils.formatDifference(opener.getLanguage(),
-									(mute.getExpire() - System.currentTimeMillis()) / 1000),
-							mute.getReason(), mute.getServer(), mute.getUnmutedBy(), df.format(unmute) });
+			lore = T.t(BukkitMain.getInstance(), opener.getLanguage(), lore, new String[] { "%mutedBy%", "%mutedIp%", "%muteTime%", "%duration%", "%expire%", "%reason%", "%server%", "%unmutedBy%", "%unmuteTime%" }, new String[] { mute.getMutedBy(), mute.getMutedBy(), df.format(date), mute.getDuration() + "", DateUtils.formatDifference(opener.getLanguage(), (mute.getExpire() - System.currentTimeMillis()) / 1000), mute.getReason(), mute.getServer(), mute.getUnmutedBy(), df.format(unmute) });
 			ItemStack item = new ItemBuilder().type(type)//
 					.name(name)//
 					.lore(lore).build();
@@ -143,7 +127,7 @@ public class MuteMenu {
 			}
 			w += 1;
 		}
-		for(int i = pageEnd - pageStart; i < itemsPerPage; i++) {
+		for (int i = pageEnd - pageStart; i < itemsPerPage; i++) {
 			menu.setItem(w, nullItem);
 			if (w % 9 == 7) {
 				w += 3;
@@ -152,8 +136,7 @@ public class MuteMenu {
 			w += 1;
 		}
 		if (muteList.size() == 0) {
-			menu.setItem(31, new ItemBuilder().type(Material.PAINTING).name("§c§lOps!")
-					.lore(Arrays.asList("§%nothing-found%§")).build());
+			menu.setItem(31, new ItemBuilder().type(Material.PAINTING).name("§c§lOps!").lore(Arrays.asList("§%nothing-found%§")).build());
 		}
 
 		for (int i = 0; i < 9; i++) {

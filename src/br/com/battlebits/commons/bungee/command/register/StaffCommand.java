@@ -15,7 +15,7 @@ import br.com.battlebits.commons.core.command.CommandFramework.Command;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -27,8 +27,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class StaffCommand implements CommandClass {
 
-	@Command(name = "finder", aliases = {
-			"find" }, usage = "/<command> [player]", groupToUse = Group.MOD, permission = "bungeecord.command.find", noPermMessageId = "command-finder-no-access", runAsync = true)
+	@Command(name = "finder", aliases = { "find" }, usage = "/<command> [player]", groupToUse = Group.MOD, permission = "bungeecord.command.find", noPermMessageId = "command-finder-no-access", runAsync = true)
 	public void finder(BungeeCommandArgs cmdArgs) {
 		final CommandSender sender = ((BungeeCommandSender) cmdArgs.getSender()).getSender();
 		final String[] args = cmdArgs.getArgs();
@@ -37,28 +36,24 @@ public class StaffCommand implements CommandClass {
 			lang = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getLanguage();
 		}
 		final Language language = lang;
-		final String finderPrefix = Translate.getTranslation(lang, "command-finder-prefix") + " ";
+		final String finderPrefix = T.t(BungeeMain.getPlugin(), lang, "command-finder-prefix") + " ";
 		if (args.length != 1) {
-			sender.sendMessage(TextComponent.fromLegacyText(finderPrefix
-					+ Translate.getTranslation(lang, "command-finder-usage").replace("%command%", cmdArgs.getLabel())));
+			sender.sendMessage(TextComponent.fromLegacyText(finderPrefix + T.t(BungeeMain.getPlugin(), lang, "command-finder-usage").replace("%command%", cmdArgs.getLabel())));
 			return;
 		}
 		UUID uuid = BattlebitsAPI.getUUIDOf(args[0]);
 		if (uuid == null) {
-			sender.sendMessage(TextComponent
-					.fromLegacyText(finderPrefix + Translate.getTranslation(language, "player-not-exist")));
+			sender.sendMessage(TextComponent.fromLegacyText(finderPrefix + T.t(BungeeMain.getPlugin(), language, "player-not-exist")));
 			return;
 		}
 		ProxiedPlayer proxied = BungeeMain.getPlugin().getProxy().getPlayer(uuid);
 		if (proxied == null) {
-			sender.sendMessage(TextComponent
-					.fromLegacyText(finderPrefix + Translate.getTranslation(language, "player-not-found")));
+			sender.sendMessage(TextComponent.fromLegacyText(finderPrefix + T.t(BungeeMain.getPlugin(), language, "player-not-found")));
 			return;
 		}
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(uuid);
 		if (player.getServerGroup().ordinal() >= Group.MANAGER.ordinal()) {
-			sender.sendMessage(TextComponent.fromLegacyText(
-					finderPrefix + Translate.getTranslation(language, "command-finder-player-not-allowed")));
+			sender.sendMessage(TextComponent.fromLegacyText(finderPrefix + T.t(BungeeMain.getPlugin(), language, "command-finder-player-not-allowed")));
 			return;
 		}
 		String tag = Tag.valueOf(player.getServerGroup().toString()).getPrefix();
@@ -68,8 +63,7 @@ public class StaffCommand implements CommandClass {
 		TextComponent space = new TextComponent(ChatColor.WHITE + " - ");
 		TextComponent ip = new TextComponent(ChatColor.BLUE + player.getServerConnected());
 		ip.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/connect " + player.getServerConnected()));
-		ip.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT,
-				new TextComponent[] { new TextComponent(Translate.getTranslation(language, "command-finder-hover")) }));
+		ip.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new TextComponent[] { new TextComponent(T.t(BungeeMain.getPlugin(), language, "command-finder-hover")) }));
 		sender.sendMessage(playerMessage, space, ip);
 	}
 
@@ -79,8 +73,7 @@ public class StaffCommand implements CommandClass {
 		Group originalGroup = Group.DONO;
 		Language lang = BattlebitsAPI.getDefaultLanguage();
 		if (cmdArgs.isPlayer()) {
-			originalGroup = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId())
-					.getServerGroup();
+			originalGroup = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getServerGroup();
 			lang = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getLanguage();
 		}
 		HashMap<Group, ArrayList<UUID>> groups = new HashMap<>();
@@ -111,16 +104,13 @@ public class StaffCommand implements CommandClass {
 				TextComponent space = new TextComponent(ChatColor.WHITE + " - ");
 				TextComponent ip = new TextComponent(ChatColor.BLUE + bP.getServerConnected());
 				ip.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/connect " + bP.getServerConnected()));
-				ip.setHoverEvent(
-						new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
-								new TextComponent(Translate.getTranslation(lang, "command-finder-hover")) }));
+				ip.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new TextComponent[] { new TextComponent(T.t(BungeeMain.getPlugin(), lang, "command-finder-hover")) }));
 				sender.sendMessage(playerMessage, space, ip);
 			}
 		}
 	}
 
-	@Command(name = "staffchat", aliases = {
-			"sc" }, groupToUse = Group.STAFF, noPermMessageId = "command-staffchat-no-access")
+	@Command(name = "staffchat", aliases = { "sc" }, groupToUse = Group.STAFF, noPermMessageId = "command-staffchat-no-access")
 	public void staffchat(BungeeCommandArgs args) {
 		if (!args.isPlayer()) {
 			args.getSender().sendMessage(TextComponent.fromLegacyText("COMANDO APENAS PARA PLAYERS"));
@@ -129,12 +119,10 @@ public class StaffCommand implements CommandClass {
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(args.getPlayer().getUniqueId());
 		boolean active = player.getConfiguration().isStaffChatEnabled();
 		player.getConfiguration().setStaffChatEnabled(!active);
-		args.getSender().sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(player.getLanguage(),
-				"command-staffchat-" + (active ? "disabled" : "enabled"))));
+		args.getSender().sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), player.getLanguage(), "command-staffchat-" + (active ? "disabled" : "enabled"))));
 	}
 
-	@Command(name = "screenshare", aliases = {
-			"ss" }, groupToUse = Group.MODPLUS, noPermMessageId = "command-screeshare-no-access")
+	@Command(name = "screenshare", aliases = { "ss" }, groupToUse = Group.MODPLUS, noPermMessageId = "command-screeshare-no-access")
 	public void screeshare(BungeeCommandArgs cmdArgs) {
 		if (!cmdArgs.isPlayer()) {
 			cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText("COMANDO APENAS PARA PLAYERS"));
@@ -146,33 +134,27 @@ public class StaffCommand implements CommandClass {
 		if (cmdArgs.isPlayer()) {
 			lang = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getLanguage();
 		}
-		String ssPrefix = Translate.getTranslation(lang, "command-screenshare-prefix") + " ";
+		String ssPrefix = T.t(BungeeMain.getPlugin(), lang, "command-screenshare-prefix") + " ";
 		if (args.length < 1) {
-			sender.sendMessage(TextComponent.fromLegacyText(ssPrefix + Translate
-					.getTranslation(lang, "command-screenshare-usage").replace("%command%", cmdArgs.getLabel())));
+			sender.sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), lang, "command-screenshare-usage").replace("%command%", cmdArgs.getLabel())));
 			return;
 		}
 		ProxiedPlayer proxied = BungeeMain.getPlugin().getProxy().getPlayer(args[0]);
 		if (proxied == null) {
-			sender.sendMessage(
-					TextComponent.fromLegacyText(ssPrefix + Translate.getTranslation(lang, "player-not-online")));
+			sender.sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), lang, "player-not-online")));
 			return;
 		}
 		if (proxied.getUniqueId().equals(cmdArgs.getPlayer().getUniqueId())) {
-			sender.sendMessage(
-					TextComponent.fromLegacyText(ssPrefix + Translate.getTranslation(lang, "cant-yourself")));
+			sender.sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), lang, "cant-yourself")));
 			return;
 		}
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(proxied.getUniqueId());
 		if (player.isScreensharing()) {
 			player.setScreensharing(false);
-			cmdArgs.getPlayer().sendMessage(TextComponent.fromLegacyText(
-					ssPrefix + Translate.getTranslation(player.getLanguage(), "command-screenshare-finished")));
-			proxied.sendMessage(TextComponent.fromLegacyText(
-					ssPrefix + Translate.getTranslation(player.getLanguage(), "command-screenshare-finished")));
+			cmdArgs.getPlayer().sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-finished")));
+			proxied.sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-finished")));
 			if (player.getLastServer().isEmpty()) {
-				proxied.connect(
-						BungeeMain.getPlugin().getServerManager().getBalancer(ServerType.LOBBY).next().getServerInfo());
+				proxied.connect(BungeeMain.getPlugin().getServerManager().getBalancer(ServerType.LOBBY).next().getServerInfo());
 			} else {
 				proxied.connect(BungeeMain.getPlugin().getProxy().getServerInfo(player.getLastServer()));
 			}
@@ -181,19 +163,14 @@ public class StaffCommand implements CommandClass {
 		ServerInfo server = BungeeMain.getPlugin().getProxy().getServerInfo("ss.battlebits.com.br");
 
 		if (server == null) {
-			cmdArgs.getPlayer()
-					.sendMessage(TextComponent.fromLegacyText(ssPrefix
-							+ Translate.getTranslation(BattlePlayer.getLanguage(cmdArgs.getPlayer().getUniqueId()),
-									"command-screenshare-server-not-online")));
+			cmdArgs.getPlayer().sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), BattlePlayer.getLanguage(cmdArgs.getPlayer().getUniqueId()), "command-screenshare-server-not-online")));
 			return;
 		}
 
 		player.setScreensharing(true);
 
-		proxied.sendMessage(TextComponent.fromLegacyText(
-				ssPrefix + Translate.getTranslation(player.getLanguage(), "command-screenshare-started")));
-		cmdArgs.getPlayer().sendMessage(TextComponent.fromLegacyText(ssPrefix + Translate.getTranslation(
-				BattlePlayer.getLanguage(cmdArgs.getPlayer().getUniqueId()), "command-screenshare-moderator")));
+		proxied.sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), player.getLanguage(), "command-screenshare-started")));
+		cmdArgs.getPlayer().sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), BattlePlayer.getLanguage(cmdArgs.getPlayer().getUniqueId()), "command-screenshare-moderator")));
 
 		cmdArgs.getPlayer().connect(server);
 		proxied.connect(server);

@@ -15,7 +15,6 @@ import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.server.BattleServer;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
-import br.com.battlebits.commons.core.translate.Translate;
 import br.com.battlebits.commons.core.twitter.Twitter;
 import br.com.battlebits.commons.core.twitter.TwitterAccount;
 import net.md_5.bungee.api.ChatColor;
@@ -26,16 +25,13 @@ import twitter4j.TwitterException;
 
 public class ServerCommand implements CommandClass {
 
-	@Command(name = "connect", usage = "/<command> <server>", permission = "bungeecord.command.server", aliases = {
-			"server", "con" })
+	@Command(name = "connect", usage = "/<command> <server>", permission = "bungeecord.command.server", aliases = { "server", "con" })
 	public void connect(BungeeCommandArgs cmdArgs) {
 		if (cmdArgs.isPlayer()) {
 			ProxiedPlayer p = cmdArgs.getPlayer();
 
 			if (cmdArgs.getArgs().length != 1) {
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"command-connect-usage")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "command-connect-usage")));
 				return;
 			}
 			String serverIp = cmdArgs.getArgs()[0];
@@ -43,22 +39,12 @@ public class ServerCommand implements CommandClass {
 			BattleServer server = BungeeMain.getPlugin().getServerManager().getServer(serverIp);
 			if (server != null && server.getServerInfo() != null) {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(
-						TextComponent
-								.fromLegacyText(
-										Translate
-												.getTranslation(
-														BattlebitsAPI.getAccountCommon()
-																.getBattlePlayer(p.getUniqueId()).getLanguage(),
-														"server-connect-ip")
-												.replace("%address%", serverIp.toLowerCase())));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connect-ip").replace("%address%", serverIp.toLowerCase())));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 				p.connect(server.getServerInfo());
 			} else {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-not-exists")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-not-exists")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 			}
 		}
@@ -86,16 +72,12 @@ public class ServerCommand implements CommandClass {
 			BattleServer hg = BungeeMain.getPlugin().getServerManager().getBalancer(ServerType.HUNGERGAMES).next();
 			if (hg != null && hg.getServerInfo() != null) {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-connect-hungergames")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connect-hungergames")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 				p.connect(hg.getServerInfo());
 			} else {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-not-available")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-not-available")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 			}
 		}
@@ -108,16 +90,12 @@ public class ServerCommand implements CommandClass {
 			BattleServer hg = BungeeMain.getPlugin().getServerManager().getBalancer(ServerType.DOUBLEKITHG).next();
 			if (hg != null && hg.getServerInfo() != null) {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-connect-doublekit")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connect-doublekit")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 				p.connect(hg.getServerInfo());
 			} else {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-not-available")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-not-available")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 			}
 		}
@@ -130,16 +108,12 @@ public class ServerCommand implements CommandClass {
 			BattleServer hg = BungeeMain.getPlugin().getServerManager().getBalancer(ServerType.CUSTOMHG).next();
 			if (hg != null && hg.getServerInfo() != null) {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-connect-customhg")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connect-customhg")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 				p.connect(hg.getServerInfo());
 			} else {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-not-available")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-not-available")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 			}
 		}
@@ -150,9 +124,7 @@ public class ServerCommand implements CommandClass {
 		if (cmdArgs.isPlayer()) {
 			ProxiedPlayer p = cmdArgs.getPlayer();
 			p.sendMessage(TextComponent.fromLegacyText(""));
-			p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-					BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-					"server-not-available")));
+			p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-not-available")));
 			p.sendMessage(TextComponent.fromLegacyText(""));
 		}
 	}
@@ -164,16 +136,12 @@ public class ServerCommand implements CommandClass {
 			BattleServer lobby = BungeeMain.getPlugin().getServerManager().getBalancer(ServerType.LOBBY).next();
 			if (lobby != null && lobby.getServerInfo() != null) {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-connect-lobby")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connect-lobby")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 				p.connect(lobby.getServerInfo());
 			} else {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(Translate.getTranslation(
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-						"server-not-available")));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-not-available")));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 			}
 		}
@@ -183,25 +151,19 @@ public class ServerCommand implements CommandClass {
 	public void address(BungeeCommandArgs cmdArgs) {
 		if (cmdArgs.isPlayer()) {
 			ProxiedPlayer p = cmdArgs.getPlayer();
-			p.sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(),
-							"server-connected-ip")
-					.replace("%address%", p.getServer().getInfo().getName().toUpperCase())));
+			p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connected-ip").replace("%address%", p.getServer().getInfo().getName().toUpperCase())));
 		}
 	}
 
-	@Command(name = "broadcast", aliases = { "bc", "alert",
-			"tweet" }, groupToUse = Group.MODPLUS, noPermMessageId = "command-broadcast-no-access")
+	@Command(name = "broadcast", aliases = { "bc", "alert", "tweet" }, groupToUse = Group.MODPLUS, noPermMessageId = "command-broadcast-no-access")
 	public void tweet(BungeeCommandArgs cmdArgs) {
 		Language language = BattlebitsAPI.getDefaultLanguage();
 		if (cmdArgs.isPlayer()) {
-			language = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId())
-					.getLanguage();
+			language = BattlebitsAPI.getAccountCommon().getBattlePlayer(cmdArgs.getPlayer().getUniqueId()).getLanguage();
 		}
 		String[] args = cmdArgs.getArgs();
 		if (args.length <= 0) {
-			cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText(Translate
-					.getTranslation(language, "command-broadcast-usage").replace("%command%", cmdArgs.getLabel())));
+			cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), language, "command-broadcast-usage").replace("%command%", cmdArgs.getLabel())));
 			return;
 		}
 		StringBuilder builder = new StringBuilder();
@@ -212,13 +174,11 @@ public class ServerCommand implements CommandClass {
 			builder.append(args[i] + espaco);
 		}
 		BungeeMain.getPlugin().getProxy().broadcast(TextComponent.fromLegacyText(""));
-		BungeeMain.getPlugin().getProxy().broadcast(TextComponent.fromLegacyText(
-				Translate.getTranslation(language, "broadcast") + " " + ChatColor.WHITE + builder.toString()));
+		BungeeMain.getPlugin().getProxy().broadcast(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), language, "broadcast") + " " + ChatColor.WHITE + builder.toString()));
 		BungeeMain.getPlugin().getProxy().broadcast(TextComponent.fromLegacyText(""));
 		try {
 			if (Twitter.tweet(TwitterAccount.BATTLEBITSMC, builder.toString())) {
-				cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText(
-						T.t(language, "tweet-success", new String[] { "%message%", builder.toString() })));
+				cmdArgs.getSender().sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), language, "tweet-success", new String[] { "%message%", builder.toString() })));
 			}
 		} catch (TwitterException e) {
 			e.printStackTrace();

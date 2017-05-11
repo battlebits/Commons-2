@@ -18,7 +18,7 @@ import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent.UpdateType;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.permission.Group;
-import br.com.battlebits.commons.core.translate.Translate;
+import br.com.battlebits.commons.core.translate.T;
 
 public class AntiAFK implements Listener {
 	public Map<UUID, Location> locations = new HashMap<>();
@@ -72,7 +72,7 @@ public class AntiAFK implements Listener {
 				}
 				
 				if (time >= 300) {
-					p.kickPlayer(Translate.getTranslation(player.getLanguage(), "antiafk-kick"));
+					p.kickPlayer(T.t(BukkitMain.getInstance(),player.getLanguage(), "antiafk-kick"));
 					continue;
 				}
 				

@@ -5,25 +5,39 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bson.Document;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+
 import br.com.battlebits.commons.BattlebitsAPI;
+import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.data.DataServer;
 import net.md_5.bungee.api.ChatColor;
 
 public class Translate {
-	private static Map<String, Map<Language, Map<String, String>>> languageTranslations = new HashMap<>();
+	private String database;
+	private MongoBackend beckend;
+	private Map<Language, Map<String, String>> languageTranslations = new HashMap<>();
 	private static Pattern finder = Pattern.compile("§%(([\\S^)]+)%§)");
-	
-	public static String getTranslation(Language language, String messageId) {
+
+	public Translate(String database, MongoBackend beckend) {
+		this.database = database;
+		this.beckend = beckend;
+	}
+
+	public String getTranslation(Language language, String messageId) {
 		return getTranslation(language, messageId, null, null);
 	}
 
-	public static String getTranslation(Language language, String messageId, HashMap<String, String> replacement) {
+	public String getTranslation(Language language, String messageId, HashMap<String, String> replacement) {
 		String[] target = replacement.keySet().toArray(new String[replacement.size()]);
 		String[] replace = replacement.values().toArray(new String[replacement.size()]);
 		return getTranslation(language, messageId, target, replace);
 	}
 
-	public static String getTranslation(Language language, String messageId, String[]... replacement) {
+	public String getTranslation(Language language, String messageId, String[]... replacement) {
 		String[] target = new String[replacement.length];
 		String[] replace = new String[replacement.length];
 
@@ -38,24 +52,18 @@ public class Translate {
 		return getTranslation(language, messageId, target, replace);
 	}
 
-	public static String getTranslation(Language language, String messageId, String[] target, String[] replacement) {
+	public String getTranslation(Language language, String messageId, String[] target, String[] replacement) {
 		String message = null;
 		Matcher matcher = finder.matcher(messageId);
 		while (matcher.find()) {
 			messageId = matcher.group(2).toLowerCase();
 		}
-		for (Map<Language, Map<String, String>> translations : languageTranslations.values()) {
-			if (!translations.containsKey(language)) {
-				BattlebitsAPI.debug(language.toString() + " > NAO ENCONTRADA");
-				continue;
-			}
-			if (!translations.get(language).containsKey(messageId)) {
-				continue;
-			}
-			message = translations.get(language).get(messageId);
-			break;
+		if (!languageTranslations.containsKey(language)) {
+			BattlebitsAPI.debug(language.toString() + " > NAO ENCONTRADA");
 		}
-
+		if (languageTranslations.get(language).containsKey(messageId)) {
+			message = languageTranslations.get(language).get(messageId);
+		}
 		if (message == null) {
 			message = "[NOT FOUND: '" + messageId + "']";
 			BattlebitsAPI.debug(language.toString() + " > " + messageId + " > NAO ENCONTRADA");
@@ -69,21 +77,23 @@ public class Translate {
 		return m;
 	}
 
-	public static String getyCommonMapTranslation(Language language) {
-		if (!languageTranslations.get(BattlebitsAPI.TRANSLATION_ID).containsKey(language)) {
-			BattlebitsAPI.debug(language.toString() + " > NAO ENCONTRADA");
-			return null;
+	public void loadTranslations() {
+		for(Language lang : Language.values()){
+			languageTranslations.put(lang, loadTranslation(lang));
+			BattlebitsAPI.debug(this.database + " > " + lang.toString() + " > CARREGADA");
 		}
-		return BattlebitsAPI.getGson().toJson(languageTranslations.get(BattlebitsAPI.TRANSLATION_ID).get(language));
 	}
+	
 
-	public static void loadTranslations(String translationType, Language lang, Map<String, String> map) {
-		Map<Language, Map<String, String>> map2 = languageTranslations.get(translationType);
-		if (map2 == null) {
-			map2 = new HashMap<>();
-			languageTranslations.put(translationType, map2);
+	@SuppressWarnings("unchecked")
+	private Map<String, String> loadTranslation(Language language) {
+		MongoDatabase database = beckend.getClient().getDatabase(this.database);
+		MongoCollection<Document> collection = database.getCollection("translation");
+		Document found = collection.find(Filters.eq("language", language.toString())).first();
+		if (found != null) {
+			return (Map<String, String>) found.get("map");
 		}
-		map2.put(lang, map);
-		BattlebitsAPI.debug(lang.toString() + " > CARREGADA");
+		collection.insertOne(new Document("language", language.toString()).append("map", new HashMap<>()));
+		return new HashMap<>();
 	}
 }
