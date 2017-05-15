@@ -347,10 +347,10 @@ public class BattlePlayer {
 		DataPlayer.saveBattlePlayer(this, "ranks");
 	}
 
-	public void connect(String serverIp) {
+	public void connect(String serverId, ServerType type) {
 		checkRanks();
-		this.serverConnected = serverIp;
-		this.serverConnectedType = ServerType.getServerType(serverIp);
+		this.serverConnected = serverId;
+		this.serverConnectedType = type;
 		DataPlayer.saveBattlePlayer(this, "serverConnected");
 		DataPlayer.saveBattlePlayer(this, "serverConnectedType");
 	}

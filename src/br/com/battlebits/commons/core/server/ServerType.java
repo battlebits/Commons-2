@@ -31,7 +31,7 @@ public enum ServerType {
 		return staffType;
 	}
 
-	public static ServerType getServerType(String serverHostname) {
+	public static ServerType getServerTypeasd(String serverHostname) {
 		for (ServerType type : values()) {
 			if (serverHostname.toLowerCase().endsWith(type.suffix.toLowerCase()))
 				return type;

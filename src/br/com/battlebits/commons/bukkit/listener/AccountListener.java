@@ -59,7 +59,7 @@ public class AccountListener implements Listener {
 					player.setCacheOnQuit(true);
 				BattlebitsAPI.debug("CONNECTION > REDIS FOUND");
 			}
-			player.connect(BattlebitsAPI.getServerId());
+			player.connect(BattlebitsAPI.getServerId(), BattlebitsAPI.getServerType());
 			player.setJoinData(userName, ipAdress.getHostAddress(), response);
 			BattlebitsAPI.getAccountCommon().loadBattlePlayer(uuid, player);
 			if (player.getClanUniqueId() != null) {

@@ -143,11 +143,11 @@ public class BungeeMain extends Plugin {
 					continue;
 				if (!entry.getValue().containsKey("onlineplayers"))
 					continue;
-				if (ServerType.getServerType(entry.getValue().get("type").toUpperCase()) == ServerType.NETWORK)
+				if (ServerType.valueOf(entry.getValue().get("type").toUpperCase()) == ServerType.NETWORK)
 					continue;
 
-				BungeeMain.getPlugin().getServerManager().addActiveServer(entry.getValue().get("address"),
-						entry.getKey(), Integer.valueOf(entry.getValue().get("maxplayers")));
+				BungeeMain.getPlugin().getServerManager().addActiveServer(entry.getValue().get("address"), 
+						entry.getKey(), ServerType.valueOf(entry.getValue().get("type").toUpperCase()), Integer.valueOf(entry.getValue().get("maxplayers")));
 				BungeeMain.getPlugin().getServerManager().getServer(entry.getKey())
 						.setOnlinePlayers(DataServer.getPlayers(entry.getKey()));
 			} catch (Exception e) {

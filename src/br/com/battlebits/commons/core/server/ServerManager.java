@@ -43,24 +43,23 @@ public class ServerManager {
 		balancers.put(type, balancer);
 	}
 
-	public void addActiveServer(String serverAddress, String serverIp, int maxPlayers) {
+	public void addActiveServer(String serverAddress, String serverIp, ServerType type, int maxPlayers) {
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + serverIp);
-		updateActiveServer(serverIp, new HashSet<>(), maxPlayers, true);
+		updateActiveServer(serverIp, type, new HashSet<>(), maxPlayers, true);
 	}
 
-	public void updateActiveServer(String serverId, Set<UUID> onlinePlayers, int maxPlayers, boolean canJoin) {
-		updateActiveServer(serverId, onlinePlayers, maxPlayers, canJoin, 0, null);
+	public void updateActiveServer(String serverId, ServerType type, Set<UUID> onlinePlayers, int maxPlayers, boolean canJoin) {
+		updateActiveServer(serverId, type, onlinePlayers, maxPlayers, canJoin, 0, null);
 	}
 
-	public void updateActiveServer(String serverId, Set<UUID> onlinePlayers, int maxPlayers, boolean canJoin, int tempo,
-			MinigameState state) {
+	public void updateActiveServer(String serverId, ServerType type, Set<UUID> onlinePlayers, int maxPlayers, boolean canJoin, int tempo, MinigameState state) {
 		serverId = serverId.toLowerCase();
 		BattleServer server = activeServers.get(serverId);
 		if (server == null) {
 			if (serverId.endsWith("battle-hg.com")) {
-				server = new HungerGamesServer(serverId, onlinePlayers, true);
+				server = new HungerGamesServer(serverId, type, onlinePlayers, true);
 			} else {
-				server = new BattleServer(serverId, onlinePlayers, maxPlayers, true);
+				server = new BattleServer(serverId, type, onlinePlayers, maxPlayers, true);
 			}
 			activeServers.put(serverId, server);
 		}
@@ -86,7 +85,7 @@ public class ServerManager {
 
 	public void addToBalancers(String serverId, BattleServer server) {
 		serverId = serverId.toLowerCase();
-		BaseBalancer<BattleServer> balancer = getBalancer(ServerType.getServerType(serverId));
+		BaseBalancer<BattleServer> balancer = getBalancer(server.getServerType());
 		if (balancer == null)
 			return;
 		if (serverId.endsWith("battle-hg.com")) {
@@ -98,7 +97,7 @@ public class ServerManager {
 
 	public void removeFromBalancers(String serverId) {
 		serverId = serverId.toLowerCase();
-		BaseBalancer<BattleServer> balancer = getBalancer(ServerType.getServerType(serverId));
+		BaseBalancer<BattleServer> balancer = getBalancer(getServer(serverId).getServerType());
 		if (balancer != null)
 			balancer.remove(serverId);
 	}

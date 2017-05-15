@@ -90,7 +90,7 @@ public class BungeePubSubHandler extends JedisPubSub {
 			String source = jsonObject.get("source").getAsString();
 			if (source.equals(BattlebitsAPI.getServerId()))
 				return;
-			ServerType sourceType = ServerType.getServerType(source);
+			ServerType sourceType = ServerType.valueOf(jsonObject.get("serverType").getAsString());
 			Action action = Action.valueOf(jsonObject.get("action").getAsString());
 			switch (action) {
 			case JOIN: {
@@ -134,7 +134,7 @@ public class BungeePubSubHandler extends JedisPubSub {
 					break;
 				}
 				BungeeMain.getPlugin().getServerManager().addActiveServer(payload.getPayload().getServerAddress(),
-						payload.getPayload().getServer().getServerId(),
+						payload.getPayload().getServer().getServerId(), sourceType,
 						payload.getPayload().getServer().getMaxPlayers());
 				break;
 			}

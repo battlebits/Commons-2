@@ -16,6 +16,7 @@ import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.backend.sql.MySQLBackend;
 import br.com.battlebits.commons.core.clan.ClanCommon;
 import br.com.battlebits.commons.core.party.PartyCommon;
+import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.Translate;
 import br.com.battlebits.commons.util.mojang.NameFetcher;
@@ -75,6 +76,11 @@ public class BattlebitsAPI {
 	@Getter
 	@Setter
 	private static String serverId;
+	
+	@Getter
+	@Setter
+	private static ServerType serverType;
+	
 	@Getter
 	@Setter
 	private static String serverAddress;

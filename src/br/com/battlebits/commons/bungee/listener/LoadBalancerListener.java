@@ -12,7 +12,6 @@ import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Players;
 import net.md_5.bungee.api.ServerPing.Protocol;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ProxyPingEvent;
@@ -42,25 +41,11 @@ public class LoadBalancerListener implements Listener {
 			return;
 		}
 
-		ServerType type = ServerType.getServerType(serverIp);
-		ServerInfo toConnect = null;
-		if (manager.getBalancer(type) != null) {
-			server = manager.getBalancer(type).next();
-			if (server != null) {
-				toConnect = server.getServerInfo();
-			}
-		}
-		if (toConnect != null) {
-			event.setTarget(toConnect);
+		BattleServer lobby = manager.getBalancer(ServerType.LOBBY).next();
+		if (lobby != null && lobby.getServerInfo() != null) {
+			event.setTarget(lobby.getServerInfo());
 		} else {
-			BattleServer lobby = manager.getBalancer(ServerType.LOBBY).next();
-			if (lobby != null && lobby.getServerInfo() != null) {
-				event.setTarget(lobby.getServerInfo());
-			} else {
-				player.disconnect(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(),
-						BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId()).getLanguage(),
-						"server-not-available")));
-			}
+			player.disconnect(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId()).getLanguage(), "server-not-available")));
 		}
 	}
 

@@ -7,19 +7,22 @@ import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.server.loadbalancer.element.LoadBalancerObject;
 import br.com.battlebits.commons.core.server.loadbalancer.element.NumberConnection;
+import lombok.Getter;
 import net.md_5.bungee.api.config.ServerInfo;
 
 public class BattleServer implements LoadBalancerObject, NumberConnection {
 
 	private String serverId;
-
+	@Getter
+	private ServerType serverType;
 	private Set<UUID> players;
 	private int maxPlayers;
 
 	private boolean joinEnabled;
 
-	public BattleServer(String serverId, Set<UUID> onlinePlayers, int maxPlayers, boolean joinEnabled) {
+	public BattleServer(String serverId, ServerType serverType, Set<UUID> onlinePlayers, int maxPlayers, boolean joinEnabled) {
 		this.serverId = serverId;
+		this.serverType = serverType;
 		this.players = onlinePlayers;
 		this.maxPlayers = maxPlayers;
 		this.joinEnabled = joinEnabled;
@@ -63,10 +66,6 @@ public class BattleServer implements LoadBalancerObject, NumberConnection {
 
 	public ServerInfo getServerInfo() {
 		return BungeeMain.getPlugin().getProxy().getServerInfo(serverId);
-	}
-
-	public ServerType getServerType() {
-		return ServerType.getServerType(serverId);
 	}
 
 	@Override
