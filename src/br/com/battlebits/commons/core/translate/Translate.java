@@ -75,6 +75,7 @@ public class Translate {
 		}
 		if (!languageTranslations.containsKey(language)) {
 			BattlebitsAPI.debug(language.toString() + " > NAO ENCONTRADA");
+			return null;
 		}
 		if (languageTranslations.get(language).containsKey(messageId)) {
 			message = languageTranslations.get(language).get(messageId);

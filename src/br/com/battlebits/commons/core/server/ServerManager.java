@@ -53,15 +53,14 @@ public class ServerManager {
 	}
 
 	public void updateActiveServer(String serverId, ServerType type, Set<UUID> onlinePlayers, int maxPlayers, boolean canJoin, int tempo, MinigameState state) {
-		serverId = serverId.toLowerCase();
 		BattleServer server = activeServers.get(serverId);
 		if (server == null) {
-			if (serverId.endsWith("battle-hg.com")) {
+			if (type == ServerType.HUNGERGAMES || type == ServerType.DOUBLEKITHG || type == ServerType.FAIRPLAY || type == ServerType.CUSTOMHG) {
 				server = new HungerGamesServer(serverId, type, onlinePlayers, true);
 			} else {
 				server = new BattleServer(serverId, type, onlinePlayers, maxPlayers, true);
 			}
-			activeServers.put(serverId, server);
+			activeServers.put(serverId.toLowerCase(), server);
 		}
 		server.setOnlinePlayers(onlinePlayers);
 		server.setJoinEnabled(canJoin);
@@ -79,8 +78,9 @@ public class ServerManager {
 	}
 
 	public void removeActiveServer(String str) {
+		if (getServer(str) != null)
+			removeFromBalancers(getServer(str));
 		activeServers.remove(str.toLowerCase());
-		removeFromBalancers(str);
 	}
 
 	public void addToBalancers(String serverId, BattleServer server) {
@@ -88,18 +88,17 @@ public class ServerManager {
 		BaseBalancer<BattleServer> balancer = getBalancer(server.getServerType());
 		if (balancer == null)
 			return;
-		if (serverId.endsWith("battle-hg.com")) {
+		if (server.getServerType() == ServerType.HUNGERGAMES || server.getServerType() == ServerType.DOUBLEKITHG || server.getServerType() == ServerType.FAIRPLAY || server.getServerType() == ServerType.CUSTOMHG) {
 			balancer.add(serverId, (HungerGamesServer) server);
 		} else {
 			balancer.add(serverId, server);
 		}
 	}
 
-	public void removeFromBalancers(String serverId) {
-		serverId = serverId.toLowerCase();
-		BaseBalancer<BattleServer> balancer = getBalancer(getServer(serverId).getServerType());
+	public void removeFromBalancers(BattleServer serverId) {
+		BaseBalancer<BattleServer> balancer = getBalancer(serverId.getServerType());
 		if (balancer != null)
-			balancer.remove(serverId);
+			balancer.remove(serverId.getServerId());
 	}
 
 }

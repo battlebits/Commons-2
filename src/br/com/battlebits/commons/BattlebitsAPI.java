@@ -52,7 +52,7 @@ public class BattlebitsAPI {
 	private static NameFetcher nameFetcher = new NameFetcher();
 
 	public final static long MULTIPLIER_DURATION = 60000 * 60;
-	public final static String TRANSLATION_ID = "";
+	public final static String TRANSLATION_ID = "commons";
 	public final static String FORUM_WEBSITE = "forum.battlebits.net";
 	public final static String WEBSITE = "www.battlebits.net";
 	public final static String STORE = "loja.battlebits.net";

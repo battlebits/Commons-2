@@ -114,6 +114,7 @@ public class BukkitMain extends JavaPlugin {
 		BattlebitsAPI.setServerId(DataServer.getServerId(BattlebitsAPI.getServerAddress()));
 		BattlebitsAPI.setServerType(DataServer.getServerType(BattlebitsAPI.getServerAddress()));
 		BattlebitsAPI.getLogger().info("Battlebits Server carregado. ServerId: " + BattlebitsAPI.getServerId());
+		BattlebitsAPI.getLogger().info("Server type: " + BattlebitsAPI.getServerType());
 		DataServer.newServer(Bukkit.getMaxPlayers());
 		this.getServer().getMessenger().registerOutgoingPluginChannel(this, BattlebitsAPI.getBungeeChannel());
 		this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeCordMessenger());
