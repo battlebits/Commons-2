@@ -1,42 +1,28 @@
 package br.com.battlebits.commons.core.server;
 
 public enum ServerType {
-	DOUBLEKITHG("doublekit.battle-hg.com", ServerStaff.HUNGERGAMES), //
-	FAIRPLAY("fp.battle-hg.com", ServerStaff.HUNGERGAMES), //
-	CUSTOMHG("custom.battle-hg.com", ServerStaff.HUNGERGAMES), //
-	HUNGERGAMES("battle-hg.com", ServerStaff.HUNGERGAMES), //
-	PVP_FULLIRON("fulliron.pvp.battlebits.com.br", ServerStaff.BATTLECRAFT), //
-	PVP_SIMULATOR("simulator.pvp.battlebits.com.br", ServerStaff.BATTLECRAFT), //
-	SKYWARS("sw.battlebits.com.br", ServerStaff.SKYWARS), //
-	LOBBY("lobby.battlebits.com.br", ServerStaff.LOBBY), //
-	RAID("raid.battlebits.com.br", ServerStaff.RAID), //
-	GARTICCRAFT("gc.battlebits.com.br", ServerStaff.GARTICCRAFT), //
-	TESTSERVER("teste.battlebits.com.br", ServerStaff.TESTSERVER), //
-	NETWORK("battlebits.com.br", ServerStaff.NETWORK), //
-	NONE("none", ServerStaff.NONE);
+	DOUBLEKITHG(ServerStaff.HUNGERGAMES), //
+	FAIRPLAY(ServerStaff.HUNGERGAMES), //
+	CUSTOMHG(ServerStaff.HUNGERGAMES), //
+	HUNGERGAMES(ServerStaff.HUNGERGAMES), //
+	PVP_FULLIRON(ServerStaff.BATTLECRAFT), //
+	PVP_SIMULATOR(ServerStaff.BATTLECRAFT), //
+	SKYWARS(ServerStaff.SKYWARS), //
+	LOBBY(ServerStaff.LOBBY), //
+	RAID(ServerStaff.RAID), //
+	GARTICCRAFT(ServerStaff.GARTICCRAFT), //
+	TESTSERVER(ServerStaff.TESTSERVER), //
+	NETWORK(ServerStaff.NETWORK), //
+	NONE(ServerStaff.NONE);
 
-	private String suffix;
 	private ServerStaff staffType;
 
-	private ServerType(String ends, ServerStaff staffType) {
-		this.suffix = ends;
+	private ServerType(ServerStaff staffType) {
 		this.staffType = staffType;
-	}
-
-	public String getSuffix() {
-		return suffix;
 	}
 
 	public ServerStaff getStaffType() {
 		return staffType;
-	}
-
-	public static ServerType getServerTypeasd(String serverHostname) {
-		for (ServerType type : values()) {
-			if (serverHostname.toLowerCase().endsWith(type.suffix.toLowerCase()))
-				return type;
-		}
-		return NONE;
 	}
 
 	public String getName() {

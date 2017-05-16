@@ -53,17 +53,7 @@ public class Translate {
 	}
 
 	public String getTranslation(Language language, String messageId, String[] target, String[] replacement) {
-		String message = null;
-		Matcher matcher = finder.matcher(messageId);
-		while (matcher.find()) {
-			messageId = matcher.group(2).toLowerCase();
-		}
-		if (!languageTranslations.containsKey(language)) {
-			BattlebitsAPI.debug(language.toString() + " > NAO ENCONTRADA");
-		}
-		if (languageTranslations.get(language).containsKey(messageId)) {
-			message = languageTranslations.get(language).get(messageId);
-		}
+		String message = getTranslationNoCheck(language, messageId, target, replacement);
 		if (message == null) {
 			message = "[NOT FOUND: '" + messageId + "']";
 			BattlebitsAPI.debug(language.toString() + " > " + messageId + " > NAO ENCONTRADA");
@@ -75,6 +65,21 @@ public class Translate {
 				m = m.replace(target[i], replacement[i]);
 			}
 		return m;
+	}
+	
+	public String getTranslationNoCheck(Language language, String messageId, String[] target, String[] replacement) {
+		String message = null;
+		Matcher matcher = finder.matcher(messageId);
+		while (matcher.find()) {
+			messageId = matcher.group(2).toLowerCase();
+		}
+		if (!languageTranslations.containsKey(language)) {
+			BattlebitsAPI.debug(language.toString() + " > NAO ENCONTRADA");
+		}
+		if (languageTranslations.get(language).containsKey(messageId)) {
+			message = languageTranslations.get(language).get(messageId);
+		}
+		return message;
 	}
 
 	public void loadTranslations() {

@@ -71,6 +71,20 @@ public class DataServer extends Data {
 		}
 		return ipAddress;
 	}
+	
+	public static ServerType getServerType(String ipAddress) {
+		try {
+			MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
+			MongoCollection<Document> collection = database.getCollection("serverId");
+			Document found = collection.find(Filters.eq("address", ipAddress)).first();
+			if (found != null) {
+				return ServerType.valueOf(found.getString("serverType"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ServerType.NONE;
+	}
 
 	public static Set<UUID> getPlayers(String serverId) {
 		Set<UUID> players = new HashSet<>();

@@ -117,12 +117,12 @@ public class TranslationInjector implements Injector {
 							boolean matched = false;
 							Matcher matcher = finder.matcher(pre);
 							while (matcher.find()) {
-								pre = pre.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2)));
+								pre = pre.replace(matcher.group(), T.getTranslation(lang, matcher.group(2)));
 								matched = true;
 							}
 							matcher = finder.matcher(su);
 							while (matcher.find()) {
-								su = su.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2)));
+								su = su.replace(matcher.group(), T.getTranslation(lang, matcher.group(2)));
 								matched = true;
 							}
 							if (matched) {
@@ -137,7 +137,7 @@ public class TranslationInjector implements Injector {
 							matcher = finder.matcher(text);
 							matched = false;
 							while (matcher.find()) {
-								text = text.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2)));
+								text = text.replace(matcher.group(), T.getTranslation(lang, matcher.group(2)));
 								matched = true;
 							}
 							if (!matched)
@@ -263,7 +263,7 @@ public class TranslationInjector implements Injector {
 			return "";
 		Matcher matcher = finder.matcher(message);
 		while (matcher.find()) {
-			message = message.replace(matcher.group(), T.t(BukkitMain.getInstance(), lang, matcher.group(2).toLowerCase()));
+			message = message.replace(matcher.group(), T.getTranslation(lang, matcher.group(2).toLowerCase()));
 		}
 		return message;
 	}
