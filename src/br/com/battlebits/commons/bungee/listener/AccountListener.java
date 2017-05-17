@@ -28,10 +28,11 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 public class AccountListener implements Listener {
 
-	@EventHandler(priority = -128)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onLogin(final LoginEvent event) {
 		BattlebitsAPI.debug("ACCOUNT > STARTING");
 		event.registerIntent(BungeeMain.getPlugin());

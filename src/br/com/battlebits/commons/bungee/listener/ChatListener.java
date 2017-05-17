@@ -44,7 +44,7 @@ public class ChatListener implements Listener {
 	public static void sendStaffMessage(BattlePlayer bP, String message) {
 		for (ProxiedPlayer player : BungeeMain.getPlugin().getProxy().getPlayers()) {
 			BattlePlayer onlineBp = BattlebitsAPI.getAccountCommon().getBattlePlayer(player.getUniqueId());
-			if (!onlineBp.hasGroupPermission(Group.YOUTUBERPLUS))
+			if (!onlineBp.hasGroupPermission(Group.STAFF))
 				continue;
 			String tag = Tag.valueOf(bP.getServerGroup().toString()).getPrefix(onlineBp.getLanguage());
 			String format = tag + (ChatColor.stripColor(tag).trim().length() > 0 ? " " : "") + bP.getName()

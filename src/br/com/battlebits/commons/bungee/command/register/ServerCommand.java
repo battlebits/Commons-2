@@ -39,7 +39,7 @@ public class ServerCommand implements CommandClass {
 			BattleServer server = BungeeMain.getPlugin().getServerManager().getServer(serverIp);
 			if (server != null && server.getServerInfo() != null) {
 				p.sendMessage(TextComponent.fromLegacyText(""));
-				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connect-ip").replace("%address%", serverIp.toLowerCase())));
+				p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId()).getLanguage(), "server-connect-ip").replace("%address%", serverIp)));
 				p.sendMessage(TextComponent.fromLegacyText(""));
 				p.connect(server.getServerInfo());
 			} else {
@@ -59,6 +59,10 @@ public class ServerCommand implements CommandClass {
 					if (info.getName().toLowerCase().startsWith(args.getArgs()[0].toLowerCase())) {
 						list.add(info.getName());
 					}
+				}
+			} else if (args.getArgs().length == 0) {
+				for (ServerInfo info : BungeeMain.getPlugin().getProxy().getServers().values()) {
+					list.add(info.getName());
 				}
 			}
 		}
