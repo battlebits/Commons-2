@@ -23,7 +23,7 @@ public class ScreenshareListener implements Listener {
 		BattlePlayer player = BattlebitsAPI.getAccountCommon().getBattlePlayer(event.getPlayer().getUniqueId());
 		if (event.getTarget() == null)
 			return;
-		if (!event.getTarget().getName().equals("ss.battlebits.com.br"))
+		if (!event.getTarget().getName().equalsIgnoreCase("SS-01"))
 			return;
 		if (player.hasGroupPermission(Group.MODPLUS))
 			return;
@@ -37,7 +37,7 @@ public class ScreenshareListener implements Listener {
 		if (event.getPlayer().getServer() == null)
 			return;
 		ServerInfo info = event.getPlayer().getServer().getInfo();
-		if (!info.getName().equals("ss.battlebits.com.br"))
+		if (!info.getName().equals("SS-01"))
 			return;
 		BattlePlayer bp = BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
 		if (bp.isScreensharing()) {
@@ -75,7 +75,7 @@ public class ScreenshareListener implements Listener {
 	@EventHandler
 	public void onChangeServer(ServerKickEvent event) {
 		ServerInfo info = event.getKickedFrom();
-		if (!info.getName().equals("ss.battlebits.com.br"))
+		if (!info.getName().equals("SS-01"))
 			return;
 		BattlePlayer bp = BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
 		if (bp.isScreensharing()) {
@@ -113,7 +113,7 @@ public class ScreenshareListener implements Listener {
 		if (event.getPlayer().getServer() == null)
 			return;
 		ServerInfo info = event.getPlayer().getServer().getInfo();
-		if (!info.getName().equals("ss.battlebits.com.br"))
+		if (!info.getName().equals("SS-01"))
 			return;
 		BattlePlayer bp = BattlePlayer.getPlayer(event.getPlayer().getUniqueId());
 		if (bp.isScreensharing()) {

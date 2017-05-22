@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.battlebits.commons.BattlebitsAPI;
-import br.com.battlebits.commons.bukkit.command.BukkitCommandArgs;
 import br.com.battlebits.commons.bungee.BungeeMain;
 import br.com.battlebits.commons.bungee.command.BungeeCommandArgs;
 import br.com.battlebits.commons.core.command.CommandClass;
@@ -51,7 +50,7 @@ public class ServerCommand implements CommandClass {
 	}
 
 	@Completer(name = "connect", aliases = { "server", "con" })
-	public List<String> onCompleter(BukkitCommandArgs args) {
+	public List<String> onCompleter(BungeeCommandArgs args) {
 		List<String> list = new ArrayList<>();
 		if (args.isPlayer()) {
 			if (args.getArgs().length == 1) {

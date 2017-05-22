@@ -160,7 +160,7 @@ public class StaffCommand implements CommandClass {
 			}
 			return;
 		}
-		ServerInfo server = BungeeMain.getPlugin().getProxy().getServerInfo("ss.battlebits.com.br");
+		ServerInfo server = BungeeMain.getPlugin().getProxy().getServerInfo("SS-01");
 
 		if (server == null) {
 			cmdArgs.getPlayer().sendMessage(TextComponent.fromLegacyText(ssPrefix + T.t(BungeeMain.getPlugin(), BattlePlayer.getLanguage(cmdArgs.getPlayer().getUniqueId()), "command-screenshare-server-not-online")));

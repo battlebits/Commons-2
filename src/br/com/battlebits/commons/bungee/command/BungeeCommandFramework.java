@@ -29,8 +29,7 @@ public class BungeeCommandFramework implements CommandFramework {
 	private final Map<String, Entry<Method, Object>> completers = new HashMap<String, Entry<Method, Object>>();
 	private final Plugin plugin;
 
-	public BungeeCommandFramework(Plugin plugin)
-			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+	public BungeeCommandFramework(Plugin plugin) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		this.plugin = plugin;
 		this.plugin.getProxy().getPluginManager().registerListener(plugin, new BungeeCompleter());
 	}
@@ -50,8 +49,7 @@ public class BungeeCommandFramework implements CommandFramework {
 					ProxiedPlayer p = (ProxiedPlayer) sender;
 					BattlePlayer bp = BattlebitsAPI.getAccountCommon().getBattlePlayer(p.getUniqueId());
 					if (!bp.hasGroupPermission(command.groupToUse())) {
-						p.sendMessage(TextComponent
-								.fromLegacyText(T.t(BungeeMain.getPlugin(),bp.getLanguage(), command.noPermMessageId())));
+						p.sendMessage(TextComponent.fromLegacyText(T.t(BungeeMain.getPlugin(), bp.getLanguage(), command.noPermMessageId())));
 						return true;
 					}
 					bp = null;
@@ -64,8 +62,7 @@ public class BungeeCommandFramework implements CommandFramework {
 						@Override
 						public void run() {
 							try {
-								entry.getKey().invoke(entry.getValue(),
-										new BungeeCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
+								entry.getKey().invoke(entry.getValue(), new BungeeCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
 							} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
 								e.printStackTrace();
 							}
@@ -73,8 +70,7 @@ public class BungeeCommandFramework implements CommandFramework {
 					});
 				} else {
 					try {
-						entry.getKey().invoke(entry.getValue(),
-								new BungeeCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
+						entry.getKey().invoke(entry.getValue(), new BungeeCommandArgs(sender, label, args, cmdLabel.split("\\.").length - 1));
 					} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
 						e.printStackTrace();
 					}
@@ -91,8 +87,7 @@ public class BungeeCommandFramework implements CommandFramework {
 		for (Method m : cls.getClass().getMethods()) {
 			if (m.getAnnotation(Command.class) != null) {
 				Command command = m.getAnnotation(Command.class);
-				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length <= 0
-						|| !CommandArgs.class.isAssignableFrom(m.getParameterTypes()[0])) {
+				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length <= 0 || !CommandArgs.class.isAssignableFrom(m.getParameterTypes()[0])) {
 					System.out.println("Unable to register command " + m.getName() + ". Unexpected method arguments");
 					continue;
 				}
@@ -102,10 +97,8 @@ public class BungeeCommandFramework implements CommandFramework {
 				}
 			} else if (m.getAnnotation(Completer.class) != null) {
 				Completer comp = m.getAnnotation(Completer.class);
-				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length <= 0
-						|| !CommandArgs.class.isAssignableFrom(m.getParameterTypes()[0])) {
-					System.out.println(
-							"Unable to register tab completer " + m.getName() + ". Unexpected method arguments");
+				if (m.getParameterTypes().length > 1 || m.getParameterTypes().length <= 0 || !CommandArgs.class.isAssignableFrom(m.getParameterTypes()[0])) {
+					System.out.println("Unable to register tab completer " + m.getName() + ". Unexpected method arguments");
 					continue;
 				}
 				if (m.getReturnType() != List.class) {
@@ -180,17 +173,14 @@ public class BungeeCommandFramework implements CommandFramework {
 				StringBuilder buffer = new StringBuilder();
 				buffer.append(label.toLowerCase());
 				for (int x = 0; x < i; x++) {
-					if (!args[x].equals("") && !args[x].equals(" ")) {
-						buffer.append(".").append(args[x].toLowerCase());
-					}
+					buffer.append(".").append(args[x].toLowerCase());
 				}
 				String cmdLabel = buffer.toString();
 				if (completers.containsKey(cmdLabel)) {
 					Entry<Method, Object> entry = completers.get(cmdLabel);
 					try {
 						event.getSuggestions().clear();
-						event.getSuggestions().addAll((List<String>) entry.getKey().invoke(entry.getValue(),
-								new BungeeCommandArgs(player, label, args, cmdLabel.split("\\.").length - 1)));
+						event.getSuggestions().addAll((List<String>) entry.getKey().invoke(entry.getValue(), new BungeeCommandArgs(player, label, args, cmdLabel.split("\\.").length - 1)));
 					} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 						e.printStackTrace();
 					}
