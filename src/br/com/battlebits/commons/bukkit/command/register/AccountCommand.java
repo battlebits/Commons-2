@@ -32,7 +32,7 @@ public class AccountCommand implements CommandClass {
 		}
 		Language lang;
 		try {
-			lang = Language.valueOf(args.getArgs()[0]);
+			lang = Language.valueOf(args.getArgs()[0].toUpperCase());
 		} catch (Exception e) {
 			p.sendMessage("§%command-language-prefix%§ §%command-language-not-language%§");
 			return;

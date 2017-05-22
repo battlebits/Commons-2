@@ -43,8 +43,8 @@ public class DataServer extends Data {
 		return new HashMap<>();
 	}
 
-	public static void addTranslationTag(Language language, String tag) {
-		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase("commons");
+	public static void addTranslationTag(Language language, String tag, String dbStr) {
+		MongoDatabase database = BattlebitsAPI.getCommonsMongo().getClient().getDatabase(dbStr);
 		MongoCollection<Document> collection = database.getCollection("translation");
 		Document found = collection.find(Filters.eq("language", language.toString())).first();
 		if (found != null) {

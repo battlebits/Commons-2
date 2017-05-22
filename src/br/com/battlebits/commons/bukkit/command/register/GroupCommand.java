@@ -11,6 +11,7 @@ import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandArgs;
 import br.com.battlebits.commons.core.account.BattlePlayer;
 import br.com.battlebits.commons.core.command.CommandArgs;
+import br.com.battlebits.commons.core.command.CommandClass;
 import br.com.battlebits.commons.core.command.CommandFramework.Command;
 import br.com.battlebits.commons.core.command.CommandFramework.Completer;
 import br.com.battlebits.commons.core.command.CommandSender;
@@ -20,7 +21,7 @@ import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 
-public class GroupCommand {
+public class GroupCommand implements CommandClass {
 	@Command(name = "groupset", usage = "/<command> <player> <group>", groupToUse = Group.MANAGER, aliases = { "setargrupo" }, noPermMessageId = "command-groupset-no-access", runAsync = true)
 	public void groupset(BukkitCommandArgs cmdArgs) {
 		final CommandSender sender = cmdArgs.getSender();

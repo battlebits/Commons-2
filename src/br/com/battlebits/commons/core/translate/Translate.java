@@ -57,7 +57,7 @@ public class Translate {
 		if (message == null) {
 			message = "[NOT FOUND: '" + messageId + "']";
 			BattlebitsAPI.debug(language.toString() + " > " + messageId + " > NAO ENCONTRADA");
-			DataServer.addTranslationTag(language, messageId);
+			DataServer.addTranslationTag(language, messageId, this.database);
 		}
 		String m = ChatColor.translateAlternateColorCodes('&', message);
 		if (target != null && replacement != null)
