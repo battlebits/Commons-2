@@ -9,7 +9,7 @@ public enum TwitterAccount {
 	private String accessToken;
 	private String accessSecret;
 
-	private TwitterAccount(String consumerKey, String consumerSecret, String accessToken, String accessSecret) {
+    TwitterAccount(String consumerKey, String consumerSecret, String accessToken, String accessSecret) {
 		this.consumerKey = consumerKey;
 		this.consumerSecret = consumerSecret;
 		this.accessSecret = accessSecret;

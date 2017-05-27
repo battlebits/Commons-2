@@ -18,16 +18,16 @@ public enum Group {
 	MOD(new ModeratorGroup()), //
 	MODPLUS(new StreamerGroup()), //
 	MANAGER(new StreamerGroup()), //
-	ADMIN(new StreamerGroup()), //
+	ADMIN(new OwnerGroup()), //
 	DONO(new OwnerGroup());
 
 	private GroupInterface group;
 
-	private Group() {
+    Group() {
 		this(new SimpleGroup());
 	}
 
-	private Group(GroupInterface group) {
+    Group(GroupInterface group) {
 		this.group = group;
 	}
 
