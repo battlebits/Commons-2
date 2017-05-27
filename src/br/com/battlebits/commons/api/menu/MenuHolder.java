@@ -35,5 +35,4 @@ class MenuHolder implements InventoryHolder {
 			return menu.getInventory();
 		}
 	}
-
 }

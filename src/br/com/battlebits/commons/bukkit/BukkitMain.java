@@ -1,5 +1,6 @@
 package br.com.battlebits.commons.bukkit;
 
+import br.com.battlebits.commons.core.data.DataServer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
@@ -37,7 +38,6 @@ import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.command.CommandLoader;
-import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.translate.Language;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.core.translate.Translate;
@@ -87,7 +87,6 @@ public class BukkitMain extends JavaPlugin {
 		plugin = getServer().getPluginManager().getPlugin("ProtocolSupportLegacyHologram");
 		if (plugin != null)
 			new AutoUpdater(plugin, "r'E9q(@P?2dVc4Ng").run();
-		plugin = this;
 		procotolManager = ProtocolLibrary.getProtocolManager();
 		new TranslationInjector().inject(this);
 		new ActionItemInjector().inject(this);

@@ -2,6 +2,7 @@ package br.com.battlebits.commons.bukkit.listener;
 
 import java.util.HashMap;
 
+import br.com.battlebits.commons.core.data.DataServer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -23,7 +24,6 @@ import br.com.battlebits.commons.bukkit.BukkitMain;
 import br.com.battlebits.commons.bukkit.event.account.PlayerChangeLeagueEvent;
 import br.com.battlebits.commons.bukkit.event.account.PlayerLanguageEvent;
 import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
-import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.permission.Group;
 import br.com.battlebits.commons.core.translate.T;
 

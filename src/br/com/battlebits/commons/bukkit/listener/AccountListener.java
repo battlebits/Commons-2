@@ -3,6 +3,7 @@ package br.com.battlebits.commons.bukkit.listener;
 import java.net.InetAddress;
 import java.util.UUID;
 
+import br.com.battlebits.commons.core.data.DataServer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +28,6 @@ import br.com.battlebits.commons.core.clan.Clan;
 import br.com.battlebits.commons.core.data.DataClan;
 import br.com.battlebits.commons.core.data.DataParty;
 import br.com.battlebits.commons.core.data.DataPlayer;
-import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.party.Party;
 import br.com.battlebits.commons.core.translate.T;
 import br.com.battlebits.commons.util.GeoIpUtils;
@@ -104,7 +104,6 @@ public class AccountListener implements Listener {
 		} catch (Exception e) {
 			event.setKickMessage(T.t(BukkitMain.getInstance(), BattlebitsAPI.getDefaultLanguage(), "account-load-failed"));
 			e.printStackTrace();
-			return;
 		}
 	}
 

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import br.com.battlebits.commons.core.data.DataServer;
 import com.google.common.io.ByteStreams;
 
 import br.com.battlebits.commons.BattlebitsAPI;
@@ -29,7 +30,6 @@ import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
 import br.com.battlebits.commons.core.backend.redis.PubSubListener;
 import br.com.battlebits.commons.core.backend.redis.RedisBackend;
 import br.com.battlebits.commons.core.command.CommandLoader;
-import br.com.battlebits.commons.core.data.DataServer;
 import br.com.battlebits.commons.core.server.ServerManager;
 import br.com.battlebits.commons.core.server.ServerType;
 import br.com.battlebits.commons.core.translate.T;

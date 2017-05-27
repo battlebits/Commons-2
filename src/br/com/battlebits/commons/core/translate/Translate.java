@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.com.battlebits.commons.core.data.DataServer;
 import org.bson.Document;
 
 import com.mongodb.client.MongoCollection;
@@ -13,7 +14,6 @@ import com.mongodb.client.model.Filters;
 
 import br.com.battlebits.commons.BattlebitsAPI;
 import br.com.battlebits.commons.core.backend.mongodb.MongoBackend;
-import br.com.battlebits.commons.core.data.DataServer;
 import net.md_5.bungee.api.ChatColor;
 
 public class Translate {

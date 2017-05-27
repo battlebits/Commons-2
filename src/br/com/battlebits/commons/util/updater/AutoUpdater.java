@@ -21,7 +21,7 @@ public class AutoUpdater {
 	private String pluginName;
 	private String versaoAtual;
 	private String pluginPwd = "";
-	private boolean needUpdate = true;
+	protected boolean needUpdate = true;
 
 	private boolean downloaded = false;
 

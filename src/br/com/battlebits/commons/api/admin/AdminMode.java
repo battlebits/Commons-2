@@ -1,8 +1,6 @@
 package br.com.battlebits.commons.api.admin;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,8 +35,6 @@ public class AdminMode {
 			return;
 		p.setGameMode(event.getGameMode());
 		Group group = VanishAPI.getInstance().hidePlayer(p);
-		Map<String, String> map = new HashMap<>();
-		map.put("%invisible%", group.toString());
 		p.sendMessage("§%command-admin-prefix%§ §%command-admin-enabled%§");
 		p.sendMessage("§%command-vanish-prefix%§ " + T.t(BukkitMain.getInstance(), BattlePlayer.getLanguage(p.getUniqueId()), "command-vanish-invisible", new String[] { "%invisible%", group.toString() }));
 	}
